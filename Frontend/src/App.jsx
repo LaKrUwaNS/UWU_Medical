@@ -4,7 +4,7 @@ import './App.css'
 function App() {
   return (
     <div className='test'>
-      හායී අශේන්
+      hi
     </div>
   )
 }
