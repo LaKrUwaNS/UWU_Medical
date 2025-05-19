@@ -1,11 +1,9 @@
 import React from 'react'
-import 'Login.css'
+import './Login.css'
 
 const Login = () => {
   return (
-    <section>
-      
-    </section>
+    <div>test</div>
   )
 }
 

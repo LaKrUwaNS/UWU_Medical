@@ -1,11 +1,14 @@
 import React from 'react'
 import './App.css'
+import Register from './pages/Login/Register'
 
 function App() {
   return (
-    <div className='test'>
-      hi
-    </div>
+    <main className='App'>
+      <Register />
+
+      
+    </main>
   )
 }
 

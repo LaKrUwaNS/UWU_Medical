@@ -1,0 +1,70 @@
+.Register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(178deg, #006100 -16.34%, #FFF 95.43%);
+    
+}
+.Register-form{
+    width: 80%;
+    height: 90%;
+    flex-shrink: 0;
+    border-radius: 20px;
+    border: 5px solid #E9FFE9;
+    background: rgba(217, 217, 217, 0.50);
+    box-shadow: 27px 14px 20.8px 3px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: row;
+
+}
+.img{
+    width: 125%;
+    height: 100%;
+   
+    background-size: cover;
+    border-radius: 14px;
+}
+.form-section{
+   
+    display: flex;
+    flex-direction: row;
+    height: 119px;
+    margin-top: 10px;
+    margin-left: 9em;
+   
+}
+.title-section{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position:relative;
+   
+    
+   
+    
+}
+.logo{
+    margin-left: 16.9em;
+    width: 100px;
+    height: 80;
+    position: relative;
+    
+
+}
+.title{
+    
+    font-weight: 700;
+    font-size: 53px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: rgba(0, 97, 0, 1);
+    position: relative;
+   
+
+}
+.sub-title{
+    color: #272727;
+    
+}
