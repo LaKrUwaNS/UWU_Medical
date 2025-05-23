@@ -1,11 +1,18 @@
 import React from 'react'
 import './App.css'
-import Register from './pages/Login/Register'
+
+import Profile from './pages/Profile/Profile';
+import Images from './assets/Image';
 
 function App() {
   return (
     <main className='App'>
-      <Register />
+   
+    
+      
+
+      
+      
 
       
     </main>

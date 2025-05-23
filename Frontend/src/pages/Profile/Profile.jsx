@@ -1,8 +1,12 @@
-import React from 'react'
+import React from 'react';
+import SideBar from'../../components/SideBar'
+import './Profile.css'
 
 const Profile = () => {
   return (
-    <div>
+    <div className='profile-sec'>
+      <SideBar/>
+      
       
     </div>
   )
