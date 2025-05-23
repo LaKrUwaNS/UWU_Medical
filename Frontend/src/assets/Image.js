@@ -8,11 +8,15 @@ import Upload from './Icons/Upload.svg'
 
 
 
+
+
 const Images = {
-    Login,
+    
     Register,
     Logo,
-    Upload
+    Upload,
+    Login
+   
    
 }
 
