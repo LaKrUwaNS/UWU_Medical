@@ -25,11 +25,14 @@ import Toggle from './Icons/toggle.svg'
 
 
 
+
+
 const Images = {
-    Login,
+
     Register,
     Logo,
     Upload,
+    Login,
     Request,
     Medicine,
     Reminder,
@@ -41,8 +44,9 @@ const Images = {
     Dashbord,
     SunBtn,
     Toggle
-   
-   
+
+
+
 }
 
 
