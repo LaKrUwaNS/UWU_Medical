@@ -61,13 +61,14 @@
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 5.2px 20px;
+  padding: 8px 21px;
+ margin-bottom: 8px;
   cursor: pointer;
   transition: padding 0.3s ease, margin 0.3s ease;
  
 }
 .Sidebar.colapsed .menu-item {
-  margin-bottom: 3px;
+  margin-bottom: 11px;
 }
 
 .menu-item:hover {
@@ -90,8 +91,10 @@
 }
 
 .logo {
-  width: 74px;
-  height: 57px;
+  width: 65px;
+  height: 48px;
+  position: relative;
+  top: 10px;
 }
 
 .Sidebar.colapsed .menu-item .text {
@@ -126,3 +129,9 @@
   padding: 0px 22px 10px 10px;   /* top/bottom = 10px, left/right = 0 */
 }
 
+.iconimg {
+  width: 20px;   
+  height: 20px;  
+  object-fit: contain;
+  margin-right: 10px;
+}

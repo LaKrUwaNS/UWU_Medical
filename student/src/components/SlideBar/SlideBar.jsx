@@ -14,7 +14,7 @@ function SlideBar() {
     <div className={`Sidebar ${isCollapsed ? 'colapsed' :''}`}>
 
         <div className="header">
-            <img src={images.logo} alt="logo" />
+            <img className='logo' src={images.logo} alt="logo" />
         
 
         {!isCollapsed && (
@@ -33,32 +33,32 @@ function SlideBar() {
             }
 
                 <div className="menu-item">
-                    <img src={images.dashboard} alt="dashboard" />
+                    <img  className='iconimg'src={images.dashboard} alt="dashboard" />
                     {!isCollapsed &&
                         <span className='text'>Dashboard</span>
                         }
                 </div>
                  
                 <div className="menu-item">
-                    <img src={images.studentData} alt="Student-data" />
+                    <img  className='iconimg'src={images.studentData} alt="Student-data" />
                     {!isCollapsed &&
                         <span className='text'>Student Data</span>
                         }
                 </div>
                 <div className="menu-item">
-                    <img src={images.medicalReq} alt="medicalreq" />
+                    <img  className='iconimg'src={images.medicalReq} alt="medicalreq" />
                     {!isCollapsed &&
                         <span className='text'>Medical Requests</span>
                         }
                 </div>
                 <div className="menu-item">
-                    <img src={images.reminders} alt="Reminders" />
+                    <img  className='iconimg'src={images.reminders} alt="Reminders" />
                     {!isCollapsed &&
                         <span className='text'>Reminders</span>
                         }
                 </div>
                 <div className="menu-item">
-                    <img src={images.updates} alt="Updates" />
+                    <img  className='iconimg'src={images.updates} alt="Updates" />
                     {!isCollapsed &&
                         <span className='text'>Updates</span>
                     }
@@ -70,25 +70,25 @@ function SlideBar() {
                 }
 
                 <div className="menu-item">
-                    <img src={images.medicineData} alt="Medicine Data" />
+                    <img className='iconimg' src={images.medicineData} alt="Medicine Data" />
                     {!isCollapsed && 
                         <span className='text'>Medicine Data</span>
                     }
                 </div>
                 <div className="menu-item">
-                    <img src={images.staff} alt="Staff" />
+                    <img className='iconimg' src={images.staff} alt="Staff" />
                     {!isCollapsed && 
                         <span className='text'>Staff</span>
                     }
                 </div>
                 <div className="menu-item">
-                    <img src={images.reports} alt="Reports" />
+                    <img  className='iconimg'src={images.reports} alt="Reports" />
                     {!isCollapsed && 
                         <span className='text'>Reports</span>
                     }
                 </div>
                 <div className="menu-item">
-                    <img src={images.settings} alt="Settings" />
+                    <img className='iconimg' src={images.settings} alt="Settings" />
                     {!isCollapsed && 
                         <span className='text'>Settings</span>
                     }
