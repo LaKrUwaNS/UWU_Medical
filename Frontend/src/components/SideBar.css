@@ -20,17 +20,21 @@
 }
 
 .header {
-  padding: 8px 4px;
-  display: flex;
+ display: flex;
   align-items: center;
-  gap: 35px;
+  padding: 10px 1px;
+  gap: 8px;
+ 
 }
 
 .medical-center {
+  white-space: nowrap;
   font-size: 20px;
   font-weight: 550;
-  position: relative;
   top: 16px;
+  
+ 
+  
 }
 
 .menu-section {
@@ -80,8 +84,12 @@
 }
 
 .logo {
-  width: 74px;
+  margin-top: 20px;
+  width: 198px;
   height: 57px;
+  margin-left: 0px;
+  margin-right: 8px;
+ 
 }
 
 .Sidebar.colapsed .menu-item .text {
@@ -115,3 +123,10 @@
   justify-content: center;
   padding: 10px 32px 10px 10px;   /* top/bottom = 10px, left/right = 0 */
 }
+.name{
+  width: 100%;
+
+
+}
+
+
