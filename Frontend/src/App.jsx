@@ -14,6 +14,8 @@ function App() {
     <main className='App'>
 
 
+    <Profile />
+
 
 
 
