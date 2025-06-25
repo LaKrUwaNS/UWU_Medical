@@ -12,6 +12,7 @@ import updates from './SlideBar/updates.svg';
 import home from '../assets/Home/Home.png';
 import rectangle from '../assets/Home/rectan.png';
 import SmilingDoctors from '../assets/Home/smilingDocs.png';
+import uniLogo from '../assets/Loading/Uni_logo.png';
 const images = {
   dashboard,
   logo,
@@ -26,7 +27,8 @@ const images = {
   updates,
   home,
   rectangle,
-  SmilingDoctors
+  SmilingDoctors,
+  uniLogo
 };
 
 export default images;
