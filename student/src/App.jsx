@@ -5,7 +5,7 @@ import Home from "./pages/Home/home";
 function App() {
   return (
     <div>
-      <SlideBar />
+      <Home />
     </div>
   );
 }

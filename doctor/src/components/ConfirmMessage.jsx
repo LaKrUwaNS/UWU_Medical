@@ -1,5 +1,5 @@
 import React from "react";
-import "./ConfirmMessage.css"; // Assuming you have a CSS file for styling
+import '../style/ConfirmMessage.css'; // Adjust the path as necessary
 
 
 const Confirmation = () => (
