@@ -9,7 +9,7 @@ import staff from './SlideBar/staff.svg';
 import studentData from './SlideBar/studentData.svg';
 import toggle from './SlideBar/toggle.svg';
 import updates from './SlideBar/updates.svg';
-import home from '../assets/Home/Home.png';
+import home from '../assets/Home/Home.jpg';
 import rectangle from '../assets/Home/rectan.png';
 import SmilingDoctors from '../assets/Home/smilingDocs.png';
 import uniLogo from '../assets/Loading/Uni_logo.png';
