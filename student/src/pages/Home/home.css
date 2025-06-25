@@ -1,0 +1,7 @@
+.home-wrapper {
+  height: 100vh;             /* Full screen height */
+  width: 100%;               /* Full width */
+  background-size: cover;    /* Resize the image to cover the div */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent repeat */
+}

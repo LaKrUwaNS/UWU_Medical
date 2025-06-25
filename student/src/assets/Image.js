@@ -9,7 +9,9 @@ import staff from './SlideBar/staff.svg';
 import studentData from './SlideBar/studentData.svg';
 import toggle from './SlideBar/toggle.svg';
 import updates from './SlideBar/updates.svg';
-
+import home from '../assets/Home/Home.png';
+import rectangle from '../assets/Home/rectan.png';
+import SmilingDoctors from '../assets/Home/smilingDocs.png';
 const images = {
   dashboard,
   logo,
@@ -21,7 +23,10 @@ const images = {
   staff,
   studentData,
   toggle,
-  updates
+  updates,
+  home,
+  rectangle,
+  SmilingDoctors
 };
 
 export default images;
