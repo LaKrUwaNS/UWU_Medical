@@ -1,17 +1,13 @@
-import './App.css';
-import SlideBar from './components/SlideBar/SlideBar';
-import Home from './pages/Home/home';
-
-
+import "./App.css";
+import SlideBar from "./components/SlideBar/SlideBar";
+import Home from "./pages/Home/home";
 
 function App() {
-
-
   return (
     <div>
-    <Home/>
-     </div>
-  )
+      <SlideBar />
+    </div>
+  );
 }
 
-export default App
+export default App;
