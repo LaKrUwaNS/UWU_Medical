@@ -13,6 +13,7 @@ import home from '../assets/Home/Home.jpg';
 import rectangle from '../assets/Home/rectan.png';
 import SmilingDoctors from '../assets/Home/smilingDocs.png';
 import uniLogo from '../assets/Loading/Uni_logo.png';
+import Login from '../assets/Login/Login.jpg';
 const images = {
   dashboard,
   logo,
@@ -28,7 +29,8 @@ const images = {
   home,
   rectangle,
   SmilingDoctors,
-  uniLogo
+  uniLogo,
+  Login
 };
 
 export default images;
