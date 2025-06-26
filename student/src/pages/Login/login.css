@@ -51,7 +51,7 @@ header img{
     border: 2px solid rgba(255, 255, 255, 1);
     backdrop-filter: blur(5.700000762939453px);
     width: 600px;
-    height: 400px;
+    height: 350px;
     top: 240px;
     border-radius: 20px;
     border-width: 2px;
@@ -92,21 +92,24 @@ header img{
 .froget-password {
   text-align: center;
   position: relative;
-
   font-size: 12px;
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .froget-password a {
 color: rgba(255, 255, 255, 1);
+position: relative;
 
+  
   
 } 
 .login-btns{
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 .clear-btn,
 .submit-btn{
