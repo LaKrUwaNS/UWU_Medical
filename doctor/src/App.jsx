@@ -1,11 +1,15 @@
 import "./App.css";
-import ConfirmMessage from "./components/ConfirmMessage.jsx"; // Import the ConfirmMessage component
+
+
 
 function App() {
-  return <main>
-    <ConfirmMessage/>
+  return (
+  <main>
+   
+  
 
-  </main>;
+  </main>
+  )
 }
 
 export default App;
