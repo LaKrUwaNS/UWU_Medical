@@ -1,0 +1,65 @@
+.medical-request-page{
+  padding: 20px;
+  margin-left: 100px;
+ 
+}
+
+.requests-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+  margin-top: 20px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-btn {
+  background-color: #00cc66;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.cancel-btn:hover {
+  background-color: #cc0000;
+}
+
+.submit-btn:hover {
+  background-color: #00994d;
+}
+.requests-grid.two-cols{
+  grid-template-columns: repeat(2,1fr);
+  margin-left: 170px;
+}
+.requests-grid.three-cols{
+  grid-template-columns: repeat(3,1fr);
+  margin-left: 40px;
+}
+
+
+.requests-grid .card {
+  transition: all 0.3s ease;
+  padding: 16px;
+}
+.three-cols .card {
+  scale: 0.95;        
+  transform: translateX(10px);
+}
+.MC{
+  position: -webkit-sticky;
+  text-align: center;
+  margin-left: 40%;
+  top: 10px;
+  
+}
+
