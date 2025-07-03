@@ -1,0 +1,138 @@
+.Sidebar {
+  background: #FFF;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  width: 275px;
+  height: 100%;
+  color: rgb(14, 13, 13);
+  position: fixed;
+  left: 0;
+  top: 0;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  border-right: 3px solid #afb1af;
+  overflow: hidden;
+  border-top-right-radius: 15px;
+   border-bottom-right-radius: 15px;
+
+}
+
+.Sidebar.colapsed {
+  width: 80px;
+  gap: 41px;
+  
+}
+
+.header {
+  padding: 8px 4px;
+  display: flex;
+  align-items: center;
+  gap: 35px;
+}
+
+.medical-center {
+  font-size: 20px;
+  font-weight: 550;
+  position: relative;
+  top: 16px;
+}
+
+.menu-section {
+  flex: 1;
+  padding: 7px 0px;
+  position: relative;
+  margin-top: 7px;
+}
+
+.menu-title {
+  padding: 0 20px 5px 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0e0d0d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
+.menu-item:first-child {
+  margin-top: 0px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 21px;
+ margin-bottom: 8px;
+  cursor: pointer;
+  transition: padding 0.3s ease, margin 0.3s ease;
+ 
+}
+.Sidebar.colapsed .menu-item {
+  margin-bottom: 11px;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.text {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  padding-left: 20px;
+}
+
+.icon {
+  font-size: 12px;
+  width: 16.8px;
+  flex-shrink: 0;
+}
+
+.logo {
+  width: 65px;
+  height: 48px;
+  position: relative;
+  top: 10px;
+}
+
+.Sidebar.colapsed .menu-item .text {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bottom-section {
+  display: flex;
+  justify-content: flex-start;  
+  padding: 10px 0 10px 220px;   /* top, right, bottom, left */
+}
+
+/* Toggle button */
+.toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+
+
+.toggle-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* When sidebar is collapsed */
+.Sidebar.colapsed .bottom-section {
+  justify-content: center;
+  padding: 0px 22px 10px 10px;   /* top/bottom = 10px, left/right = 0 */
+}
+
+.iconimg {
+  width: 20px;   
+  height: 20px;  
+  object-fit: contain;
+  margin-right: 10px;
+}
