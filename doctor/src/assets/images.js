@@ -1,10 +1,12 @@
 import register from '../assets/Register/register.jpg';
 import logo from '../assets/Register/logo.svg';
-
-
-const images=  {
+import fix from '../assets/Login/fix.jpg';
+import uni_Logo from '../assets/Login/logo.png';
+const images = {
     register,
-    logo
+    logo,
+    fix,
+    uni_Logo
 
 
 
@@ -13,4 +15,4 @@ const images=  {
 
 
 }
- export default images;
+export default images;
