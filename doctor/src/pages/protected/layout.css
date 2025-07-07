@@ -1,0 +1,5 @@
+.main-layout {
+    display: flex;
+    height: 200vh;
+    gap: 5px;
+}
