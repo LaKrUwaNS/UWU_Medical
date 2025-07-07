@@ -7,7 +7,6 @@ import { CreateOTP } from "../../utils/OTPGen";
 import { sendTokenAsCookie } from "../../utils/Cookies";
 import { generateAccessToken } from "../../utils/WebToken";
 import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
-
 import OTP from "../../models/OTP.model";
 import { Session } from "../../models/session.model";
 import { cloudinary } from "../../config/Claudenary";
@@ -15,7 +14,6 @@ import Doctor from "../../models/Doctor.model";
 import { sendResponse } from "../../utils/response";
 import { AuthenticatedRequest } from "../../middleware/CheckLogin/isDotorlogin";
 import { generateWelcomeEmailHtml } from "../../const/Mail/Welcome.templete";
-import { VERIFY_CODE } from "../../utils/dotenv";
 
 //! Testing Controllers
 // ✅ Test Mail
@@ -278,3 +276,33 @@ export const ResetPassword = TryCatch(async (req: Request, res: Response) => {
 
     return sendResponse(res, 200, true, "Password reset successfully")
 });
+
+// check Doctor is Login
+export const CheckIsDoctorLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        return sendResponse(res, 401, false, "Not logged in");
+    }
+
+    const session = await Session.findOne({ accessToken: token, sessionType: "LOGIN" });
+    if (!session) {
+        return sendResponse(res, 401, false, "Session not found or expired");
+    }
+
+    const doctor = await Doctor.findById(session.doctorId);
+    if (!doctor) {
+        return sendResponse(res, 404, false, "Doctor not found");
+    }
+
+    return sendResponse(res, 200, true, "Doctor is logged in", {
+        doctor: {
+            id: doctor._id,
+            fullName: doctor.fullName,
+            userName: doctor.userName,
+            photo: doctor.photo,
+            professionalEmail: doctor.professionalEmail
+        }
+    });
+});
+

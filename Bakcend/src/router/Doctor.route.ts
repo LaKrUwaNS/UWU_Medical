@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { DoctorLogging, ForgotPassword, Logout, RegisterDoctor, ResetPassword, TestMail, TestMulter, VerifyRegisterOTP } from "../controller/doctor/Auth.controller";
+import { CheckIsDoctorLoggedIn, DoctorLogging, ForgotPassword, Logout, RegisterDoctor, ResetPassword, TestMail, TestMulter, VerifyRegisterOTP } from "../controller/doctor/Auth.controller";
 import { RegisterDoctorZodSchema, validateMiddleware } from "../middleware/validate.middleware";
 import { otpVerificationSchema } from "../middleware/validate.middleware";
 import { loginSchema } from "../middleware/validate.middleware";
@@ -38,6 +38,9 @@ DoctorRouter.post("/reset-password", validateMiddleware(resetPasswordSchema), Re
 
 // !Doctor Logout
 DoctorRouter.post("/logout", Logout); //localhost:5000/doctor/logout
+
+// !Check Login
+DoctorRouter.get("/check-login", CheckIsDoctorLoggedIn) //localhost:5000/doctor/check-login
 
 
 
