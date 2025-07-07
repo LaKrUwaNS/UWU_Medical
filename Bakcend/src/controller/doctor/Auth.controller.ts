@@ -7,7 +7,6 @@ import { CreateOTP } from "../../utils/OTPGen";
 import { sendTokenAsCookie } from "../../utils/Cookies";
 import { generateAccessToken } from "../../utils/WebToken";
 import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
-
 import OTP from "../../models/OTP.model";
 import { Session } from "../../models/session.model";
 import { cloudinary } from "../../config/Claudenary";
@@ -15,7 +14,6 @@ import Doctor from "../../models/Doctor.model";
 import { sendResponse } from "../../utils/response";
 import { AuthenticatedRequest } from "../../middleware/CheckLogin/isDotorlogin";
 import { generateWelcomeEmailHtml } from "../../const/Mail/Welcome.templete";
-import { VERIFY_CODE } from "../../utils/dotenv";
 
 //! Testing Controllers
 // ✅ Test Mail
