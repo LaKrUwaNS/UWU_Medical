@@ -56,16 +56,16 @@ function Register() {
                 <form className="register-form" onSubmit={handleSubmit}>
 
                     <p className='text'>Enter Username and full name</p>
-                    <input name="username" type="text" placeholder='Username' required />
-                    <input name="fullname"type="text" placeholder='Full name' required/>
+                    <input name="username" type="text" placeholder='Username' className="form-input"  required />
+                    <input name="fullname"type="text" placeholder='Full name' className="form-input"  required/>
                     <p className='text'>Enter personal number</p>
-                    <input name="mobile"type="tel" placeholder='Mobile Number' required/> 
+                    <input name="mobile"type="tel" placeholder='Mobile Number' className="form-input"  required/> 
                     <p className='text'>Enter Work and personal Emails</p>
-                     <input name="personalEmail" type="email" placeholder="Personal Email" required />
-                    <input name="universityEmail" type="email" placeholder="University Email" required />
+                     <input name="personalEmail" type="email" placeholder="Personal Email" className="form-input"  required />
+                    <input name="universityEmail" type="email" placeholder="University Email" className="form-input"  required />
 
                     <div className='bottom'>
-                    <input  name="verifyKey" type="text" placeholder="Verify Key" required />
+                    <input  name="verifyKey" type="text" placeholder="Verify Key" className="form-input"  required />
 
                     <div>
                         <p className='policy-text'>Read our security policy  <a className="readme-link"href="#">Read Me</a></p>

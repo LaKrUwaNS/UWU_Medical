@@ -1,5 +1,5 @@
 import "./App.css";
-import Contract from "./components/Contract/Contract";
+import Register from './pages/Register/Register'
 
 
 
@@ -10,7 +10,7 @@ function App() {
   return (
     <main>
 
-    <Contract/>
+    <Register/>
 
 
     </main>
