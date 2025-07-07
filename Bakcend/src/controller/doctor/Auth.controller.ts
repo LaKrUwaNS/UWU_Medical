@@ -278,3 +278,33 @@ export const ResetPassword = TryCatch(async (req: Request, res: Response) => {
 
     return sendResponse(res, 200, true, "Password reset successfully")
 });
+
+// check Doctor is Login
+export const CheckIsDoctorLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        return sendResponse(res, 401, false, "Not logged in");
+    }
+
+    const session = await Session.findOne({ accessToken: token, sessionType: "LOGIN" });
+    if (!session) {
+        return sendResponse(res, 401, false, "Session not found or expired");
+    }
+
+    const doctor = await Doctor.findById(session.doctorId);
+    if (!doctor) {
+        return sendResponse(res, 404, false, "Doctor not found");
+    }
+
+    return sendResponse(res, 200, true, "Doctor is logged in", {
+        doctor: {
+            id: doctor._id,
+            fullName: doctor.fullName,
+            userName: doctor.userName,
+            photo: doctor.photo,
+            professionalEmail: doctor.professionalEmail
+        }
+    });
+});
+
