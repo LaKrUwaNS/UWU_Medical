@@ -1,5 +1,7 @@
 import "./App.css";
-import Login from "./pages/Login/Login";
+import Contract from "./components/Contract/Contract";
+
+
 
 
 
@@ -8,7 +10,7 @@ function App() {
   return (
     <main>
 
-      <Login />
+    <Contract/>
 
 
     </main>
