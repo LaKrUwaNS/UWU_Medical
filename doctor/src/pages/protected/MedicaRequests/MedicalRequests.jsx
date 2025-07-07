@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './MedicalRequests.css';
-import RequestCard from '../../components/RequestCard/RequestCard';
-import Data from '../../Data/MedicalRequestsData';
-import SlideBar from '../../components/SlideBar/SlideBar';
-import DoctorInfo from '../../components/DoctorInfo/DoctorInfo';
+import RequestCard from '../../../components/RequestCard/RequestCard';
+import Data from '../../../Data/MedicalRequestsData';
+import SlideBar from '../../../components/SlideBar/SlideBar';
+import DoctorInfo from '../../../components/DoctorInfo/DoctorInfo';
 
 function MedicalRequests() {
   const [requests, setRequests] = useState(Data);

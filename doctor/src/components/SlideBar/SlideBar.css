@@ -4,23 +4,24 @@
   width: 275px;
   height: 100%;
   color: rgb(14, 13, 13);
-  position: fixed;
   left: 0;
   top: 0;
   transition: width 0.3s ease;
-  display: flex;
   flex-direction: column;
   border-right: 3px solid #afb1af;
   overflow: hidden;
   border-top-right-radius: 15px;
-   border-bottom-right-radius: 15px;
+  border-bottom-right-radius: 15px;
 
 }
-
+Link{
+  text-decoration: none;
+  color: inherit;
+}
 .Sidebar.colapsed {
   width: 80px;
   gap: 41px;
-  
+
 }
 
 .header {
@@ -63,11 +64,12 @@
   display: flex;
   align-items: center;
   padding: 8px 21px;
- margin-bottom: 8px;
+  margin-bottom: 8px;
   cursor: pointer;
   transition: padding 0.3s ease, margin 0.3s ease;
- 
+
 }
+
 .Sidebar.colapsed .menu-item {
   margin-bottom: 11px;
 }
@@ -105,8 +107,9 @@
 
 .bottom-section {
   display: flex;
-  justify-content: flex-start;  
-  padding: 10px 0 10px 220px;   /* top, right, bottom, left */
+  justify-content: flex-start;
+  padding: 10px 0 10px 220px;
+  /* top, right, bottom, left */
 }
 
 /* Toggle button */
@@ -127,12 +130,13 @@
 /* When sidebar is collapsed */
 .Sidebar.colapsed .bottom-section {
   justify-content: center;
-  padding: 0px 22px 10px 10px;   /* top/bottom = 10px, left/right = 0 */
+  padding: 0px 22px 10px 10px;
+  /* top/bottom = 10px, left/right = 0 */
 }
 
 .iconimg {
-  width: 20px;   
-  height: 20px;  
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   margin-right: 10px;
 }
