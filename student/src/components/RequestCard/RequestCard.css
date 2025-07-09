@@ -1,0 +1,93 @@
+.request-card {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.request-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #008000; /* green text for medical titles */
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.pending {
+  border-color: #f4b400;
+}
+.pending.badge {
+  background-color: #f4b400;
+  color: black;
+}
+
+.approved {
+  border-color: #0f9d58;
+}
+.approved.badge {
+  background-color: #0f9d58;
+  color: white;
+}
+
+.rejected {
+  border-color: #db4437;
+}
+.rejected.badge {
+  background-color: #db4437;
+  color: white;
+}
+
+.request-description {
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+.request-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.duration {
+  font-size: 0.85rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.button-group button {
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.resend-btn {
+  background-color: #a8f0a3;
+  color: black;
+}
+
+.delete-btn {
+  background-color: #ff6b6b;
+  color: white;
+}

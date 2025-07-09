@@ -1,0 +1,31 @@
+/* Global reset and base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Layout */
+.page-container {
+  display: flex;
+  gap: 40px;
+  padding: 30px;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
+/* Right Section */
+.request-section {
+  flex: 1;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
