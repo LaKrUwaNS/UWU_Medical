@@ -1,0 +1,107 @@
+.form-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+    background: white;
+
+}
+ 
+.form-container h2{
+    margin-bottom: 20px;
+}
+.form-container label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+textarea,select.input,button {
+    padding: 8px;
+    border: 1 px solid #ccc;
+    border-radius: 5px;
+}
+.submit{
+    width: 100%;.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.form-container h2 {
+  margin-bottom: 20px;
+}
+
+.form-container label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+textarea,
+select,
+input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.submit {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  cursor: pointer;
+  background: rgba(121, 255, 121, 1);
+  transition: background 0.3s ease;
+  margin-top: 20px;
+}
+
+.submit:hover {
+  background-color: #45a049;
+}
+
+.timeslot {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.slot-item {
+  flex: 1;
+  min-width: 120px;
+}
+
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    cursor: pointer;
+    background: rgba(121, 255, 121, 1);
+    transition: background 0.3s;
+
+}
+.submit :hover{
+     background-color: #45a049;
+
+
+}
+.timeslot {
+    display: flex;
+    gap: 10px;
+}
