@@ -20,9 +20,6 @@ function MedicalRequests() {
       <DoctorInfo />
     <div style={{ display: 'flex' }}>
 
-      <SlideBar
-        onToggleCollapse={setIsSidebarCollapsed}
-        />
 
       <main className="medical-request-page">
         <div className="header">
