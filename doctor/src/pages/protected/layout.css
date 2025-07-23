@@ -1,5 +1,27 @@
 .main-layout {
     display: flex;
-    height: 200vh;
-    gap: 5px;
+    height: 100vh;
+    overflow-y: auto;
+     width: 100vw;
+
+}
+.slidebar-container {
+    
+    transition: width 0.3 ease;
+    width: 275px;
+
+}
+.slidebar-container.collapsed {
+    width:80px;
+
+}
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+  margin-left: 275px;
+}
+
+.main-content.collapsed {
+  margin-left: 80px;
 }

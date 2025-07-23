@@ -1,26 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import "./SlideBar.css";
 import images from "../../assets/Image";
 
-function SlideBar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsCollapsed((prev) => !prev);
-  };
-
+function SlideBar({ isCollapsed, onToggle }) {
   return (
     <div className={`Sidebar ${isCollapsed ? "collapsed" : ""}`}>
+      {/* Logo */}
+      <img className="slideBar-logo" src={images.logo} alt="logo" />
+
       {/* Header */}
-       <img className="logo" src={images.logo} alt="logo" />
-     
       <div className="header">
-        
         {!isCollapsed && <div className="medical-center">Medical Center</div>}
       </div>
 
-      {/* Menu */}
+      {/* Menu Section */}
       <div className="menu-section">
         {!isCollapsed && <div className="menu-title">Main Menu</div>}
 
@@ -72,10 +66,10 @@ function SlideBar() {
         </Link>
       </div>
 
-      {/* Toggle Button */}
+      {/* Collapse/Expand Button */}
       <div className="bottom-section">
-        <button className="toggle-btn" onClick={toggleSidebar}>
-          <img className="toggle-icon" src={images.toggle} alt="Toggle" />
+        <button className="toggle-btn" onClick={onToggle}>
+          <img className="toggle-icon" src={images.toggle} alt="Toggle Sidebar" />
         </button>
       </div>
     </div>
