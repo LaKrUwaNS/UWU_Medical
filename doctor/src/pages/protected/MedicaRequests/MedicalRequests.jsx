@@ -23,22 +23,29 @@ function MedicalRequests() {
 
       <main className="medical-request-page">
         <div className="header">
-          <h2 className='MC'>Medical Requests</h2>
+          <h2 className='MR'>Medical Requests</h2>
           <div className="docter-info">
 
           </div>
         </div>
         
-        <div className={`requests-grid ${isSidebarCollapsed ? 'three-cols' :'two-cols'}`}>
-          {requests.map((req) => (
-            <RequestCard
-              key={req.id}
-              data={req}
-              onDelete={() => handleDelete(req.id)}
-              className="request-card"
-            />
-          ))}
-        </div>
+       {requests.length === 0 ? (
+  <div className="empty-state">
+    <p>No medical requests available.</p>
+  </div>
+) : (
+  <div className={`requests-grid ${isSidebarCollapsed ? 'three-cols' :'two-cols'}`}>
+    {requests.map((req) => (
+      <RequestCard
+        key={req.id}
+        data={req}
+        onDelete={() => handleDelete(req.id)}
+        className="request-card"
+      />
+    ))}
+  </div>
+)}
+
       </main>
     </div>
     </div>
