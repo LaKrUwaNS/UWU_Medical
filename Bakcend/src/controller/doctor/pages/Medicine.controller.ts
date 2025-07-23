@@ -128,7 +128,11 @@ export const deleteMedicine = TryCatch(async (req: AuthenticatedRequest, res: Re
  * @access Authenticated
  */
 export const getInventoryData = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const inventory = await Inventory.findById(req.user.inventoryId)
+    const inventoryId = (req.user as any).inventoryId;
+    if (!inventoryId) {
+        return sendResponse(res, 400, false, "User does not have an associated inventory ID");
+    }
+    const inventory = await Inventory.findById(inventoryId)
         .populate('medicines', 'medicineName quantity status');
 
     if (!inventory) {

@@ -188,7 +188,7 @@ export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
     if (Token) {
         const FindSession = await Session.findOne({ accessToken: Token });
         if (FindSession)
-            return sendResponse(res, 400, false, "User already logged in");
+            return sendResponse(res, 400, true, "User already logged in");
     }
 
     const FindUser = await Doctor.findOne({ professionalEmail: email });
@@ -277,7 +277,7 @@ export const ResetPassword = TryCatch(async (req: Request, res: Response) => {
     return sendResponse(res, 200, true, "Password reset successfully")
 });
 
-// check Doctor is Login
+// !check Doctor is Login
 export const CheckIsDoctorLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
     const token = req.cookies.accessToken;
 

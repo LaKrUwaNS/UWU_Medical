@@ -18,7 +18,9 @@ import {
     LoginStudent,
     ForgotStudentPassword,
     ResetStudentPassword,
-    LogoutStudent
+    LogoutStudent,
+    UpdateStudentProfile,
+    CheckIsStudentLoggedIn
 } from "../controller/student/Auth.Student.controller";
 
 const StudentRouter = Router();
@@ -43,5 +45,17 @@ StudentRouter.post("/reset-password", validateMiddleware(StudentresetPasswordSch
 
 // ! Student Logout
 StudentRouter.post("/logout", validateMiddleware(StudentlogoutStudentSchema), LogoutStudent);            // localhost:5000/student/logout
+
+// ! Check Student Login Status
+StudentRouter.get("/check-login", CheckIsStudentLoggedIn); // localhost:5000/student/check-login
+
+// ! Update Student Profile
+StudentRouter.put("/update-profile", UpdateStudentProfile); // localhost:5000/student/update-profile
+
+
+
+
+// Genaral Api Routes
+// You can add more routes here as needed
 
 export default StudentRouter;

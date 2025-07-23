@@ -16,6 +16,8 @@ import Register from "./pages/Register/Register";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./pages/protected/layout";
 
+
+
 function App() {
   return (
     <Router>
@@ -26,7 +28,6 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* All layout-wrapped routes */}
-
         <Route path="/dashboard" element={<Layout><Dahsboard /></Layout>} />
         <Route path="/medical-requests" element={<Layout><MedicalRequests /></Layout>} />
         <Route path="/medicine-data" element={<Layout><MedicineData /></Layout>} />
