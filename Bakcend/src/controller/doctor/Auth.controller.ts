@@ -64,9 +64,7 @@ export const RegisterDoctor = TryCatch(async (req: Request, res: Response) => {
     /*if (VERIFY_CODE !== securityCode) {
         return sendResponse(res, 400, false, "Invalid security code");
     }*/
-    const existingDoctor = await Doctor.findOne({
-        $or: [{ personalEmail }, { professionalEmail }, { userName }]
-    });
+    const existingDoctor = await Doctor.findOne({ professionalEmail: professionalEmail });
 
     if (existingDoctor) {
         return sendResponse(res, 400, false, "User already exists");
