@@ -1,0 +1,113 @@
+.medicine-page{
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    background-color: #f9f9f9;
+     
+}
+.top-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.top-header h2{
+    font-size: 24px;
+    font-weight: 600;
+}
+.top-actions{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+
+}
+.search-bar{
+     padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 240px;
+    font-size: 14px;
+}
+.add-button{
+   background: rgba(120, 255, 120, 1);
+   color: #070707;
+   font-weight: 600;
+   padding: 8px 14px;
+   border: none;
+   border-radius: 10px;
+   cursor: pointer;
+
+}
+.doctor-profile{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+.doctor-profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.table-container{
+    width: 100%;
+    background-color: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    overflow: auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+.medicine-table{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.medicine-table th,
+.medicine-table td {
+    padding: 16px 16px;
+    text-align: left;
+    border-bottom: 1px solid #807f7f;
+}
+.medicine-table th{
+    background: rgba(192, 255, 192, 1);
+    font-weight: 600;
+}
+.status-badge {
+    display:inline-block;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    width: 60px;
+
+}
+
+.status-badge.green {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.yellow {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.red {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.no-data-message {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+  font-style: italic;
+  background-color: #f9f9f9;
+}
+
+
+

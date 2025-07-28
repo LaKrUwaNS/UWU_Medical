@@ -1,0 +1,73 @@
+.next-patient-card {
+  width: 460px;
+  height: 100px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+  font-family: sans-serif;
+}
+
+.next-header {
+  font-weight: bold;
+  text-align: right;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.next-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.patient-image {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.patient-info {
+  flex-grow: 1;
+}
+
+.patient-id {
+  font-size: 12px;
+  color: #444;
+}
+
+.patient-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #000;
+}
+
+.patient-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.process-btn {
+  background-color: #7be489;
+  color: #fff;
+  border: none;
+  padding: 8px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #fa8585;
+  color: #fff;
+  border: none;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}

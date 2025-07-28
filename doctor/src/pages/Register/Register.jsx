@@ -56,10 +56,22 @@ function Register() {
                 <form className="register-form" onSubmit={handleSubmit}>
 
                     <p className='text'>Enter Username and full name</p>
-                    <input name="username" type="text" placeholder='Username' className="form-input"  required />
-                    <input name="fullname"type="text" placeholder='Full name' className="form-input"  required/>
+                    <div className="names">
+                    <input name="username" type="text" placeholder='Username' className="form-input-half"  required />
+                    <input name="fullname"type="text" placeholder='Full name' className="form-input-half"  required/>
+                    </div>
+                    <input name='password' type="password" placeholder='Password' className="form-input"  required />
+                    
+                    
+                 
+ 
+                    
+
+
                     <p className='text'>Enter personal number</p>
                     <input name="mobile"type="tel" placeholder='Mobile Number' className="form-input"  required/> 
+
+
                     <p className='text'>Enter Work and personal Emails</p>
                      <input name="personalEmail" type="email" placeholder="Personal Email" className="form-input"  required />
                     <input name="universityEmail" type="email" placeholder="University Email" className="form-input"  required />

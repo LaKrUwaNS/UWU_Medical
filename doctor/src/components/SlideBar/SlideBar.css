@@ -26,16 +26,16 @@
   gap: 5px;
 }
 
-.logo {
+.slideBar-logo {
   position: relative;
-  width: 60px;
-  height: 50px;
+  height: 60px;
   top: 30px;
-  left: 15px;
+  right: 5em;
+  
  
 }
-.Sidebar.collapsed .logo {
-  justify-content: center; 
+.Sidebar.collapsed .slideBar-logo {
+  left: 0.2em;
   
 }
 

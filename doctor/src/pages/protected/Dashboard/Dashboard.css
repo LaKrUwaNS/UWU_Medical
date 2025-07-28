@@ -1,4 +1,185 @@
-.dashboard-container {
-    width: 100%;
-    height: auto;
+.dashboard {
+  padding: 0px 2px;
+  font-family: Arial, sans-serif;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-section {
+  display: flex;
+  align-items: center;
+  gap:2px;
+  position: relative;
+  margin-left: 30em;
+}
+
+
+.search-section input {
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+/* Cards Container */
+.dashboard-cards {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+/* Each Card */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 2px 6px;
+  flex: 1;
+  min-width: 250px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  font-weight: bold;
+  margin-top: 10px;;
+  margin-left: 10px;
+  align-items: center;
+}
+
+.card-header img {
+  width: 40px;
+  height: 40px;
+}
+
+/* Card Numbers */
+.card h1 {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.increase {
+  color: green;
+  font-size: 14px;
+  margin-left: 125px;
+  margin-top: -20px;
+}
+
+/* Staff Box Count */
+.count-box {
+  font-size: 34px;
+  font-weight: bold;
+  color: black;
+  border: 2px solid green;
+  border-radius: 12px;
+  padding: 2px 14px;
+  display: inline-block;
+  
+  position: relative;
+  margin-left: 20px;
+  margin-top: -40px;
+  background-color: white;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Row Labels (Absans / Leave) */
+.status-row-labels {
+  display: flex;
+
+  margin-left:130px;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: -40px;
+  gap: 10px;
+}
+
+/* Row Values (circles) */
+.status-row-values {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 5px;
+}
+
+/* Circle Styling */
+.status-circle-absent,
+.status-circle-leave {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 2px solid;
+}
+
+.status-circle-absent {
+  border-color: red;
+  color: red;
+}
+
+.status-circle-leave {
+  border-color: blue;
+  color: blue;
+}
+
+/* Optional Hover Effect */
+.status-circle-absent:hover,
+.status-circle-leave:hover {
+  transform: scale(1.1);
+  cursor: default;
+}
+
+/* Medical Request */
+.next-request {
+  font-size: 14px;
+  color: #555;
+  margin-left: 120px;
+  margin-top: -20px;
+}
+
+.time {
+  font-weight: bold;
+}
+/* New Rows: Student + Donut | Next Patient + Bar Chart */
+.dashboard-row {
+  display: flex;
+  gap: 20px;
+  margin-top: 7px;
+  flex-wrap: wrap;
+}
+
+.dashboard-row > * {
+  flex: 1;
+  min-width: 300px;
+}
+
+/* Optional: Make charts take more space if needed */
+.chart-container {
+  flex: 2;
+}
+.search-icon{
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.next-patient-wrapper {
+  margin-top: -15px;
+}
+.BarChart-wrapper{
+    margin-top: -2px;
+
+}
+.card-img{
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: relative;
+  margin-left: 16em;
+  border: 1px solid #ccc;
 }

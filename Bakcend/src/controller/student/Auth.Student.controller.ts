@@ -14,6 +14,7 @@ import { sendResponse } from "../../utils/response";
 import Student from "../../models/Student.model";
 import OTP from "../../models/OTP.model";
 import { Session } from "../../models/session.model";
+import { AuthenticatedRequest } from "../../middleware/CheckLogin/isDotorlogin";
 
 // ✅ Register Student & Send OTP
 export const RegisterStudent = TryCatch(async (req: Request, res: Response) => {
@@ -73,7 +74,7 @@ export const VerifyStudentOTP = TryCatch(async (req: Request, res: Response) => 
     await student.save();
     await otpRecord.deleteOne();
 
-    const accessToken = generateAccessToken(student._id  as string);
+    const accessToken = generateAccessToken(student._id as string);
     sendTokenAsCookie(res, accessToken);
     await Session.create({
         studentId: student._id,
@@ -94,7 +95,7 @@ export const LoginStudent = TryCatch(async (req: Request, res: Response) => {
     const token = req.cookies.accessToken;
     if (token) {
         const session = await Session.findOne({ accessToken: token });
-        if (session) return sendResponse(res, 400, false, "Already logged in");
+        if (session) return sendResponse(res, 400, true, "Already logged in");
     }
 
     const student = await Student.findOne({ indexNumber });
@@ -171,3 +172,95 @@ export const ResetStudentPassword = TryCatch(async (req: Request, res: Response)
 });
 
 // ✅ Update Student Profile
+export const UpdateStudentProfile = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        return sendResponse(res, 401, false, "Not logged in");
+    }
+
+    const session = await Session.findOne({ accessToken: token, sessionType: "LOGIN" });
+    if (!session) {
+        return sendResponse(res, 401, false, "Session expired or invalid");
+    }
+
+    const student = await Student.findById(session.studentId);
+    if (!student) {
+        return sendResponse(res, 404, false, "Student not found");
+    }
+
+    // Extract updatable fields from the request body
+    const {
+        name,
+        gender,
+        contactNumber,
+        emergencyNumber,
+        bloodType,
+        allergies,
+        degree,
+        presentYear,
+        photo // optional if you're handling profile pictures
+    } = req.body;
+
+    // Update fields if provided
+    if (name) student.name = name;
+    if (gender) student.gender = gender;
+    if (contactNumber) student.contactNumber = contactNumber;
+    if (emergencyNumber) student.emergencyNumber = emergencyNumber;
+    if (bloodType) student.bloodType = bloodType;
+    if (allergies !== undefined) student.allergies = allergies;
+    if (degree) student.degree = degree;
+    if (presentYear) student.presentYear = presentYear;
+    if (photo) student.photo = photo;
+
+    await student.save();
+
+    return sendResponse(res, 200, true, "Profile updated successfully", {
+        student: {
+            id: student._id,
+            name: student.name,
+            gender: student.gender,
+            contactNumber: student.contactNumber,
+            emergencyNumber: student.emergencyNumber,
+            bloodType: student.bloodType,
+            allergies: student.allergies,
+            degree: student.degree,
+            presentYear: student.presentYear,
+            photo: student.photo
+        }
+    });
+});
+
+
+
+// check Student is Login
+export const CheckIsStudentLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const token = req.cookies.accessToken;
+
+    if (!token) {
+        return sendResponse(res, 401, false, "Not logged in");
+    }
+
+    const session = await Session.findOne({ accessToken: token, sessionType: "LOGIN" });
+    if (!session) {
+        return sendResponse(res, 401, false, "Session not found or expired");
+    }
+
+    const student = await Student.findById(session.studentId);
+    if (!student) {
+        return sendResponse(res, 404, false, "Student not found");
+    }
+
+    return sendResponse(res, 200, true, "Student is logged in", {
+        student: {
+            id: student._id,
+            name: student.name,
+            indexNumber: student.indexNumber,
+            gender: student.gender,
+            photo: student.photo,
+            contactNumber: student.contactNumber,
+            degree: student.degree,
+            presentYear: student.presentYear,
+        }
+    });
+});
