@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 
-//! Doctor (Fixed: Removed `photo`)
+//! Doctor )
 export const RegisterDoctorZodSchema = z.object({
     userName: z.string().min(3, "Username must be at least 3 characters"),
     fullName: z.string().min(3, "Full name must be at least 3 characters"),

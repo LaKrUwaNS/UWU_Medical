@@ -198,6 +198,8 @@ export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
         return sendResponse(res, 400, false, "Invalid email or password");
 
     const accessToken = generateAccessToken(FindUser._id.toString());
+
+    // ✅ ONLY sets cookie
     sendTokenAsCookie(res, accessToken);
 
     await Session.create({
@@ -210,6 +212,8 @@ export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
 
     return sendResponse(res, 200, true, "Login successful");
 });
+
+
 
 // !✅ Logout
 export const Logout = TryCatch(async (req: Request, res: Response) => {

@@ -27,17 +27,12 @@ export const sendTokenCookies = (
 
 // !For the senting the one cookie for session cookie authorization
 // *This is used in the login and signup process to send the access token as a cookie
+// ✅ Fixed: only sets the cookie — does not send a response
 export const sendTokenAsCookie = (res: Response, token: string) => {
-
     res.cookie("accessToken", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // only https in production
         sameSite: "strict",
-        maxAge: 1 * 24 * 60 * 60 * 1000, // 1 days
-    });
-
-    res.status(200).json({
-        success: true,
-        token,
+        maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
     });
 };
