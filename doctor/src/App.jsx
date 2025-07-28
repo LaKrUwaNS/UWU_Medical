@@ -10,6 +10,9 @@ import {
   Settings,
   StudentData,
   Updates,
+  Staff,
+
+
 } from "./pages";
 import Register from "./pages/Register/Register";
 
@@ -34,6 +37,7 @@ function App() {
         <Route path="/reminder" element={<Layout><Reminder /></Layout>} />
         <Route path="/settings" element={<Layout><Settings /></Layout>} />
         <Route path="/reports" element={<Layout><Reports /></Layout>} />
+        <Route path="/staff" element={<Layout><Staff /></Layout>} />
         <Route path="/students/:id" element={<Layout><StudentData /></Layout>} />
         <Route path="/updates" element={<Layout><Updates /></Layout>} />
 

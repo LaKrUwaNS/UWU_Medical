@@ -8,6 +8,7 @@ import Register from './Register/Register';
 import Reports from './protected/Reports/Reports';
 import StudentData from './protected/StudentsData/StudentsData.jsx';
 import Updates from './protected/Updates/Updates';
+import Staff from './protected/Staff/Staff.jsx';
 
 
 export {
@@ -20,5 +21,6 @@ export {
     Register,
     Reports,
     StudentData,
-    Updates
+    Updates,
+    Staff
 };
