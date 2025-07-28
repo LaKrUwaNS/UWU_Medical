@@ -186,7 +186,7 @@ export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
     if (Token) {
         const FindSession = await Session.findOne({ accessToken: Token });
         if (FindSession)
-            return sendResponse(res, 400, true, "User already logged in");
+            return sendResponse(res, 200, true, "User already logged in");
     }
 
     const FindUser = await Doctor.findOne({ professionalEmail: email });
