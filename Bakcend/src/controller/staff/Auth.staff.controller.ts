@@ -1,272 +1,228 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-
 import { TryCatch } from "../../utils/Error/ErrorHandler";
 import { SendMail } from "../../config/Nodemailer";
-import { VerifyOTP } from "../../utils/OTPGen";
 import { generateOtpEmailHtml } from "../../const/Mail/OTP.templete";
 import { generateResetOtpEmailHtml } from "../../const/Mail/ResepOTP.templete";
-import { sendTokenCookies } from "../../utils/Cookies";
-import { generateAccessToken, generateRefreshToken } from "../../utils/WebToken";
-import { FifteenMinutesFromNow, Now, TwoDaysFromNow } from "../../utils/Date";
-
+import { CreateOTP } from "../../utils/OTPGen";
+import { sendTokenAsCookie } from "../../utils/Cookies";
+import { generateAccessToken } from "../../utils/WebToken";
+import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
 import OTP from "../../models/OTP.model";
-import { Staff } from "../../models/Staff.model";
 import { Session } from "../../models/session.model";
+import { cloudinary } from "../../config/Claudenary";
+import { Staff } from "../../models/Staff.model";
+import { sendResponse } from "../../utils/response";
+import { AuthenticatedRequest } from "../../middleware/CheckLogin/isDotorlogin";
+import { generateWelcomeEmailHtml } from "../../const/Mail/Welcome.templete";
 
-// --- Register Staff ---
+// ✅ Register Staff
 export const RegisterStaff = TryCatch(async (req: Request, res: Response) => {
-    const { name, title, email, jobTitle, mobileNumber, password, securityCode, photo } = req.body;
-
-    if (!name || !title || !email || !jobTitle || !mobileNumber || !password || !securityCode) {
-        return res.status(400).json({ message: "All required fields must be provided" });
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        return res.status(400).json({ message: "Invalid email format" });
-    }
-
-    if (password.length < 8) {
-        return res.status(400).json({ message: "Password must be at least 8 characters long" });
-    }
-
-    // Check duplicates by email or mobileNumber
-    const existingStaff = await Staff.findOne({ $or: [{ email }, { mobileNumber }] });
-    if (existingStaff) {
-        return res.status(400).json({ message: "Staff with this email or mobile number already exists" });
-    }
-
-    // Hash password & security code handled by pre-save hook
-
-    const staff = await Staff.create({
+    const {
         name,
         title,
         email,
+        password,
         jobTitle,
         mobileNumber,
+        securityCode
+    } = req.body;
+
+    if (!name || !title || !email || !password || !jobTitle || !mobileNumber || !securityCode) {
+        return sendResponse(res, 400, false, "All fields are required");
+    }
+
+    const existingStaff = await Staff.findOne({ email });
+    if (existingStaff) {
+        return sendResponse(res, 400, false, "Staff already exists");
+    }
+
+    const newStaff = new Staff({
+        name,
+        title,
+        email,
         password,
+        jobTitle,
+        mobileNumber,
         securityCode,
-        photo,
+        expireAt: OneDayFromNow()
     });
 
-    // Generate and send OTP to email
-    const otp = VerifyOTP();
-    await SendMail(email, "OTP Verification", generateOtpEmailHtml(otp));
+    await newStaff.save();
 
-    const hashedOtp = await bcrypt.hash(otp, 10);
+    const otpCode = CreateOTP();
     await OTP.create({
         email,
-        OTP: hashedOtp,
+        OTP: otpCode,
         OTPexpire: FifteenMinutesFromNow(),
-        Type: "Email",
+        Type: "Email"
     });
 
-    res.status(200).json({ message: "OTP sent successfully" });
+    await SendMail(email, "OTP Verification", generateOtpEmailHtml(otpCode));
+
+    return sendResponse(res, 201, true, "Staff registered successfully, OTP sent");
 });
 
-// --- Verify Registration OTP ---
-export const VerifyRegisterOTPStaff = TryCatch(async (req: Request, res: Response) => {
+// ✅ Verify Register OTP
+export const VerifyStaffOTP = TryCatch(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
 
-    if (!email || !otp) {
-        return res.status(400).json({ message: "Email and OTP are required" });
+    const otpRecord = await OTP.findOne({ email, Type: "Email" });
+    if (!otpRecord) {
+        return sendResponse(res, 400, false, "Invalid or expired OTP");
     }
 
-    const otpData = await OTP.findOne({ email, Type: "Email" });
-
-    if (!otpData || otpData.OTPexpire < new Date()) {
-        return res.status(400).json({ message: "OTP not found or expired" });
+    const isOtpValid = await otpRecord.compareOtp(otp);
+    const isOtpExpired = otpRecord.OTPexpire < new Date();
+    if (!isOtpValid || isOtpExpired) {
+        return sendResponse(res, 400, false, "Invalid or expired OTP");
     }
 
-    const isOtpValid = await bcrypt.compare(otp.trim(), otpData.OTP);
-    if (!isOtpValid) {
-        return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    const staff = await Staff.findOne({ email });
+    const staff = await Staff.findOne({ email }) as InstanceType<typeof Staff> | null;
     if (!staff) {
-        return res.status(404).json({ message: "Staff not found" });
+        return sendResponse(res, 404, false, "Staff not found");
     }
 
     staff.isVerified = true;
+    staff.expireAt = null;
     await staff.save();
-    await OTP.deleteOne({ email, Type: "Email" });
 
-    // Generate tokens & session (optional)
+    await otpRecord.deleteOne();
+
     const accessToken = generateAccessToken(staff._id as string);
-    const refreshToken = generateRefreshToken(staff._id as string);
+    sendTokenAsCookie(res, accessToken);
 
     await Session.create({
-        staffId: staff._id,
+        doctorId: staff._id, // optional: rename model or session field
         accessToken,
-        refreshToken,
         sessionType: "LOGIN",
-        expireAt: TwoDaysFromNow(),
-        date: Now(),
-        isAvailable: true,
+        expireAt: OneDayFromNow(),
+        date: new Date()
     });
 
-    sendTokenCookies(res, accessToken, refreshToken);
+    await SendMail(staff.email, "Welcome to Our Platform", generateWelcomeEmailHtml(staff.name));
 
-    res.status(200).json({
-        message: "OTP verified successfully",
-        staff: {
-            id: staff._id,
-            name: staff.name,
-            email: staff.email,
-            verified: staff.isVerified,
-        },
-    });
+    return sendResponse(res, 200, true, "OTP verified successfully");
 });
 
-// --- Staff Login ---
+// ✅ Staff Login
 export const StaffLogin = TryCatch(async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-    }
-
-    if (req.cookies.token) {
-        return res.status(400).json({ message: "Already logged in" });
+    const token = req.cookies.accessToken;
+    if (token) {
+        const existingSession = await Session.findOne({ accessToken: token });
+        if (existingSession)
+            return sendResponse(res, 400, true, "User already logged in");
     }
 
     const staff = await Staff.findOne({ email });
-    if (!staff) {
-        return res.status(400).json({ message: "Invalid email or password" });
-    }
+    if (!staff)
+        return sendResponse(res, 404, false, "No staff found");
 
-    if (!staff.isVerified) {
-        return res.status(400).json({ message: "Please verify your email first" });
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, staff.password);
-    if (!isPasswordValid) {
-        return res.status(400).json({ message: "Invalid email or password" });
-    }
-
-    // Invalidate existing sessions
-    await Session.updateMany({ staffId: staff._id, isAvailable: true }, { isAvailable: false });
+    const isPasswordValid = await staff.comparePass(password);
+    if (!isPasswordValid)
+        return sendResponse(res, 400, false, "Invalid email or password");
 
     const accessToken = generateAccessToken(staff._id as string);
-    const refreshToken = generateRefreshToken(staff._id as string);
+    sendTokenAsCookie(res, accessToken);
 
     await Session.create({
-        staffId: staff._id,
+        doctorId: staff._id, // optional: rename model or session field
         accessToken,
-        refreshToken,
         sessionType: "LOGIN",
-        expireAt: TwoDaysFromNow(),
-        date: Now(),
-        isAvailable: true,
+        expireAt: OneDayFromNow(),
+        date: new Date()
     });
 
-    sendTokenCookies(res, accessToken, refreshToken);
-
-    res.status(200).json({
-        message: "Staff logged in successfully",
-        staff: {
-            id: staff._id,
-            name: staff.name,
-            email: staff.email,
-            verified: staff.isVerified,
-        },
-    });
+    return sendResponse(res, 200, true, "Login successful");
 });
 
-// --- Forgot Password ---
-export const ForgotPasswordStaff = TryCatch(async (req: Request, res: Response) => {
+// ✅ Forgot Password
+export const StaffForgotPassword = TryCatch(async (req: Request, res: Response) => {
     const { email } = req.body;
 
-    if (!email) {
-        return res.status(400).json({ message: "Email is required" });
-    }
-
     const staff = await Staff.findOne({ email });
-    if (!staff) {
-        return res.status(200).json({ message: "If the email exists, OTP has been sent" });
-    }
+    if (!staff)
+        return sendResponse(res, 404, false, "No staff found");
 
-    const existingOtp = await OTP.findOne({ email, Type: "Reset" });
-    if (existingOtp && existingOtp.OTPexpire > new Date()) {
-        return res.status(400).json({ message: "OTP already sent. Please wait before requesting a new one." });
-    }
-
-    await OTP.deleteMany({ email, Type: "Reset" });
-
-    const otp = VerifyOTP();
+    const otp = CreateOTP();
     await SendMail(email, "Password Reset OTP", generateResetOtpEmailHtml(otp));
 
-    const hashedOtp = await bcrypt.hash(otp, 10);
     await OTP.create({
         email,
-        OTP: hashedOtp,
+        OTP: otp,
         OTPexpire: FifteenMinutesFromNow(),
-        Type: "Reset",
+        Type: "Reset"
     });
 
-    res.status(200).json({ message: "If the email exists, OTP has been sent" });
+    return sendResponse(res, 200, true, "OTP has been sent");
 });
 
-// --- Reset Password ---
-export const ResetPasswordStaff = TryCatch(async (req: Request, res: Response) => {
-    const { email, otp, password } = req.body;
+// ✅ Reset Password
+export const StaffResetPassword = TryCatch(async (req: Request, res: Response) => {
+    const { email, otp, password: newPassword } = req.body;
 
-    if (!email || !otp || !password) {
-        return res.status(400).json({ message: "Email, OTP, and new password are required" });
-    }
+    const otpRecord = await OTP.findOne({ email, Type: "Reset" });
+    if (!otpRecord)
+        return sendResponse(res, 400, false, "Invalid or expired OTP");
 
-    if (password.length < 8) {
-        return res.status(400).json({ message: "Password must be at least 8 characters long" });
-    }
+    const isOtpValid = await otpRecord.compareOtp(otp);
+    const isOtpExpired = otpRecord.OTPexpire < new Date();
+    if (!isOtpValid || isOtpExpired)
+        return sendResponse(res, 400, false, "Invalid or expired OTP");
 
     const staff = await Staff.findOne({ email });
-    if (!staff) {
-        return res.status(400).json({ message: "Invalid request" });
-    }
+    if (!staff)
+        return sendResponse(res, 404, false, "No staff found");
 
-    const otpData = await OTP.findOne({ email, Type: "Reset" });
-    if (!otpData || otpData.OTPexpire < new Date()) {
-        return res.status(400).json({ message: "Invalid or expired OTP" });
-    }
-
-    const isOtpValid = await bcrypt.compare(otp, otpData.OTP);
-    if (!isOtpValid) {
-        return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    // Assign new password directly to trigger pre-save hook for hashing
-    staff.password = password;
+    staff.password = newPassword;
     await staff.save();
 
-    await OTP.deleteOne({ email, Type: "Reset" });
+    await otpRecord.deleteOne();
 
-    // Invalidate all existing sessions
-    await Session.updateMany({ staffId: staff._id }, { isAvailable: false });
-
-    res.status(200).json({ message: "Password reset successfully" });
+    return sendResponse(res, 200, true, "Password reset successfully");
 });
 
-// --- Logout ---
-export const LogoutStaff = TryCatch(async (req: Request, res: Response) => {
-    const refreshToken = req.cookies.refreshToken;
+// ✅ Logout
+export const StaffLogout = TryCatch(async (req: Request, res: Response) => {
+    const token = req.cookies.accessToken;
+    if (!token)
+        return sendResponse(res, 400, false, "No token found");
 
-    if (!refreshToken) {
-        return res.status(400).json({ message: "Not logged in" });
+    const session = await Session.findOne({ accessToken: token });
+    if (!session)
+        return sendResponse(res, 404, false, "No session found");
+
+    await session.deleteOne();
+    res.clearCookie("accessToken");
+
+    return sendResponse(res, 200, true, "Logout successfully");
+});
+
+// ✅ Profile Photo Upload
+export const StaffPhotoUpload = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const user = req.user;
+    const file = req.file as Express.Multer.File | undefined;
+
+    if (!file) {
+        return sendResponse(res, 400, false, "No file uploaded");
     }
 
-    try {
-        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET!) as { id: string };
-        await Session.findByIdAndUpdate(decoded.id, { isAvailable: false });
-    } catch (error) {
-        console.error("Error during logout:", error);
+    if (!user || !user.id) {
+        return sendResponse(res, 401, false, "Unauthorized: User not found");
     }
 
-    res.clearCookie("refreshToken");
-    res.clearCookie("token");
+    const uploadResult = await cloudinary.uploader.upload(file.path, {
+        folder: "staff_photos"
+    });
 
-    res.status(200).json({ message: "Logged out successfully" });
+    const staff = await Staff.findById(user.id);
+    if (!staff) {
+        return sendResponse(res, 404, false, "Staff not found");
+    }
+
+    staff.photo = uploadResult.url;
+    await staff.save();
+
+    return sendResponse(res, 200, true, "Photo uploaded successfully", uploadResult);
 });

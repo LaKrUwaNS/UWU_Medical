@@ -77,6 +77,43 @@ export const StudentlogoutStudentSchema = z.object({
     indexNumber: z.string().min(1),
 });
 
+//! Staff
+
+export const StaffRegisterSchema = z.object({
+    name: z.string().min(2, "Name is too short"),
+    title: z.string().min(2, "Title is required"),
+    email: z.string().email("Invalid email format"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    jobTitle: z.string().min(2, "Job title is required"),
+    mobileNumber: z.string().min(10, "Invalid mobile number"),
+    securityCode: z.string().min(4, "Security code must be at least 4 characters")
+});
+
+export const StaffVerifyOtpSchema = z.object({
+    email: z.string().email("Invalid email format"),
+    otp: z.string().min(4, "OTP must be at least 4 digits")
+});
+
+export const StaffLoginSchema = z.object({
+    email: z.string().email("Invalid email format"),
+    password: z.string().min(6, "Password must be at least 6 characters")
+});
+
+export const StaffForgotPasswordSchema = z.object({
+    email: z.string().email("Invalid email format")
+});
+
+export const StaffResetPasswordSchema = z.object({
+    email: z.string().email("Invalid email format"),
+    otp: z.string().min(4, "OTP must be at least 4 digits"),
+    password: z.string().min(6, "New password must be at least 6 characters")
+});
+
+export const StaffLogoutSchema = z.object({
+    // Can include optional fields if needed, left blank for cookie-only logout
+});
+
+
 
 
 //!Middleware to validate and send simplified errors
