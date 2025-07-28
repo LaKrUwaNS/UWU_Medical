@@ -5,7 +5,7 @@ import UserProfile from '../../../components/UserProfile/UseraProfile';
 import NextPatientCard from '../../../components/NextPatientCard/NextPatientCard';
 import StudentDataCard from '../../../components/StudentDataCard/StudentDataCard';
 import DonutChart from '../../../components/DonutChart/DonutChart';
-import BarChart from '../../../components/BarChart/BarChart';
+import BarChart from '../../../components/BarChart/Barchart';
 
 const Dashboard = () => {
   return (
