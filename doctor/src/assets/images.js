@@ -8,6 +8,7 @@ import staffImage from '../assets/Dashboard/icons/staff.png';
 import MedicaReq from '../assets/Dashboard/icons/medical_req.png';
 import lakruwan from '../assets/Dashboard/icons/Lakruwan-PF.jpg';
 import search from '../assets/Dashboard/icons/search.svg';
+import Kavindu from '../assets/Student/kavindu.jpg';
 const images = {
     register,
     logo,
@@ -18,7 +19,8 @@ const images = {
     staffImage,
     MedicaReq,
     lakruwan,
-    search
+    search,
+    Kavindu
     
 
 
