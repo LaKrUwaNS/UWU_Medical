@@ -182,26 +182,32 @@ export const VerifyRegisterOTP = TryCatch(async (req: Request, res: Response) =>
 export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
+    // 1️⃣ Check if already logged in
     const Token = req.cookies.accessToken;
     if (Token) {
-        const FindSession = await Session.findOne({ accessToken: Token });
-        if (FindSession)
-            return sendResponse(res, 200, true, "User already logged in");
+        const FindSession = await Session.findOne({ accessToken: Token, sessionType: "LOGIN" });
+        if (FindSession && FindSession.isActive?.()) {
+            return sendResponse(res, 200, true, "User already logged in", null, true);
+        }
     }
 
+    // 2️⃣ Find doctor by email
     const FindUser = await Doctor.findOne({ professionalEmail: email });
-    if (!FindUser)
-        return sendResponse(res, 404, false, "No user found");
+    if (!FindUser) {
+        return sendResponse(res, 404, false, "Invalid email or password", null, false);
+    }
 
+    // 3️⃣ Verify password
     const Checkpassword = await FindUser.Doctorpasswordcompare(password);
-    if (!Checkpassword)
-        return sendResponse(res, 400, false, "Invalid email or password");
+    if (!Checkpassword) {
+        return sendResponse(res, 400, false, "Invalid email or password", null, false);
+    }
 
+    // 4️⃣ Generate token & set cookie
     const accessToken = generateAccessToken(FindUser._id.toString());
-
-    // ✅ ONLY sets cookie
     sendTokenAsCookie(res, accessToken);
 
+    // 5️⃣ Create session
     await Session.create({
         doctorId: FindUser._id,
         accessToken,
@@ -210,9 +216,16 @@ export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
         date: new Date(),
     });
 
-    return sendResponse(res, 200, true, "Login successful");
+    // 6️⃣ Send response
+    return sendResponse(res, 200, true, "Login successful", {
+        doctor: {
+            id: FindUser._id,
+            fullName: FindUser.fullName,
+            userName: FindUser.userName,
+            professionalEmail: FindUser.professionalEmail
+        }
+    }, true);
 });
-
 
 
 // !✅ Logout
@@ -279,24 +292,29 @@ export const ResetPassword = TryCatch(async (req: Request, res: Response) => {
     return sendResponse(res, 200, true, "Password reset successfully")
 });
 
-// !check Doctor is Login
+
+// ! Check Doctor is Logged In
 export const CheckIsDoctorLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
     const token = req.cookies.accessToken;
 
+    // 1. Check if token exists
     if (!token) {
-        return sendResponse(res, 401, false, "Not logged in");
+        return sendResponse(res, 401, false, "Not logged in", null, false);
     }
 
+    // 2. Find session for this token
     const session = await Session.findOne({ accessToken: token, sessionType: "LOGIN" });
-    if (!session) {
-        return sendResponse(res, 401, false, "Session not found or expired");
+    if (!session || session.isActive && !session.isActive()) {
+        return sendResponse(res, 401, false, "Session not found or expired", null, false);
     }
 
+    // 3. Find doctor linked to the session
     const doctor = await Doctor.findById(session.doctorId);
     if (!doctor) {
-        return sendResponse(res, 404, false, "Doctor not found");
+        return sendResponse(res, 404, false, "Doctor not found", null, false);
     }
 
+    // 4. Return success with doctor details
     return sendResponse(res, 200, true, "Doctor is logged in", {
         doctor: {
             id: doctor._id,
@@ -305,6 +323,6 @@ export const CheckIsDoctorLoggedIn = TryCatch(async (req: AuthenticatedRequest, 
             photo: doctor.photo,
             professionalEmail: doctor.professionalEmail
         }
-    });
+    }, true);
 });
 
