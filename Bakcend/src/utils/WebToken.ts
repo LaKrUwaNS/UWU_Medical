@@ -1,6 +1,6 @@
 // utils/generateTokens.ts
 import jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_SECRET } from './dotenv';
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from './dotenv';
 
 interface TokenPayload {
     id: string;
@@ -10,6 +10,12 @@ interface TokenPayload {
 
 export const generateAccessToken = (userId: string): string => {
     return jwt.sign({ id: userId }, ACCESS_TOKEN_SECRET as string);
+};
+
+export const generateRefreshToken = (userId: string): string => {
+    return jwt.sign({ id: userId }, REFRESH_TOKEN_SECRET as string, {
+        expiresIn: '1d', // 1 day expiry
+    });
 };
 
 

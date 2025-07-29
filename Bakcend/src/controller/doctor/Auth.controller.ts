@@ -4,8 +4,8 @@ import { SendMail } from "../../config/Nodemailer";
 import { generateOtpEmailHtml } from "../../const/Mail/OTP.templete";
 import { generateResetOtpEmailHtml } from "../../const/Mail/ResepOTP.templete";
 import { CreateOTP } from "../../utils/OTPGen";
-import { sendTokenAsCookie } from "../../utils/Cookies";
-import { generateAccessToken } from "../../utils/WebToken";
+import { sendTokenAsCookie, sendTokenCookies } from "../../utils/Cookies";
+import { decodeAccessToken, generateAccessToken, generateRefreshToken } from "../../utils/WebToken";
 import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
 import OTP from "../../models/OTP.model";
 import { Session } from "../../models/session.model";
@@ -53,19 +53,22 @@ export const RegisterDoctor = TryCatch(async (req: Request, res: Response) => {
         personalEmail,
         professionalEmail,
         securityCode,
-        title
+        title,
     } = req.body;
 
-
-    if (!userName || !fullName || !password || !personalEmail || !professionalEmail || !securityCode || !title) {
+    if (
+        !userName ||
+        !fullName ||
+        !password ||
+        !personalEmail ||
+        !professionalEmail ||
+        !securityCode ||
+        !title
+    ) {
         return sendResponse(res, 400, false, "All fields are required");
     }
 
-    /*if (VERIFY_CODE !== securityCode) {
-        return sendResponse(res, 400, false, "Invalid security code");
-    }*/
-    const existingDoctor = await Doctor.findOne({ professionalEmail: professionalEmail });
-
+    const existingDoctor = await Doctor.findOne({ professionalEmail });
     if (existingDoctor) {
         return sendResponse(res, 400, false, "User already exists");
     }
@@ -78,13 +81,12 @@ export const RegisterDoctor = TryCatch(async (req: Request, res: Response) => {
         professionalEmail,
         securityCode,
         title,
-        expireAt: OneDayFromNow()
+        expireAt: OneDayFromNow(),
     });
 
     await newDoctor.save();
 
     const otpCode = CreateOTP();
-
     await OTP.create({
         email: professionalEmail,
         OTP: otpCode,
@@ -132,99 +134,135 @@ export const ProfilePhotoupload = TryCatch(async (req: AuthenticatedRequest, res
 export const VerifyRegisterOTP = TryCatch(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
 
-    // Check if OTP record exists
     const otpRecord = await OTP.findOne({ email, Type: "Email" });
     if (!otpRecord) {
-        return sendResponse(res, 400, false, "Invalid or expired OTP")
+        return sendResponse(res, 400, false, "Invalid or expired OTP");
     }
 
-    // Validate OTP and expiry
     const isOtpValid = await otpRecord.compareOtp(otp);
     const isOtpExpired = otpRecord.OTPexpire < new Date();
     if (!isOtpValid || isOtpExpired) {
-        return sendResponse(res, 400, false, "Invalid or expired OTP")
+        return sendResponse(res, 400, false, "Invalid or expired OTP");
     }
 
-    // Find the doctor by email
     const doctor = await Doctor.findOne({ professionalEmail: email });
     if (!doctor) {
-        return sendResponse(res, 404, false, "Doctor not found")
+        return sendResponse(res, 404, false, "Doctor not found");
     }
 
-    // Mark as verified
     doctor.Verified = true;
     doctor.expireAt = null;
     await doctor.save();
 
-    // Delete OTP after successful verification
-    await otpRecord.deleteOne();
-
+    // Generate tokens
     const accessToken = generateAccessToken(doctor._id.toString());
-    sendTokenAsCookie(res, accessToken);
+    const refreshToken = generateRefreshToken(doctor._id.toString());
 
+    // Create session with both tokens
     await Session.create({
         doctorId: doctor._id,
         accessToken,
+        refreshToken,
         sessionType: "LOGIN",
         expireAt: OneDayFromNow(),
         date: new Date(),
     });
 
-    // send welcome email
-    await SendMail(doctor.professionalEmail, "Welcome to Our Platform", generateWelcomeEmailHtml(doctor.fullName));
+    sendTokenCookies(res, accessToken, refreshToken);
 
-    // Return success response
-    return sendResponse(res, 200, true, "OTP verified successfully")
+    await SendMail(
+        doctor.professionalEmail,
+        "Welcome to Our Platform",
+        generateWelcomeEmailHtml(doctor.fullName)
+    );
+
+    return sendResponse(res, 200, true, "OTP verified successfully");
 });
-
 
 // !✅ Doctor Login
 export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
-    const Token = req.cookies.accessToken;
-    if (Token) {
-        const FindSession = await Session.findOne({ accessToken: Token });
-        if (FindSession)
-            return sendResponse(res, 400, true, "User already logged in");
+    if (!email || !password) {
+        return sendResponse(res, 400, false, "Email and password are required");
     }
 
-    const FindUser = await Doctor.findOne({ professionalEmail: email });
-    if (!FindUser)
-        return sendResponse(res, 404, false, "No user found");
+    const doctor = await Doctor.findOne({ professionalEmail: email });
+    if (!doctor) {
+        return sendResponse(res, 404, false, "Doctor not found");
+    }
 
-    const Checkpassword = await FindUser.Doctorpasswordcompare(password);
-    if (!Checkpassword)
-        return sendResponse(res, 400, false, "Invalid email or password");
+    const isPasswordValid = await doctor.Doctorpasswordcompare(password);
+    if (!isPasswordValid) {
+        return sendResponse(res, 401, false, "Invalid password");
+    }
 
-    const accessToken = generateAccessToken(FindUser._id.toString());
-    sendTokenAsCookie(res, accessToken);
+    if (!doctor.Verified) {
+        return sendResponse(res, 403, false, "Please verify your email first");
+    }
 
+    // Generate tokens
+    const accessToken = generateAccessToken(doctor._id.toString());
+    const refreshToken = generateRefreshToken(doctor._id.toString());
+
+    // Find existing active login session and mark as LOGOUT
+    await Session.updateMany(
+        { doctorId: doctor._id, sessionType: "LOGIN" },
+        { $set: { sessionType: "LOGOUT" } }
+    );
+
+    // Create new login session
     await Session.create({
-        doctorId: FindUser._id,
+        doctorId: doctor._id,
         accessToken,
+        refreshToken,
         sessionType: "LOGIN",
         expireAt: OneDayFromNow(),
         date: new Date(),
     });
 
-    return sendResponse(res, 200, true, "Login successful");
+    sendTokenCookies(res, accessToken, refreshToken);
+
+    return sendResponse(
+        res,
+        200,
+        true,
+        "Login successful",
+        {
+            doctor: {
+                id: doctor._id,
+                fullName: doctor.fullName,
+                userName: doctor.userName,
+                photo: doctor.photo,
+                professionalEmail: doctor.professionalEmail,
+            },
+        },
+        true
+    );
 });
+
+
 
 // !✅ Logout
 export const Logout = TryCatch(async (req: Request, res: Response) => {
-    const Token = req.cookies.accessToken;
-    if (!Token)
-        return sendResponse(res, 400, false, "No token found")
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        return sendResponse(res, 401, false, "Not logged in");
+    }
 
-    const FindSession = await Session.findOne({ accessToken: Token });
-    if (!FindSession)
-        return sendResponse(res, 404, false, "No session found")
+    // Update sessionType to "LOGOUT"
+    await Session.updateOne(
+        { refreshToken, sessionType: "LOGIN" },
+        { $set: { sessionType: "LOGOUT" } }
+    );
 
-    await FindSession.deleteOne();
+    // Clear cookies
     res.clearCookie("accessToken");
-    return sendResponse(res, 200, true, "Logout successfully")
+    res.clearCookie("refreshToken");
+
+    return sendResponse(res, 200, true, "Logout successful");
 });
+;
 
 
 // !✅ Forgot Password
@@ -275,25 +313,92 @@ export const ResetPassword = TryCatch(async (req: Request, res: Response) => {
     return sendResponse(res, 200, true, "Password reset successfully")
 });
 
-// !check Doctor is Login
-export const CheckIsDoctorLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const token = req.cookies.accessToken;
 
-    if (!token) {
+// ✅ Combined Check + Refresh Access Token API
+export const CheckIsDoctorLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
+
+    // 1️⃣ If we have an access token, try to validate it
+    if (accessToken) {
+        try {
+            const doctorId = decodeAccessToken(accessToken); // verify
+            if (doctorId) {
+                const session = await Session.findOne({ accessToken, sessionType: "LOGIN" });
+                if (session && (!session.isActive || session.isActive())) {
+                    const doctor = await Doctor.findById(session.doctorId);
+                    if (doctor) {
+                        return sendResponse(res, 200, true, "Doctor is logged in", {
+                            doctor: {
+                                id: doctor._id,
+                                fullName: doctor.fullName,
+                                userName: doctor.userName,
+                                photo: doctor.photo,
+                                professionalEmail: doctor.professionalEmail
+                            }
+                        }, true);
+                    }
+                }
+            }
+        } catch (err) {
+            // Token invalid → we'll try refresh flow below
+        }
+    }
+
+    // 2️⃣ If access token invalid/missing → try refresh token
+    if (!refreshToken) {
         return sendResponse(res, 401, false, "Not logged in");
     }
 
-    const session = await Session.findOne({ accessToken: token, sessionType: "LOGIN" });
-    if (!session) {
-        return sendResponse(res, 401, false, "Session not found or expired");
+    const doctorIdFromRefresh = decodeAccessToken(refreshToken);
+    if (!doctorIdFromRefresh) {
+        return sendResponse(res, 401, false, "Invalid or expired refresh token");
     }
 
+    // Check session
+    const session = await Session.findOne({
+        refreshToken,
+        sessionType: "LOGIN",
+        expireAt: { $gt: new Date() } // session still valid
+    });
+
+    if (!session) {
+        return sendResponse(res, 401, false, "Session expired or not found");
+    }
+
+    // 3️⃣ Generate a new access token
+    const newAccessToken = generateAccessToken(doctorIdFromRefresh);
+
+    // Optional: Generate a new refresh token each time (for extra security)
+    const newRefreshToken = generateRefreshToken(doctorIdFromRefresh);
+
+    // 4️⃣ Update session
+    session.accessToken = newAccessToken;
+    session.refreshToken = newRefreshToken;
+    await session.save();
+
+    // 5️⃣ Send cookies
+    res.cookie("accessToken", newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 15 * 60 * 1000 // 15 mins
+    });
+
+    res.cookie("refreshToken", newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000 // 1 day
+    });
+
+    // 6️⃣ Return doctor data
     const doctor = await Doctor.findById(session.doctorId);
     if (!doctor) {
         return sendResponse(res, 404, false, "Doctor not found");
     }
 
-    return sendResponse(res, 200, true, "Doctor is logged in", {
+    return sendResponse(res, 200, true, "Doctor is logged in (refreshed)", {
         doctor: {
             id: doctor._id,
             fullName: doctor.fullName,
@@ -301,6 +406,5 @@ export const CheckIsDoctorLoggedIn = TryCatch(async (req: AuthenticatedRequest, 
             photo: doctor.photo,
             professionalEmail: doctor.professionalEmail
         }
-    });
+    }, true);
 });
-

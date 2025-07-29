@@ -1,5 +1,5 @@
 import { Document, model, Schema, Types } from "mongoose";
-import { FifteenMinutesFromNow } from "../utils/Date";
+import { SevenDaysFromNow } from "../utils/Date";
 
 export interface ISession extends Document {
     date: Date;
@@ -7,6 +7,7 @@ export interface ISession extends Document {
     staffId?: Types.ObjectId;
     studentId?: Types.ObjectId;
     accessToken: string;
+    refreshToken?: string;
     sessionType: 'LOGIN' | 'LOGOUT';
     expireAt: Date;
     isActive(): boolean;
@@ -19,11 +20,12 @@ const sessionSchema = new Schema<ISession>(
         staffId: { type: Schema.Types.ObjectId, ref: 'Staff' },
         studentId: { type: Schema.Types.ObjectId, ref: 'Student' },
         accessToken: { type: String, required: true },
+        refreshToken: { type: String, required: true },
         sessionType: { type: String, enum: ['LOGIN', 'LOGOUT'], required: true },
         expireAt: {
             type: Date,
             required: true,
-            default: () => FifteenMinutesFromNow()
+            default: () => SevenDaysFromNow()
         }
     },
     {
