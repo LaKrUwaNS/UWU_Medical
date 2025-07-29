@@ -1,45 +1,48 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import images from '../../assets/images.js';
 import './Login.css';
 
 function Login() {
-    const [username, setUsername] = useState('');
+    const [professionalEmail, setProfessionalEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-        const response = await fetch('http://localhost:8080/api/v1/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
-        });
+        if (!professionalEmail || !password) {
+            alert('Please fill in all fields');
+            return;
+        }
 
-        const data = await response.json();
-        if (data.success) {
-            setMessage('Login Successful');
-        } else {
-            setMessage(data.message || 'Login Failed');
+        try {
+            const response = await fetch('http://localhost:5000/doctor/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include', // enable cookies for session
+                body: JSON.stringify({ email: professionalEmail, password })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert(data.message || 'Login Successful');
+                setMessage(data.message || 'Login Successful')
+
+                // Redirect to protected route
+                navigate('/dashboard');
+            } else {
+                alert(data.message || 'Login failed');
+                setMessage(data.message || 'Login failed');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('An error occurred during login');
         }
     };
 
-    const handleRegister = async () => {
-        const response = await fetch('http://localhost:8080/api/v1/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
-        });
-
-        const data = await response.json();
-        if (data.success) {
-            setMessage('Registration Successful');
-        } else {
-            setMessage(data.message || 'Registration Failed');
-        }
-    };
-
-    // Navigate to register page
     const handleNavigateToRegister = (e) => {
         e.preventDefault();
         navigate('/register');
@@ -64,11 +67,11 @@ function Login() {
 
                 <div className='input-section'>
                     <input
-                        type='text'
-                        placeholder='Username'
+                        type='email'
+                        placeholder='Professional Email'
                         className='input-field'
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        value={professionalEmail}
+                        onChange={(e) => setProfessionalEmail(e.target.value)}
                     />
                     <input
                         type='password'
@@ -76,21 +79,24 @@ function Login() {
                         className='input-field'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleLogin(); }}
                     />
-                    <a href='#' className='foroget'>Forgot Password or Email</a>
+                    <Link to='/forgot-password' className='foroget'>Forgot Password or Email</Link>
                 </div>
 
                 <div className='button-section'>
                     <button className='login-button' onClick={handleLogin}>Login</button>
-                    <button className='register-button' onClick={handleRegister}>Register</button>
+                    <button className='register-button' onClick={handleNavigateToRegister}>Register</button>
                 </div>
 
                 <p className='signup-section'>
                     New Doctor Account?
                     <span className='signup-text'>
-                        <a className="a-link" href='#' onClick={handleNavigateToRegister}> Sign up</a>
+                        <Link to='/register' className="a-link">Sign up</Link>
                     </span>
                 </p>
+
+                {message && <p className="message-text">{message}</p>}
 
                 <div className='bottom-line'></div>
 
