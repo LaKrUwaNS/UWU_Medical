@@ -1,6 +1,6 @@
 // utils/sendTokenCookies.ts
 import { Response } from 'express';
-import { FifteenMinutesFromNow, SevenDaysFromNow } from '../utils/Date'
+import { FifteenMinutesFromNow, OneDayFromNow, SevenDaysFromNow } from '../utils/Date'
 
 
 // !For sending both access and refresh tokens as cookies
@@ -20,7 +20,7 @@ export const sendTokenCookies = (
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         sameSite: 'strict',
-        maxAge: SevenDaysFromNow().getTime() - Date.now(),
+        maxAge: OneDayFromNow().getTime() - Date.now(),
     });
 };
 

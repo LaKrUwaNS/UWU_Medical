@@ -15,47 +15,34 @@ export interface AuthenticatedRequest extends Request {
     };
 }
 
-export const isDoctorLogin = TryCatch(
-    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-        let token = req.cookies.accessToken as string | undefined;
-
-        if (!token) {
-            return sendResponse(res, 401, false, "Unauthorized: Please log in");
-        }
-
-        // 1) Decode & verify JWT
-        const doctorId = decodeAccessToken(token);
-        if (!doctorId) {
-            return sendResponse(res, 401, false, "Unauthorized: Invalid or expired token");
-        }
-
-        // 2) Look for an active session
-        const session = await Session.findOne({ accessToken: token });
-        if (!session || session.sessionType !== "LOGIN" || !session.isActive?.()) {
-            return sendResponse(res, 401, false, "Unauthorized: Session not found or expired");
-        }
-
-        // 3) Fetch the doctor record
-        const doctor = await Doctor.findById(doctorId);
-        if (!doctor) {
-            return sendResponse(res, 404, false, "Doctor not found");
-        }
-
-        // 4) (Optional) Refresh session expiry & token
-        //    If you want sliding sessions, uncomment:
-        // session.expireAt = new Date(Date.now() + 15 * 60 * 1000);
-        // await session.save();
-        // token = generateAccessToken(doctor._id.toString());
-        // sendTokenAsCookie(res, token);
-
-        // 5) Attach user and continue
-        req.user = {
-            id: doctor._id.toString(),
-            userName: doctor.userName,
-            fullName: doctor.fullName,
-            professionalEmail: doctor.professionalEmail,
-        };
-
-        next();
+export const isDoctorLogin = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+        return sendResponse(res, 401, false, "Not logged in");
     }
-);
+
+    const session = await Session.findOne({
+        accessToken,
+        sessionType: "LOGIN",
+        expireAt: { $gt: new Date() },
+    });
+
+    if (!session) {
+        return sendResponse(res, 401, false, "Session not found or expired");
+    }
+
+    const doctor = await Doctor.findById(session.doctorId);
+    if (!doctor) {
+        return sendResponse(res, 404, false, "Doctor not found");
+    }
+
+    return sendResponse(res, 200, true, "Doctor is logged in", {
+        doctor: {
+            id: doctor._id,
+            fullName: doctor.fullName,
+            userName: doctor.userName,
+            photo: doctor.photo,
+            professionalEmail: doctor.professionalEmail,
+        },
+    }, true);
+});

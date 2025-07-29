@@ -13,22 +13,13 @@ import {
 } from "./pages";
 import Register from "./pages/Register/Register";
 
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./pages/protected/layout";
-import { useEffect } from "react";
 
-
-function AuthWrapper({ children }) {
-  const navigate = useNavigate();
-
-
-  return children;
-}
 
 function App() {
   return (
     <Router>
-      <AuthWrapper>
         <Routes>
 
           {/* Public routes */}
@@ -48,7 +39,6 @@ function App() {
 
 
         </Routes>
-      </AuthWrapper>
     </Router>
   );
 }
