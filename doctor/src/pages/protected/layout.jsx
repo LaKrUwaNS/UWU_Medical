@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import SlideBar from "../../components/SlideBar/SlideBar";
-import { Navigate } from 'react-router-dom';
-import './layout.css';
+import { Navigate } from "react-router-dom";
+import { DoctorContext } from "../../context/DoctorContext"; // ⬅ import context
+import "./layout.css";
 
 const Layout = ({ children }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const [doctor, setDoctor] = useState(null);
 
     const handleToggle = () => {
         setIsCollapsed(prev => !prev);
     };
 
     useEffect(() => {
-        let interval;
-
         const checkDoctorLogin = async () => {
             try {
                 const res = await fetch("http://localhost:5000/doctor/check-login", {
@@ -25,19 +25,20 @@ const Layout = ({ children }) => {
 
                 if (data.success && data.isAuthorized) {
                     setIsAuthenticated(true);
+                    setDoctor(data.doctor);
                 } else {
                     setIsAuthenticated(false);
+                    setDoctor(null);
                 }
             } catch {
                 setIsAuthenticated(false);
+                setDoctor(null);
             }
         };
 
         checkDoctorLogin(); // Run once immediately
-
-        interval = setInterval(checkDoctorLogin, 300000);
-
-        return () => clearInterval(interval); // Cleanup on unmount
+        const interval = setInterval(checkDoctorLogin, 300000); // every 5 min
+        return () => clearInterval(interval);
     }, []);
 
     if (isAuthenticated === null) {
@@ -49,14 +50,16 @@ const Layout = ({ children }) => {
     }
 
     return (
-        <div className="main-layout">
-            <div className={`sidebar-conatainer ${isCollapsed ? 'collapsed' : ''}`}>
-                <SlideBar isCollapsed={isCollapsed} onToggle={handleToggle} />
+        <DoctorContext.Provider value={doctor}>
+            <div className="main-layout">
+                <div className={`sidebar-conatainer ${isCollapsed ? "collapsed" : ""}`}>
+                    <SlideBar isCollapsed={isCollapsed} onToggle={handleToggle} />
+                </div>
+                <div className={`main-content ${isCollapsed ? "collapsed" : ""}`}>
+                    {children}
+                </div>
             </div>
-            <div className={`main-content ${isCollapsed ? 'collapsed' : ""}`}>
-                {children}
-            </div>
-        </div>
+        </DoctorContext.Provider>
     );
 };
 
