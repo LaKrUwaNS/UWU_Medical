@@ -56,7 +56,7 @@ function StudentData() {
           <div className='pro-header'>
           <button className="new-add-btn">New Add</button>
           <div className="profile">
-            <UserProfile />
+            <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
           </div>
           </div>
         </div>

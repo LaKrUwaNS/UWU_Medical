@@ -21,7 +21,7 @@ function MedicineData() {
             <h2>Medicine Data</h2>
 
             <div className="top-actions">
-                <input type="text" placeholder='Search About Student' className='search-bar' />
+                <input type="text" placeholder='Search About Medicine' className='search-bar' />
                 <button className='add-button'>New Add</button>
 
                 <div className="doctor-profile">
