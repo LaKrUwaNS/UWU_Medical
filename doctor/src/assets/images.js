@@ -9,6 +9,14 @@ import MedicaReq from '../assets/Dashboard/icons/medical_req.png';
 import lakruwan from '../assets/Dashboard/icons/Lakruwan-PF.jpg';
 import search from '../assets/Dashboard/icons/search.svg';
 import Kavindu from '../assets/Student/kavindu.jpg';
+import gratitude from '../assets/Updates/gratitude.jpg';
+import psa from '../assets/Updates/psa.jpg';
+import respiratory from '../assets/Updates/respiratory-health.jpg';
+import swimming from '../assets/Updates/Swimming.jpg';
+import cool from '../assets/Updates/want-to-cool.jpg';
+import wildfires from '../assets/Updates/Wildfires.jpg';
+
+
 const images = {
     register,
     logo,
@@ -20,7 +28,13 @@ const images = {
     MedicaReq,
     lakruwan,
     search,
-    Kavindu
+    Kavindu,
+    gratitude,
+    psa,
+    respiratory,
+    swimming,
+    cool,
+    wildfires
     
 
 
