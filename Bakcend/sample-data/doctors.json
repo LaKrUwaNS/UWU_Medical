@@ -1,0 +1,17 @@
+[
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439031" },
+    "name": "Dr. Lakruwan Sharaka",
+    "title": "Dr.",
+    "email": "lakruwan.doctor@uwu.ac.lk",
+    "specialization": "General Medicine",
+    "mobileNumber": "+94712345700",
+    "photo": "/images/dr-lakruwan.jpg",
+    "password": "$2b$10$hashedpassword31",
+    "securityCode": "$2b$10$hashedsecurity31",
+    "isVerified": true,
+    "isAvailable": true,
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-01-01T08:00:00Z" }
+  }
+]
