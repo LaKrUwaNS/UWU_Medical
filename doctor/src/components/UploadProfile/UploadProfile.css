@@ -4,60 +4,62 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 999;
 }
 
 .popup-box {
-  background-color: white;
-  width: 500px;
-  max-width: 90%;
-  padding: 20px;
-  border-radius: 10px;
+  width: 600px;
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
   text-align: center;
   position: relative;
 }
 
 .drop-area {
-  background-color: #d9d9d9;
-  height: 250px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   border: 2px dashed #ccc;
-  border-radius: 5px;
-  margin-bottom: 15px;
+  padding: 50px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  transition: background 0.3s;
+}
+
+.drop-area:hover {
+  background-color: #e0e0e0;
 }
 
 .drop-text {
   font-size: 28px;
   font-weight: bold;
-  color: #ffffff;
+  color: #555;
 }
 
 .drop-subtext {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
-  color: #ffffff;
+  color: #777;
 }
 
 .instruction-text {
-  font-size: 12px;
+  margin-top: 20px;
+  font-size: 14px;
   color: #333;
-  margin-bottom: 15px;
 }
 
 .skip-button {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
   background: none;
   border: none;
-  color: #000;
-  font-size: 14px;
+  color: black;
+  font-weight: bold;
   cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  right: 30px;
+  font-size: 14px;
 }

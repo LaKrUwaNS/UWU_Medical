@@ -1,0 +1,49 @@
+[
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439021" },
+    "name": "Dr. Chaminda Weerasinghe",
+    "title": "Dr.",
+    "email": "chaminda@uwu.ac.lk",
+    "jobTitle": "Senior Medical Officer",
+    "mobileNumber": "+94712345690",
+    "photo": "/images/dr-chaminda.jpg",
+    "password": "$2b$10$hashedpassword21",
+    "securityCode": "$2b$10$hashedsecurity21",
+    "isVerified": true,
+    "isAvailable": true,
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-01-01T08:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439022" },
+    "name": "Nurse Sunitha Rajapaksa",
+    "title": "Ms.",
+    "email": "sunitha@uwu.ac.lk",
+    "jobTitle": "Senior Nurse",
+    "mobileNumber": "+94712345691",
+    "photo": "/images/nurse-sunitha.jpg",
+    "password": "$2b$10$hashedpassword22",
+    "securityCode": "$2b$10$hashedsecurity22",
+    "isVerified": true,
+    "isAvailable": false,
+    "reason": "sick leave",
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-07-25T08:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439023" },
+    "name": "Pharmacist Ruwan Silva",
+    "title": "Mr.",
+    "email": "ruwan@uwu.ac.lk",
+    "jobTitle": "Chief Pharmacist",
+    "mobileNumber": "+94712345692",
+    "photo": "/images/pharmacist-ruwan.jpg",
+    "password": "$2b$10$hashedpassword23",
+    "securityCode": "$2b$10$hashedsecurity23",
+    "isVerified": true,
+    "isAvailable": false,
+    "reason": "absent",
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-07-30T08:00:00Z" }
+  }
+]

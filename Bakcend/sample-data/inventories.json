@@ -1,0 +1,29 @@
+[
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439061" },
+    "medicineId": { "$oid": "507f1f77bcf86cd799439051" },
+    "quantity": 500,
+    "minStockLevel": 50,
+    "location": "Shelf A1",
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-07-30T08:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439062" },
+    "medicineId": { "$oid": "507f1f77bcf86cd799439052" },
+    "quantity": 200,
+    "minStockLevel": 30,
+    "location": "Shelf B2",
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-07-30T08:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439063" },
+    "medicineId": { "$oid": "507f1f77bcf86cd799439053" },
+    "quantity": 300,
+    "minStockLevel": 40,
+    "location": "Shelf C3",
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-07-30T08:00:00Z" }
+  }
+]

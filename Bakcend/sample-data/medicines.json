@@ -1,0 +1,32 @@
+[
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439051" },
+    "name": "Paracetamol",
+    "category": "Pain Reliever",
+    "dosage": "500mg",
+    "manufacturer": "State Pharmaceuticals",
+    "expiryDate": { "$date": "2025-12-31T00:00:00Z" },
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-01-01T08:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439052" },
+    "name": "Amoxicillin",
+    "category": "Antibiotic",
+    "dosage": "250mg",
+    "manufacturer": "Lanka Pharmaceuticals",
+    "expiryDate": { "$date": "2025-10-15T00:00:00Z" },
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-01-01T08:00:00Z" }
+  },
+  {
+    "_id": { "$oid": "507f1f77bcf86cd799439053" },
+    "name": "Vitamin C",
+    "category": "Vitamin",
+    "dosage": "1000mg",
+    "manufacturer": "Health Lanka",
+    "expiryDate": { "$date": "2026-06-30T00:00:00Z" },
+    "createdAt": { "$date": "2024-01-01T08:00:00Z" },
+    "updatedAt": { "$date": "2024-01-01T08:00:00Z" }
+  }
+]

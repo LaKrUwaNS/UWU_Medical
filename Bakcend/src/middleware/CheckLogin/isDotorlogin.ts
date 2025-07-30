@@ -3,8 +3,6 @@ import { TryCatch } from "../../utils/Error/ErrorHandler";
 import Doctor from "../../models/Doctor.model";
 import { sendResponse } from "../../utils/response";
 import { Session } from "../../models/session.model";
-import { decodeAccessToken, generateAccessToken } from "../../utils/WebToken";
-import { sendTokenAsCookie } from "../../utils/Cookies";
 
 export interface AuthenticatedRequest extends Request {
     user?: {
@@ -12,37 +10,43 @@ export interface AuthenticatedRequest extends Request {
         userName: string;
         fullName: string;
         professionalEmail: string;
+        photo?: string;
     };
 }
 
-export const isDoctorLogin = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const accessToken = req.cookies.accessToken;
-    if (!accessToken) {
-        return sendResponse(res, 401, false, "Not logged in");
-    }
+export const isDoctorLogin = TryCatch(
+    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        const accessToken = req.cookies.accessToken;
 
-    const session = await Session.findOne({
-        accessToken,
-        sessionType: "LOGIN",
-        expireAt: { $gt: new Date() },
-    });
+        if (!accessToken) {
+            return sendResponse(res, 401, false, "Not logged in");
+        }
 
-    if (!session) {
-        return sendResponse(res, 401, false, "Session not found or expired");
-    }
+        const session = await Session.findOne({
+            accessToken,
+            sessionType: "LOGIN",
+            expireAt: { $gt: new Date() },
+        });
 
-    const doctor = await Doctor.findById(session.doctorId);
-    if (!doctor) {
-        return sendResponse(res, 404, false, "Doctor not found");
-    }
+        if (!session) {
+            return sendResponse(res, 401, false, "Session not found or expired");
+        }
 
-    return sendResponse(res, 200, true, "Doctor is logged in", {
-        doctor: {
-            id: doctor._id,
+        const doctor = await Doctor.findById(session.doctorId);
+        if (!doctor) {
+            return sendResponse(res, 404, false, "Doctor not found");
+        }
+
+        // Attach doctor data to the request object
+        req.user = {
+            id: doctor._id.toString(),
             fullName: doctor.fullName,
             userName: doctor.userName,
             photo: doctor.photo,
             professionalEmail: doctor.professionalEmail,
-        },
-    }, true);
-});
+        };
+
+        // Pass control to the next middleware or route
+        next();
+    }
+);

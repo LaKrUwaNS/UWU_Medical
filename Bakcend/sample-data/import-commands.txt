@@ -1,0 +1,26 @@
+# MongoDB Import Commands
+# Run these commands in your terminal to import the sample data
+
+# Make sure you're in the correct directory where sample-data.json is located
+# Replace 'your_database_name' with your actual database name
+
+# Import Students
+mongoimport --db your_database_name --collection students --file sample-data.json --jsonArray --drop --jsonPathFilter="students"
+
+# Import Staff
+mongoimport --db your_database_name --collection staff --file sample-data.json --jsonArray --drop --jsonPathFilter="staff"
+
+# Import Doctors
+mongoimport --db your_database_name --collection doctors --file sample-data.json --jsonArray --drop --jsonPathFilter="doctors"
+
+# Import Medical Requests
+mongoimport --db your_database_name --collection medicalrequests --file sample-data.json --jsonArray --drop --jsonPathFilter="medicalrequests"
+
+# Import Medicines
+mongoimport --db your_database_name --collection medicines --file sample-data.json --jsonArray --drop --jsonPathFilter="medicines"
+
+# Import Inventories
+mongoimport --db your_database_name --collection inventories --file sample-data.json --jsonArray --drop --jsonPathFilter="inventories"
+
+# Import Prescriptions
+mongoimport --db your_database_name --collection prescriptions --file sample-data.json --jsonArray --drop --jsonPathFilter="prescriptions"

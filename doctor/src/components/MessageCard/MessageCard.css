@@ -1,0 +1,61 @@
+.message-card {
+  width: 280px;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.massage-card {
+  background-color: #d1fae5; /* light green */
+}
+
+.article-card {
+  background-color: #fef3c7; /* light orange */
+}
+
+.message-card-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.message-type {
+  color: #111827;
+}
+
+.student-id {
+  color: #6b7280;
+}
+
+.message-content {
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+.card-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.delete-btn, .read-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: #f87171;
+  color: white;
+}
+
+.read-btn {
+  background-color: #3b82f6;
+  color: white;
+}
