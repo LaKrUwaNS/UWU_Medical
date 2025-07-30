@@ -2,21 +2,11 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import './BarChart.css';
 
-const data = [
-    { day: 'Mon', patients: 1 },
-    { day: 'Tue', patients: 4 },
-    { day: 'Wed', patients: 3 },
-    { day: 'Thu', patients: 6 },
-    { day: 'Fri', patients: 7 },
-    { day: 'Sat', patients: 1 },
-    { day: 'Sun', patients: 0 },
-];
-
-const AttendancebarChart = () => {
+const AttendancebarChart = ({ attendanceData }) => {
     return (
         <div className="bar-chart-container">
             <h3 className="chart-title">Attendance Summary</h3>
-            <BarChart width={500} height={120} data={data}>
+            <BarChart width={500} height={120} data={attendanceData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="day" />
                 <YAxis />
@@ -28,3 +18,4 @@ const AttendancebarChart = () => {
 };
 
 export default AttendancebarChart;
+
