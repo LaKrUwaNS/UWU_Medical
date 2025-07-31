@@ -181,8 +181,86 @@ export const VerifyRegisterOTP = TryCatch(async (req: Request, res: Response) =>
 
 // !✅ Doctor Login
 export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const accessTokenFromCookie = req.cookies.accessToken;
+    const refreshTokenFromCookie = req.cookies.refreshToken;
 
+    // 🔹 1️⃣ If they already have a valid access token → return already logged in
+    if (accessTokenFromCookie) {
+        try {
+            const doctorId = decodeAccessToken(accessTokenFromCookie);
+            if (doctorId) {
+                const activeSession = await Session.findOne({
+                    doctorId,
+                    accessToken: accessTokenFromCookie,
+                    sessionType: "LOGIN",
+                    expireAt: { $gt: new Date() }
+                });
+
+                if (activeSession) {
+                    const doctor = await Doctor.findById(doctorId);
+                    if (doctor) {
+                        return sendResponse(res, 200, true, "Doctor is already logged in", {
+                            doctor: {
+                                id: doctor._id,
+                                fullName: doctor.fullName,
+                                userName: doctor.userName,
+                                photo: doctor.photo,
+                                professionalEmail: doctor.professionalEmail
+                            }
+                        }, true);
+                    }
+                }
+            }
+        } catch (err) {
+            // Invalid access token, we'll try refresh below
+        }
+    }
+
+    // 🔹 2️⃣ If refresh token valid → refresh session and return logged in
+    if (refreshTokenFromCookie) {
+        try {
+            const doctorIdFromRefresh = decodeAccessToken(refreshTokenFromCookie);
+            if (doctorIdFromRefresh) {
+                const activeSession = await Session.findOne({
+                    doctorId: doctorIdFromRefresh,
+                    refreshToken: refreshTokenFromCookie,
+                    sessionType: "LOGIN",
+                    expireAt: { $gt: new Date() }
+                });
+
+                if (activeSession) {
+                    const newAccessToken = generateAccessToken(doctorIdFromRefresh);
+                    const newRefreshToken = generateRefreshToken(doctorIdFromRefresh);
+
+                    // Update session tokens
+                    activeSession.accessToken = newAccessToken;
+                    activeSession.refreshToken = newRefreshToken;
+                    await activeSession.save();
+
+                    // Send new cookies
+                    sendTokenCookies(res, newAccessToken, newRefreshToken);
+
+                    const doctor = await Doctor.findById(doctorIdFromRefresh);
+                    if (doctor) {
+                        return sendResponse(res, 200, true, "Doctor is already logged in (session refreshed)", {
+                            doctor: {
+                                id: doctor._id,
+                                fullName: doctor.fullName,
+                                userName: doctor.userName,
+                                photo: doctor.photo,
+                                professionalEmail: doctor.professionalEmail
+                            }
+                        }, true);
+                    }
+                }
+            }
+        } catch (err) {
+            // Invalid refresh token → continue normal login
+        }
+    }
+
+    // 🔹 3️⃣ Normal login (if no valid tokens)
+    const { email, password } = req.body;
     if (!email || !password) {
         return sendResponse(res, 400, false, "Email and password are required");
     }
@@ -201,15 +279,15 @@ export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
         return sendResponse(res, 403, false, "Please verify your email first");
     }
 
-    // Generate tokens
-    const accessToken = generateAccessToken(doctor._id.toString());
-    const refreshToken = generateRefreshToken(doctor._id.toString());
-
-    // Find existing active login session and mark as LOGOUT
+    // End any old sessions
     await Session.updateMany(
         { doctorId: doctor._id, sessionType: "LOGIN" },
         { $set: { sessionType: "LOGOUT" } }
     );
+
+    // Generate new tokens
+    const accessToken = generateAccessToken(doctor._id.toString());
+    const refreshToken = generateRefreshToken(doctor._id.toString());
 
     // Create new login session
     await Session.create({
@@ -221,24 +299,18 @@ export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
         date: new Date(),
     });
 
+    // Send cookies
     sendTokenCookies(res, accessToken, refreshToken);
 
-    return sendResponse(
-        res,
-        200,
-        true,
-        "Login successful",
-        {
-            doctor: {
-                id: doctor._id,
-                fullName: doctor.fullName,
-                userName: doctor.userName,
-                photo: doctor.photo,
-                professionalEmail: doctor.professionalEmail,
-            },
-        },
-        true
-    );
+    return sendResponse(res, 200, true, "Login successful", {
+        doctor: {
+            id: doctor._id,
+            fullName: doctor.fullName,
+            userName: doctor.userName,
+            photo: doctor.photo,
+            professionalEmail: doctor.professionalEmail
+        }
+    }, true);
 });
 
 

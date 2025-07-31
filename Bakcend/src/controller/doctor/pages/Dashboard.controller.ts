@@ -30,7 +30,7 @@ export const getDashBoard = TryCatch(async (req: AuthenticatedRequest, res: Resp
 
     const formattedStudentList = studentList.map(student => ({
         name: student.name,
-        department: student.department,
+        department: student.degree,
         emn: student.indexNumber,
         image: student.photo || '/images/default.jpg'
     }));
@@ -67,8 +67,17 @@ export const getDashBoard = TryCatch(async (req: AuthenticatedRequest, res: Resp
         : null;
 
     // === Donut Chart Data (Patient data by department) ===
-    // Get actual patients from prescriptions and group by department (count unique students)
+    // Get actual patients from prescriptions with date filter and group by department
+    const currentDate = new Date();
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
+
     const prescriptionPatients = await Prescription.aggregate([
+        {
+            $match: {
+                createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+            }
+        },
         {
             $lookup: {
                 from: 'students',
