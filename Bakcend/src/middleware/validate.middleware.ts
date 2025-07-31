@@ -168,84 +168,41 @@ export const StudentresetPasswordSchema = z.object({
 
 
 //! Staff schemas
+// Staff Registration Validation
 export const StaffRegisterSchema = z.object({
-    name: z.string({
-        required_error: "Name is required",
-        invalid_type_error: "Name must be a string",
-    }).min(2, { message: "Name is too short" }),
-    title: z.string({
-        required_error: "Title is required",
-        invalid_type_error: "Title must be a string",
-    }).min(2, { message: "Title is required" }),
-    email: z.string({
-        required_error: "Email is required",
-        invalid_type_error: "Email must be a string",
-    }).email({ message: "Invalid email format" }),
-    password: z.string({
-        required_error: "Password is required",
-        invalid_type_error: "Password must be a string",
-    }).min(6, { message: "Password must be at least 6 characters" }),
-    jobTitle: z.string({
-        required_error: "Job title is required",
-        invalid_type_error: "Job title must be a string",
-    }).min(2, { message: "Job title is required" }),
-    mobileNumber: z.string({
-        required_error: "Mobile number is required",
-        invalid_type_error: "Mobile number must be a string",
-    }).min(10, { message: "Invalid mobile number" }),
-    securityCode: z.string({
-        required_error: "Security code is required",
-        invalid_type_error: "Security code must be a string",
-    }).min(4, { message: "Security code must be at least 4 characters" }),
+    name: z.string().min(3, "Name is required"),
+    title: z.string().min(2, "Title is required"),
+    email: z.string().email("Invalid email"),
+    jobTitle: z.string().min(2, "Job title is required"),
+    mobileNumber: z.string().min(10, "Mobile number is required"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+// OTP Verification Validation
 export const StaffVerifyOtpSchema = z.object({
-    email: z.string({
-        required_error: "Email is required",
-        invalid_type_error: "Email must be a string",
-    }).email({ message: "Invalid email format" }),
-    otp: z.string({
-        required_error: "OTP is required",
-        invalid_type_error: "OTP must be a string",
-    }).min(4, { message: "OTP must be at least 4 digits" }),
+    email: z.string().email("Invalid email"),
+    otp: z.string().min(4, "OTP must be at least 4 digits"),
 });
 
+// Login Validation
 export const StaffLoginSchema = z.object({
-    email: z.string({
-        required_error: "Email is required",
-        invalid_type_error: "Email must be a string",
-    }).email({ message: "Invalid email format" }),
-    password: z.string({
-        required_error: "Password is required",
-        invalid_type_error: "Password must be a string",
-    }).min(6, { message: "Password must be at least 6 characters" }),
+    email: z.string().email("Invalid email"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
+// Forgot Password Validation
 export const StaffForgotPasswordSchema = z.object({
-    email: z.string({
-        required_error: "Email is required",
-        invalid_type_error: "Email must be a string",
-    }).email({ message: "Invalid email format" }),
+    email: z.string().email("Invalid email"),
 });
 
+// Reset Password Validation
 export const StaffResetPasswordSchema = z.object({
-    email: z.string({
-        required_error: "Email is required",
-        invalid_type_error: "Email must be a string",
-    }).email({ message: "Invalid email format" }),
-    otp: z.string({
-        required_error: "OTP is required",
-        invalid_type_error: "OTP must be a string",
-    }).min(4, { message: "OTP must be at least 4 digits" }),
-    password: z.string({
-        required_error: "Password is required",
-        invalid_type_error: "Password must be a string",
-    }).min(6, { message: "New password must be at least 6 characters" }),
+    email: z.string().email("Invalid email"),
+    otp: z.string().min(4, "OTP must be at least 4 digits"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export const StaffLogoutSchema = z.object({
-    // Optional fields can be added if needed; otherwise blank for cookie-only logout
-});
+
 
 //! Middleware to validate and send simplified errors
 export const validateMiddleware = (schema: z.ZodType): RequestHandler => {
