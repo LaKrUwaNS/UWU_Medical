@@ -1,7 +1,7 @@
-import { AuthenticatedRequest } from "../../../middleware/CheckLogin/isDotorlogin";
 import { Response } from "express";
-import { TryCatch } from "../../../utils/Error/ErrorHandler";
 import { sendResponse } from "../../../utils/response";
+import { TryCatch } from "../../../utils/Error/ErrorHandler";
+import { AuthenticatedRequest } from "../../../middleware/CheckLogin/isDotorlogin";
 import Student from "../../../models/Student.model";
 import { Prescription } from "../../../models/prescription.model";
 import { MedicalRequest } from "../../../models/MedicalRequest.model";
@@ -17,39 +17,38 @@ import { SortOrder } from "mongoose";
 export const getStudentMedicalProfile = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
 
-    if (!id || typeof id !== 'string') {
+    if (!id) {
         return sendResponse(res, 400, false, "Valid student ID is required");
     }
 
-    const student = await Student.findById(id).select('-password');
+    const student = await Student.findById(id).select("-password");
     if (!student) {
         return sendResponse(res, 404, false, "Student not found");
     }
 
     const [prescriptions, medicalRequests] = await Promise.all([
         Prescription.find({ studentId: id })
-            .populate('doctorId', 'fullName title')
-            .populate('drugs.medicineId', 'medicineName status')
-            .sort({ date: -1 as SortOrder }), // Fixed sort typing
-        MedicalRequest.find({ studentId: id })
-            .sort({ date: -1 as SortOrder }) // Fixed sort typing
+            .populate("doctorId", "fullName title")
+            .populate("drugs.medicineId", "medicineName status")
+            .sort({ date: -1 as SortOrder }),
+        MedicalRequest.find({ studentId: id }).sort({ date: -1 as SortOrder }),
     ]);
 
     return sendResponse(res, 200, true, "Student medical profile retrieved", {
         student,
         prescriptions,
-        medicalRequests
+        medicalRequests,
     });
 });
 
 /**
  * @description Get all prescriptions for a student with pagination
- * @route GET /api/medical/student/:id/prescriptions
+ * @route GET /api/medical/student/prescriptions/:id
  * @access Doctor
  */
 export const getStudentPrescriptions = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
-    const { status, limit = '10', page = '1' } = req.query;
+    const { status, limit = "10", page = "1" } = req.query;
 
     if (!id) {
         return sendResponse(res, 400, false, "Student ID is required");
@@ -57,30 +56,24 @@ export const getStudentPrescriptions = TryCatch(async (req: AuthenticatedRequest
 
     const query: Record<string, any> = { studentId: id };
     if (status) {
-        if (!['waiting', 'serving', 'done'].includes(status as string)) {
+        if (!["waiting", "serving", "done"].includes(status as string)) {
             return sendResponse(res, 400, false, "Invalid status value");
         }
         query.queueStatus = status;
     }
 
-    const limitNumber = parseInt(limit as string);
-    const pageNumber = parseInt(page as string);
+    const limitNumber = parseInt(limit as string, 10);
+    const pageNumber = parseInt(page as string, 10);
     const skipNumber = (pageNumber - 1) * limitNumber;
-
-    const options = {
-        limit: limitNumber,
-        skip: skipNumber,
-        sort: { date: -1 as SortOrder } // Properly typed sort
-    };
 
     const [prescriptions, total] = await Promise.all([
         Prescription.find(query)
-            .populate('doctorId', 'fullName title')
-            .populate('drugs.medicineId', 'medicineName status')
-            .limit(options.limit)
-            .skip(options.skip)
-            .sort(options.sort),
-        Prescription.countDocuments(query)
+            .populate("doctorId", "fullName title")
+            .populate("drugs.medicineId", "medicineName status")
+            .limit(limitNumber)
+            .skip(skipNumber)
+            .sort({ date: -1 as SortOrder }),
+        Prescription.countDocuments(query),
     ]);
 
     return sendResponse(res, 200, true, "Prescriptions retrieved", {
@@ -88,9 +81,9 @@ export const getStudentPrescriptions = TryCatch(async (req: AuthenticatedRequest
         pagination: {
             total,
             page: pageNumber,
-            pages: Math.ceil(total / options.limit),
-            limit: options.limit
-        }
+            pages: Math.ceil(total / limitNumber),
+            limit: limitNumber,
+        },
     });
 });
 
@@ -100,88 +93,90 @@ export const getStudentPrescriptions = TryCatch(async (req: AuthenticatedRequest
  * @access Doctor
  */
 export const createPrescription = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const { indexNumber, medicines, description } = req.body;
-    const doctorId = req.user._id;
-    const date = new Date();
+    const { studentId, medicines, description } = req.body;
+    const doctorId = req.user?.id;
 
-    // Validate required fields
-    if (!indexNumber || !medicines || !description) {
-        return sendResponse(res, 400, false, "Index number, medicines, and description are required");
+    if (!req.user || !doctorId) {
+        return sendResponse(res, 401, false, "User not authenticated");
     }
 
-    // Find student
-    const student = await Student.findOne({ indexNumber });
+    if (!studentId || !Array.isArray(medicines) || medicines.length === 0 || !description) {
+        return sendResponse(res, 400, false, "Student ID, medicines, and description are required");
+    }
+
+    const student = await Student.findById(studentId);
     if (!student) {
         return sendResponse(res, 404, false, "Student not found");
     }
 
-    // Validate medicines array
-    if (!Array.isArray(medicines) || medicines.length === 0) {
-        return sendResponse(res, 400, false, "At least one medicine is required");
-    }
-
-    // Check inventory exists
-    const inventory = await Inventory.findById(req.user.inventoryId);
-    if (!inventory) {
-        return sendResponse(res, 404, false, "Inventory not found");
-    }
-
-    // Prepare prescription drugs and validate medicine availability
-    const prescriptionDrugs = [];
-    const medicineUpdates = [];
+    const prescriptionDrugs: any[] = [];
+    const medicineUpdates: any[] = [];
+    const inventoryIdSet = new Set<string>();
 
     for (const item of medicines) {
         if (!item.medicineName || !item.quantity) {
             return sendResponse(res, 400, false, "Each medicine must have a name and quantity");
         }
 
-        const medicine = await Medicine.findOne({
-            medicineName: item.medicineName,
-            inventoryId: inventory._id
-        });
-
+        const medicine = await Medicine.findOne({ medicineName: item.medicineName.trim() });
         if (!medicine) {
-            return sendResponse(res, 404, false, `Medicine ${item.medicineName} not found in inventory`);
+            return sendResponse(res, 404, false, `Medicine ${item.medicineName} not found`);
         }
 
         if (medicine.quantity < item.quantity) {
-            return sendResponse(res, 400, false,
+            return sendResponse(
+                res,
+                400,
+                false,
                 `Not enough ${medicine.medicineName} in stock. Available: ${medicine.quantity}, Requested: ${item.quantity}`
             );
         }
 
+        if (!medicine.inventoryId) {
+            return sendResponse(res, 500, false, `Medicine ${medicine.medicineName} has no linked inventory`);
+        }
+
+        inventoryIdSet.add(medicine.inventoryId.toString());
+
         prescriptionDrugs.push({
             medicineId: medicine._id,
-            quantity: item.quantity
+            quantity: item.quantity,
         });
 
         medicineUpdates.push({
             updateOne: {
                 filter: { _id: medicine._id },
-                update: { $inc: { quantity: -item.quantity } }
-            }
+                update: { $inc: { quantity: -item.quantity } },
+            },
         });
     }
 
-    // Create prescription
+    const inventoryId = Array.from(inventoryIdSet)[0];
+    if (!inventoryId) {
+        return sendResponse(res, 500, false, "No valid inventory ID found for medicines");
+    }
+
     const prescription = await Prescription.create({
         studentId: student._id,
         doctorId,
-        date,
+        date: new Date(),
         description,
         drugs: prescriptionDrugs,
-        inventoryId: inventory._id,
-        queueStatus: "waiting"
+        inventoryId,
+        queueStatus: "waiting",
     });
 
-    // Update medicine quantities
-    await Medicine.bulkWrite(medicineUpdates);
+    if (medicineUpdates.length > 0) {
+        await Medicine.bulkWrite(medicineUpdates);
+    }
 
     return sendResponse(res, 201, true, "Prescription created successfully", {
         prescription,
-        updatedMedicines: medicineUpdates.length
+        updatedMedicines: medicineUpdates.length,
     });
 });
+
+
 
 /**
  * @description Update prescription status
@@ -196,7 +191,7 @@ export const updatePrescriptionStatus = TryCatch(async (req: AuthenticatedReques
         return sendResponse(res, 400, false, "Prescription ID is required");
     }
 
-    if (!status || !['waiting', 'serving', 'done'].includes(status)) {
+    if (!status || !["waiting", "serving", "done"].includes(status)) {
         return sendResponse(res, 400, false, "Valid status is required (waiting, serving, done)");
     }
 
@@ -204,11 +199,22 @@ export const updatePrescriptionStatus = TryCatch(async (req: AuthenticatedReques
         id,
         { queueStatus: status },
         { new: true }
-    ).populate('drugs.medicineId', 'medicineName');
+    ).populate("drugs.medicineId", "medicineName");
 
     if (!prescription) {
         return sendResponse(res, 404, false, "Prescription not found");
     }
 
     return sendResponse(res, 200, true, "Prescription status updated", prescription);
+});
+
+
+// Get all medicines in stock and inventory
+export const getMedicineList = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const medicines = await Medicine.find({ status: 'in stock' })
+        .populate("inventoryId", "name")
+        .sort({ medicineName: 1 })
+        .lean();
+
+    return sendResponse(res, 200, true, "Medicines retrieved successfully", medicines);
 });
