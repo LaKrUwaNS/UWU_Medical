@@ -66,9 +66,6 @@ export const getDashBoard = TryCatch(async (req: AuthenticatedRequest, res: Resp
             indexNumber: nearestRequest.studentId.indexNumber,
             schedule: nearestRequest.schedule
         } : null
-    console.log("nearestRequest:", nearestRequest);
-    console.log("studentId:", nearestRequest?.studentId);
-    console.log("Current time:", now);
 
 
 
