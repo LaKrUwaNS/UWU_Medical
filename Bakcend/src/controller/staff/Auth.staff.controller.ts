@@ -1,54 +1,56 @@
 import { Request, Response } from "express";
 import { TryCatch } from "../../utils/Error/ErrorHandler";
+import { sendResponse } from "../../utils/response";
+import { generateAccessToken, generateRefreshToken, decodeAccessToken } from "../../utils/WebToken";
+import { sendTokenCookies } from "../../utils/Cookies";
+import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
+import { cloudinary } from "../../config/Claudenary";
+import { AuthenticatedStaffRequest } from "../../middleware/CheckLogin/isStafflogin";
+
+import { Session } from "../../models/session.model";
+import { Staff } from "../../models/Staff.model";
+import OTP from "../../models/OTP.model";
+
+// 📧 Email Utilities
 import { SendMail } from "../../config/Nodemailer";
 import { generateOtpEmailHtml } from "../../const/Mail/OTP.templete";
 import { generateResetOtpEmailHtml } from "../../const/Mail/ResepOTP.templete";
-import { CreateOTP } from "../../utils/OTPGen";
-import { sendTokenAsCookie } from "../../utils/Cookies";
-import { generateAccessToken } from "../../utils/WebToken";
-import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
-import OTP from "../../models/OTP.model";
-import { Session } from "../../models/session.model";
-import { cloudinary } from "../../config/Claudenary";
-import { Staff } from "../../models/Staff.model";
-import { sendResponse } from "../../utils/response";
-import { AuthenticatedRequest } from "../../middleware/CheckLogin/isDotorlogin";
 import { generateWelcomeEmailHtml } from "../../const/Mail/Welcome.templete";
+import { CreateOTP } from "../../utils/OTPGen";
 
-// ✅ Register Staff
+// ✅ Register Staff (send OTP via email)
 export const RegisterStaff = TryCatch(async (req: Request, res: Response) => {
     const {
         name,
         title,
         email,
-        password,
         jobTitle,
         mobileNumber,
-        securityCode
+        securityCode,
+        password
     } = req.body;
 
-    if (!name || !title || !email || !password || !jobTitle || !mobileNumber || !securityCode) {
-        return sendResponse(res, 400, false, "All fields are required");
-    }
-
+    // Check if already registered
     const existingStaff = await Staff.findOne({ email });
     if (existingStaff) {
-        return sendResponse(res, 400, false, "Staff already exists");
+        return sendResponse(res, 400, false, "Staff already registered");
     }
 
     const newStaff = new Staff({
         name,
         title,
         email,
-        password,
         jobTitle,
         mobileNumber,
+        password,
         securityCode,
-        expireAt: OneDayFromNow()
+        expireAt: OneDayFromNow(),
+        isVerified: false
     });
 
     await newStaff.save();
 
+    // 📧 Create and send OTP
     const otpCode = CreateOTP();
     await OTP.create({
         email,
@@ -57,125 +59,258 @@ export const RegisterStaff = TryCatch(async (req: Request, res: Response) => {
         Type: "Email"
     });
 
-    await SendMail(email, "OTP Verification", generateOtpEmailHtml(otpCode));
+    await SendMail(email, "Staff OTP Verification", generateOtpEmailHtml(otpCode));
 
-    return sendResponse(res, 201, true, "Staff registered successfully, OTP sent");
+    return sendResponse(res, 201, true, "Staff registered successfully, OTP sent to email");
 });
 
-// ✅ Verify Register OTP
-export const VerifyStaffOTP = TryCatch(async (req: Request, res: Response) => {
+// ✅ Verify Staff OTP
+export const VerifyStaffRegisterOTP = TryCatch(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
 
     const otpRecord = await OTP.findOne({ email, Type: "Email" });
-    if (!otpRecord) {
-        return sendResponse(res, 400, false, "Invalid or expired OTP");
-    }
+    if (!otpRecord) return sendResponse(res, 400, false, "Invalid or expired OTP");
 
     const isOtpValid = await otpRecord.compareOtp(otp);
     const isOtpExpired = otpRecord.OTPexpire < new Date();
-    if (!isOtpValid || isOtpExpired) {
-        return sendResponse(res, 400, false, "Invalid or expired OTP");
-    }
+    if (!isOtpValid || isOtpExpired) return sendResponse(res, 400, false, "Invalid or expired OTP");
 
-    const staff = await Staff.findOne({ email }) as InstanceType<typeof Staff> | null;
-    if (!staff) {
-        return sendResponse(res, 404, false, "Staff not found");
-    }
+    const staff = await Staff.findOne({ email });
+    if (!staff) return sendResponse(res, 404, false, "Staff not found");
 
     staff.isVerified = true;
     staff.expireAt = null;
     await staff.save();
 
-    await otpRecord.deleteOne();
-
+    // Create tokens
     const accessToken = generateAccessToken(staff._id as string);
-    sendTokenAsCookie(res, accessToken);
+    const refreshToken = generateRefreshToken(staff._id as string);
 
+    // Save session
     await Session.create({
-        doctorId: staff._id, // optional: rename model or session field
+        staffId: staff._id,
         accessToken,
+        refreshToken,
         sessionType: "LOGIN",
         expireAt: OneDayFromNow(),
-        date: new Date()
+        date: new Date(),
     });
 
-    await SendMail(staff.email, "Welcome to Our Platform", generateWelcomeEmailHtml(staff.name));
+    sendTokenCookies(res, accessToken, refreshToken);
 
-    return sendResponse(res, 200, true, "OTP verified successfully");
+    // 📧 Send welcome email
+    await SendMail(email, "Welcome to the Platform", generateWelcomeEmailHtml(staff.name));
+
+    return sendResponse(res, 200, true, "Staff verified successfully");
 });
 
 // ✅ Staff Login
+// ✅ Staff Login
 export const StaffLogin = TryCatch(async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const accessTokenFromCookie = req.cookies.accessToken;
+    const refreshTokenFromCookie = req.cookies.refreshToken;
 
-    const token = req.cookies.accessToken;
-    if (token) {
-        const existingSession = await Session.findOne({ accessToken: token });
-        if (existingSession)
-            return sendResponse(res, 400, true, "User already logged in");
+    // 🔹 1️⃣ Check Access Token in cookies
+    if (accessTokenFromCookie) {
+        try {
+            const staffId = decodeAccessToken(accessTokenFromCookie);
+            if (staffId) {
+                const activeSession = await Session.findOne({
+                    staffId,
+                    accessToken: accessTokenFromCookie,
+                    sessionType: "LOGIN",
+                    expireAt: { $gt: new Date() }
+                });
+
+                if (activeSession) {
+                    const staff = await Staff.findById(staffId);
+                    if (staff) {
+                        return sendResponse(res, 200, true, "Staff is already logged in", {
+                            staff: {
+                                id: staff._id,
+                                name: staff.name,
+                                title: staff.title,
+                                email: staff.email,
+                                jobTitle: staff.jobTitle,
+                                mobileNumber: staff.mobileNumber,
+                                photo: staff.photo
+                            }
+                        }, true);
+                    }
+                }
+            }
+        } catch (err) {
+            // Invalid access token → try refresh token below
+        }
+    }
+
+    // 🔹 2️⃣ Check Refresh Token in cookies
+    if (refreshTokenFromCookie) {
+        try {
+            const staffIdFromRefresh = decodeAccessToken(refreshTokenFromCookie);
+            if (staffIdFromRefresh) {
+                const activeSession = await Session.findOne({
+                    staffId: staffIdFromRefresh,
+                    refreshToken: refreshTokenFromCookie,
+                    sessionType: "LOGIN",
+                    expireAt: { $gt: new Date() }
+                });
+
+                if (activeSession) {
+                    const newAccessToken = generateAccessToken(staffIdFromRefresh);
+                    const newRefreshToken = generateRefreshToken(staffIdFromRefresh);
+
+                    // Update session with new tokens
+                    activeSession.accessToken = newAccessToken;
+                    activeSession.refreshToken = newRefreshToken;
+                    await activeSession.save();
+
+                    // Send updated cookies
+                    sendTokenCookies(res, newAccessToken, newRefreshToken);
+
+                    const staff = await Staff.findById(staffIdFromRefresh);
+                    if (staff) {
+                        return sendResponse(res, 200, true, "Staff is already logged in (session refreshed)", {
+                            staff: {
+                                id: staff._id,
+                                name: staff.name,
+                                title: staff.title,
+                                email: staff.email,
+                                jobTitle: staff.jobTitle,
+                                mobileNumber: staff.mobileNumber,
+                                photo: staff.photo
+                            }
+                        }, true);
+                    }
+                }
+            }
+        } catch (err) {
+            // Invalid refresh token → fall back to normal login
+        }
+    }
+
+    // 🔹 3️⃣ Normal Login Flow
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return sendResponse(res, 400, false, "Email and password are required");
     }
 
     const staff = await Staff.findOne({ email });
-    if (!staff)
-        return sendResponse(res, 404, false, "No staff found");
+    if (!staff) {
+        return sendResponse(res, 404, false, "Staff not found");
+    }
+
+    if (!staff.isVerified) {
+        return sendResponse(res, 403, false, "Please verify your email first");
+    }
 
     const isPasswordValid = await staff.comparePass(password);
-    if (!isPasswordValid)
-        return sendResponse(res, 400, false, "Invalid email or password");
+    if (!isPasswordValid) {
+        return sendResponse(res, 401, false, "Invalid password");
+    }
 
+    // End old sessions
+    await Session.updateMany(
+        { staffId: staff._id, sessionType: "LOGIN" },
+        { $set: { sessionType: "LOGOUT" } }
+    );
+
+    // Generate new tokens
     const accessToken = generateAccessToken(staff._id as string);
-    sendTokenAsCookie(res, accessToken);
+    const refreshToken = generateRefreshToken(staff._id as string);
 
+    // Create new login session
     await Session.create({
-        doctorId: staff._id, // optional: rename model or session field
+        staffId: staff._id,
         accessToken,
+        refreshToken,
         sessionType: "LOGIN",
         expireAt: OneDayFromNow(),
-        date: new Date()
+        date: new Date(),
     });
 
-    return sendResponse(res, 200, true, "Login successful");
+    // Send cookies
+    sendTokenCookies(res, accessToken, refreshToken);
+
+    return sendResponse(res, 200, true, "Login successful", {
+        staff: {
+            id: staff._id,
+            name: staff.name,
+            title: staff.title,
+            email: staff.email,
+            jobTitle: staff.jobTitle,
+            mobileNumber: staff.mobileNumber,
+            photo: staff.photo
+        }
+    }, true);
 });
 
-// ✅ Forgot Password
+
+
+
+// ✅ Upload Staff Profile Photo
+export const UploadStaffPhoto = TryCatch(async (req: AuthenticatedStaffRequest, res: Response) => {
+    const staffUser = req.user;
+    if (!staffUser?.id) {
+        return sendResponse(res, 401, false, "Unauthorized: Staff not found");
+    }
+
+    const file = req.file as Express.Multer.File | undefined;
+    if (!file) {
+        return sendResponse(res, 400, false, "No file uploaded");
+    }
+
+    const uploadResult = await cloudinary.uploader.upload(file.path, {
+        folder: "staff_photos",
+    });
+
+    const staff = await Staff.findById(staffUser.id);
+    if (!staff) return sendResponse(res, 404, false, "Staff not found");
+
+    staff.photo = uploadResult.secure_url;
+    await staff.save();
+
+    return sendResponse(res, 200, true, "Profile photo uploaded successfully", {
+        photoUrl: uploadResult.secure_url,
+        publicId: uploadResult.public_id
+    });
+});
+
+// ✅ Forgot Password - Send Reset OTP
 export const StaffForgotPassword = TryCatch(async (req: Request, res: Response) => {
     const { email } = req.body;
 
     const staff = await Staff.findOne({ email });
-    if (!staff)
-        return sendResponse(res, 404, false, "No staff found");
+    if (!staff) return sendResponse(res, 404, false, "Staff not found");
 
-    const otp = CreateOTP();
-    await SendMail(email, "Password Reset OTP", generateResetOtpEmailHtml(otp));
-
+    const otpCode = CreateOTP();
     await OTP.create({
         email,
-        OTP: otp,
+        OTP: otpCode,
         OTPexpire: FifteenMinutesFromNow(),
         Type: "Reset"
     });
 
-    return sendResponse(res, 200, true, "OTP has been sent");
+    await SendMail(email, "Staff Password Reset OTP", generateResetOtpEmailHtml(otpCode));
+
+    return sendResponse(res, 200, true, "Password reset OTP sent to email");
 });
 
-// ✅ Reset Password
+// ✅ Reset Password with OTP
 export const StaffResetPassword = TryCatch(async (req: Request, res: Response) => {
-    const { email, otp, password: newPassword } = req.body;
+    const { email, otp, password } = req.body;
 
     const otpRecord = await OTP.findOne({ email, Type: "Reset" });
-    if (!otpRecord)
-        return sendResponse(res, 400, false, "Invalid or expired OTP");
+    if (!otpRecord) return sendResponse(res, 400, false, "Invalid or expired OTP");
 
     const isOtpValid = await otpRecord.compareOtp(otp);
     const isOtpExpired = otpRecord.OTPexpire < new Date();
-    if (!isOtpValid || isOtpExpired)
-        return sendResponse(res, 400, false, "Invalid or expired OTP");
+    if (!isOtpValid || isOtpExpired) return sendResponse(res, 400, false, "Invalid or expired OTP");
 
     const staff = await Staff.findOne({ email });
-    if (!staff)
-        return sendResponse(res, 404, false, "No staff found");
+    if (!staff) return sendResponse(res, 404, false, "Staff not found");
 
-    staff.password = newPassword;
+    staff.password = password;
     await staff.save();
 
     await otpRecord.deleteOne();
@@ -183,46 +318,68 @@ export const StaffResetPassword = TryCatch(async (req: Request, res: Response) =
     return sendResponse(res, 200, true, "Password reset successfully");
 });
 
-// ✅ Logout
+// ✅ Staff Logout
 export const StaffLogout = TryCatch(async (req: Request, res: Response) => {
-    const token = req.cookies.accessToken;
-    if (!token)
-        return sendResponse(res, 400, false, "No token found");
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        return sendResponse(res, 401, false, "Not logged in");
+    }
 
-    const session = await Session.findOne({ accessToken: token });
-    if (!session)
-        return sendResponse(res, 404, false, "No session found");
+    await Session.updateOne(
+        { refreshToken, sessionType: "LOGIN" },
+        { $set: { sessionType: "LOGOUT" } }
+    );
 
-    await session.deleteOne();
     res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
-    return sendResponse(res, 200, true, "Logout successfully");
+    return sendResponse(res, 200, true, "Logout successful");
 });
 
-// ✅ Profile Photo Upload
-export const StaffPhotoUpload = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const user = req.user;
-    const file = req.file as Express.Multer.File | undefined;
+// ✅ Check if Staff is logged in
+export const CheckIsStaffLoggedIn = TryCatch(async (req: AuthenticatedStaffRequest, res: Response) => {
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
 
-    if (!file) {
-        return sendResponse(res, 400, false, "No file uploaded");
+    if (accessToken) {
+        try {
+            const staffId = decodeAccessToken(accessToken);
+            if (staffId) {
+                const session = await Session.findOne({ accessToken, sessionType: "LOGIN" });
+                if (session) {
+                    const staff = await Staff.findById(session.staffId);
+                    if (staff) {
+                        return sendResponse(res, 200, true, "Staff is logged in", { staff }, true);
+                    }
+                }
+            }
+        } catch { }
     }
 
-    if (!user || !user.id) {
-        return sendResponse(res, 401, false, "Unauthorized: User not found");
-    }
+    if (!refreshToken) return sendResponse(res, 401, false, "Not logged in");
 
-    const uploadResult = await cloudinary.uploader.upload(file.path, {
-        folder: "staff_photos"
+    const staffIdFromRefresh = decodeAccessToken(refreshToken);
+    if (!staffIdFromRefresh) return sendResponse(res, 401, false, "Invalid or expired refresh token");
+
+    const session = await Session.findOne({
+        refreshToken,
+        sessionType: "LOGIN",
+        expireAt: { $gt: new Date() }
     });
 
-    const staff = await Staff.findById(user.id);
-    if (!staff) {
-        return sendResponse(res, 404, false, "Staff not found");
-    }
+    if (!session) return sendResponse(res, 401, false, "Session expired or not found");
 
-    staff.photo = uploadResult.url;
-    await staff.save();
+    const newAccessToken = generateAccessToken(staffIdFromRefresh);
+    const newRefreshToken = generateRefreshToken(staffIdFromRefresh);
 
-    return sendResponse(res, 200, true, "Photo uploaded successfully", uploadResult);
+    session.accessToken = newAccessToken;
+    session.refreshToken = newRefreshToken;
+    await session.save();
+
+    sendTokenCookies(res, newAccessToken, newRefreshToken);
+
+    const staff = await Staff.findById(session.staffId);
+    if (!staff) return sendResponse(res, 404, false, "Staff not found");
+
+    return sendResponse(res, 200, true, "Staff is logged in (refreshed)", { staff }, true);
 });

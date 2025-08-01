@@ -1,0 +1,67 @@
+.medical-dashboard {
+  border: 2px solid lightgreen;
+  padding: 20px;
+  border-radius: 12px;
+  font-family: Arial, sans-serif;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  font-size: 24px;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.chart-section {
+  display: flex;
+  justify-content: center;
+}
+
+.stats-section {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  width: 250px;
+}
+
+.stat-number {
+  font-size: 28px;
+  margin: 10px 0;
+}
+
+.stat-chart {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  height: 60px;
+}
+
+.mini-bar {
+  width: 8px;
+  background: #28a745;
+  border-radius: 2px;
+}

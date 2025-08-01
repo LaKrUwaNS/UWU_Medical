@@ -1,0 +1,210 @@
+.medical-staff-directory {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+.title-section h1 {
+  font-size: 32px;
+  font-weight: 600;
+  color: #090a0a;
+  margin: 0 0 8px 0;
+}
+
+.title-section p {
+  color: #7f8c8d;
+  font-size: 16px;
+  margin: 0;
+}
+
+.stats-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+}
+
+.stats-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.stats-icon {
+  background: #3498db;
+  color: white;
+  padding: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-info p {
+  color: #7f8c8d;
+  font-size: 14px;
+  margin: 0 0 5px 0;
+}
+
+
+.stats-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.search-section-staff {
+  margin-bottom: 25px;
+}
+
+.search-container {
+  position: relative;
+  max-width: 500px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #bdc3c7;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px 12px 50px;
+  border: 2px solid #ecf0f1;
+  border-radius: 25px;
+  font-size: 16px;
+  background: white;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.search-input::placeholder {
+  color: #bdc3c7;
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.staff-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.staff-table thead {
+  background: #a8e6a3;
+}
+
+.staff-table th {
+  padding: 18px 20px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.staff-table tbody tr {
+  border-bottom: 1px solid #ecf0f1;
+  transition: background-color 0.2s ease;
+}
+
+.staff-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.staff-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.staff-table td {
+  padding: 18px 20px;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.role-badge {
+  background: #e8f5e8;
+  color: #27ae60;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .medical-staff-directory {
+    padding: 15px;
+  }
+  
+  .header-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .stats-card {
+    min-width: auto;
+  }
+  
+  .title-section h1 {
+    font-size: 24px;
+  }
+  
+  .search-container {
+    max-width: 100%;
+  }
+  
+  .staff-table {
+    font-size: 13px;
+  }
+  
+  .staff-table th,
+  .staff-table td {
+    padding: 12px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .staff-table th,
+  .staff-table td {
+    padding: 10px 8px;
+  }
+  
+  .role-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+}

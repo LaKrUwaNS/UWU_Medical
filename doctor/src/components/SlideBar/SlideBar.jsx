@@ -1,75 +1,118 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "./SlideBar.css";
 import images from "../../assets/Image";
 
 function SlideBar({ isCollapsed, onToggle }) {
-  return (
-    <div className={`Sidebar ${isCollapsed ? "collapsed" : ""}`}>
-      {/* Logo */}
-      <img className="slideBar-logo" src={images.logo} alt="logo" />
+  const location = useLocation();
+  const [mounted, setMounted] = useState(false);
 
-      {/* Header */}
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Enhanced menu items with better organization
+  const menuItems = [
+    {
+      section: "Main Menu",
+      items: [
+        { to: "/dashboard", icon: images.dashboard, text: "Dashboard", id: "dashboard" },
+        { to: "/students/1", icon: images.studentData, text: "Student Data", id: "students" },
+        { to: "/medical-requests", icon: images.medicalReq, text: "Medical Requests", id: "medical-requests" },
+        { to: "/reminder", icon: images.reminders, text: "Reminders", id: "reminder" },
+        { to: "/updates", icon: images.updates, text: "Updates", id: "updates" }
+      ]
+    },
+    {
+      section: "Management",
+      items: [
+        { to: "/medicine-data", icon: images.medicineData, text: "Medicine Data", id: "medicine-data" },
+        { to: "/staff", icon: images.staff, text: "Staff", id: "staff" },
+        { to: "/reports", icon: images.reports, text: "Reports", id: "reports" },
+        { to: "/settings", icon: images.settings, text: "Settings", id: "settings" }
+      ]
+    }
+  ];
+
+  const isActiveRoute = (path) => {
+    return location.pathname === path;
+  };
+
+  return (
+    <div className={`Sidebar ${isCollapsed ? "collapsed" : ""} ${mounted ? "mounted" : ""}`}>
+      {/* Logo Section */}
       <div className="header">
-        {!isCollapsed && <div className="medical-center">Medical Center</div>}
+        <img 
+          className="slideBar-logo" 
+          src={images.logo} 
+          alt="Medical Center Logo" 
+          loading="lazy"
+        />
+        {!isCollapsed && (
+          <div className="medical-center">
+            Medical Center
+          </div>
+        )}
       </div>
 
       {/* Menu Section */}
-      <div className="menu-section">
-        {!isCollapsed && <div className="menu-title">Main Menu</div>}
+      <nav className="menu-section" role="navigation" aria-label="Main navigation">
+        {menuItems.map((section, sectionIndex) => (
+          <div key={section.section} className="menu-group">
+            {!isCollapsed && (
+              <div className="menu-title" role="heading" aria-level="2">
+                {section.section}
+              </div>
+            )}
+            
+            {section.items.map((item, itemIndex) => (
+              <Link
+                key={item.id}
+                to={item.to}
+                className={`menu-item ${isActiveRoute(item.to) ? "active" : ""}`}
+                aria-label={item.text}
+                title={isCollapsed ? item.text : ""}
+                style={{
+                  animationDelay: `${(sectionIndex * section.items.length + itemIndex) * 0.05}s`
+                }}
+              >
+                <img 
+                  className="iconimg" 
+                  src={item.icon} 
+                  alt=""
+                  loading="lazy"
+                  aria-hidden="true"
+                />
+                {!isCollapsed && (
+                  <span className="text">{item.text}</span>
+                )}
+                
+                {/* Active indicator */}
+                {isActiveRoute(item.to) && !isCollapsed && (
+                  <div className="active-indicator" aria-hidden="true" />
+                )}
+              </Link>
+            ))}
+          </div>
+        ))}
+      </nav>
 
-        <Link to="/dashboard" className="menu-item">
-          <img className="iconimg" src={images.dashboard} alt="Dashboard" />
-          {!isCollapsed && <span className="text">Dashboard</span>}
-        </Link>
-
-        <Link to="/students/1" className="menu-item">
-          <img className="iconimg" src={images.studentData} alt="Student Data" />
-          {!isCollapsed && <span className="text">Student Data</span>}
-        </Link>
-
-        <Link to="/medical-requests" className="menu-item">
-          <img className="iconimg" src={images.medicalReq} alt="Medical Requests" />
-          {!isCollapsed && <span className="text">Medical Requests</span>}
-        </Link>
-
-        <Link to="/reminder" className="menu-item">
-          <img className="iconimg" src={images.reminders} alt="Reminders" />
-          {!isCollapsed && <span className="text">Reminders</span>}
-        </Link>
-
-        <Link to="/updates" className="menu-item">
-          <img className="iconimg" src={images.updates} alt="Updates" />
-          {!isCollapsed && <span className="text">Updates</span>}
-        </Link>
-
-        {!isCollapsed && <div className="menu-title">Second Menu</div>}
-
-        <Link to="/medicine-data" className="menu-item">
-          <img className="iconimg" src={images.medicineData} alt="Medicine Data" />
-          {!isCollapsed && <span className="text">Medicine Data</span>}
-        </Link>
-
-        <Link to="/staff" className="menu-item">
-          <img className="iconimg" src={images.staff} alt="Staff" />
-          {!isCollapsed && <span className="text">Staff</span>}
-        </Link>
-
-        <Link to="/reports" className="menu-item">
-          <img className="iconimg" src={images.reports} alt="Reports" />
-          {!isCollapsed && <span className="text">Reports</span>}
-        </Link>
-
-        <Link to="/settings" className="menu-item">
-          <img className="iconimg" src={images.settings} alt="Settings" />
-          {!isCollapsed && <span className="text">Settings</span>}
-        </Link>
-      </div>
-
-      {/* Collapse/Expand Button */}
+      {/* Toggle Button */}
       <div className="bottom-section">
-        <button className="toggle-btn" onClick={onToggle}>
-          <img className="toggle-icon" src={images.toggle} alt="Toggle Sidebar" />
+        <button 
+          className="toggle-btn" 
+          onClick={onToggle}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-expanded={!isCollapsed}
+          type="button"
+        >
+          <img 
+            className="toggle-icon" 
+            src={images.toggle} 
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+          />
         </button>
       </div>
     </div>

@@ -3,8 +3,7 @@ import { TryCatch } from "../../utils/Error/ErrorHandler";
 import Student from "../../models/Student.model";
 import { sendResponse } from "../../utils/response";
 import { Session } from "../../models/session.model";
-import { decodeAccessToken, generateAccessToken } from "../../utils/WebToken";
-import { sendTokenAsCookie } from "../../utils/Cookies";
+import { decodeAccessToken } from "../../utils/WebToken";
 
 export interface AuthenticatedStudentRequest extends Request {
     user?: {
@@ -52,7 +51,7 @@ export const isStudentLoggedIn = TryCatch(
             id: student._id as string,
             name: student.name,
             indexNumber: student.indexNumber,
-            degree: student.degree
+            degree: student.degree as string
         };
 
         next();

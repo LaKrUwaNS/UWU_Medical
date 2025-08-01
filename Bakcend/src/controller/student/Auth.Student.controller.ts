@@ -3,32 +3,40 @@ import { TryCatch } from "../../utils/Error/ErrorHandler";
 import { SendMail } from "../../config/Nodemailer";
 import { generateOtpEmailHtml } from "../../const/Mail/OTP.templete";
 import { generateResetOtpEmailHtml } from "../../const/Mail/ResepOTP.templete";
-import { generateWelcomeEmailHtml } from "../../const/Mail/Welcome.templete";
-
 import { CreateOTP } from "../../utils/OTPGen";
-import { sendTokenAsCookie } from "../../utils/Cookies";
-import { generateAccessToken } from "../../utils/WebToken";
+import { sendTokenCookies } from "../../utils/Cookies";
+import { decodeAccessToken, generateAccessToken, generateRefreshToken } from "../../utils/WebToken";
 import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
-import { sendResponse } from "../../utils/response";
-
-import Student from "../../models/Student.model";
 import OTP from "../../models/OTP.model";
 import { Session } from "../../models/session.model";
+import { cloudinary } from "../../config/Claudenary";
+import Student from "../../models/Student.model";
+import { sendResponse } from "../../utils/response";
 import { AuthenticatedRequest } from "../../middleware/CheckLogin/isDotorlogin";
+import { generateWelcomeEmailHtml } from "../../const/Mail/Welcome.templete";
 
-// ✅ Register Student & Send OTP
+// ✅ Register Student
 export const RegisterStudent = TryCatch(async (req: Request, res: Response) => {
-    const { indexNumber, password, name, gender, contactNumber, emergencyNumber, bloodType, allergies, degree, presentYear } = req.body;
+    const {
+        indexNumber,
+        universityEmail,
+        password,
+        name,
+        gender,
+        contactNumber,
+        emergencyNumber,
+        bloodType,
+        allergies
+    } = req.body;
 
-    if (!indexNumber || !password || !name || !gender || !contactNumber || !emergencyNumber || !bloodType || !degree || !presentYear) {
-        return sendResponse(res, 400, false, "All fields are required");
+    const existingStudent = await Student.findOne({ universityEmail });
+    if (existingStudent) {
+        return sendResponse(res, 400, false, "Student already registered");
     }
-
-    const existing = await Student.findOne({ indexNumber });
-    if (existing) return sendResponse(res, 400, false, "Student already exists");
 
     const newStudent = new Student({
         indexNumber,
+        universityEmail,
         password,
         name,
         gender,
@@ -36,231 +44,348 @@ export const RegisterStudent = TryCatch(async (req: Request, res: Response) => {
         emergencyNumber,
         bloodType,
         allergies,
-        degree,
-        presentYear,
         expireAt: OneDayFromNow(),
+        isVerified: false
     });
 
     await newStudent.save();
 
-    const otp = CreateOTP();
+    const otpCode = CreateOTP();
     await OTP.create({
-        email: indexNumber, // Using indexNumber as email placeholder
-        OTP: otp,
+        email: universityEmail,
+        OTP: otpCode,
         OTPexpire: FifteenMinutesFromNow(),
-        Type: "Email",
+        Type: "Email"
     });
 
-    await SendMail(indexNumber, "OTP Verification", generateOtpEmailHtml(otp));
+    await SendMail(universityEmail, "OTP Verification", generateOtpEmailHtml(otpCode));
+
     return sendResponse(res, 201, true, "Student registered successfully, OTP sent");
 });
 
-// ✅ Verify OTP
-export const VerifyStudentOTP = TryCatch(async (req: Request, res: Response) => {
-    const { indexNumber, otp } = req.body;
+// ✅ Verify Student OTP
+export const VerifyStudentRegisterOTP = TryCatch(async (req: Request, res: Response) => {
+    const { universityEmail, otp } = req.body;
 
-    const otpRecord = await OTP.findOne({ email: indexNumber, Type: "Email" });
-    if (!otpRecord) return sendResponse(res, 400, false, "Invalid or expired OTP");
+    const otpRecord = await OTP.findOne({ email: universityEmail, Type: "Email" });
+    if (!otpRecord) {
+        return sendResponse(res, 400, false, "Invalid or expired OTP");
+    }
 
     const isOtpValid = await otpRecord.compareOtp(otp);
     const isOtpExpired = otpRecord.OTPexpire < new Date();
-    if (!isOtpValid || isOtpExpired) return sendResponse(res, 400, false, "Invalid or expired OTP");
+    if (!isOtpValid || isOtpExpired) {
+        return sendResponse(res, 400, false, "Invalid or expired OTP");
+    }
 
-    const student = await Student.findOne({ indexNumber });
-    if (!student) return sendResponse(res, 404, false, "Student not found");
+    const student = await Student.findOne({ universityEmail });
+    if (!student) {
+        return sendResponse(res, 404, false, "Student not found");
+    }
 
     student.isVerified = true;
     student.expireAt = null;
     await student.save();
-    await otpRecord.deleteOne();
 
     const accessToken = generateAccessToken(student._id as string);
-    sendTokenAsCookie(res, accessToken);
+    const refreshToken = generateRefreshToken(student._id as string);
+
     await Session.create({
         studentId: student._id,
         accessToken,
+        refreshToken,
         sessionType: "LOGIN",
         expireAt: OneDayFromNow(),
         date: new Date(),
     });
 
-    await SendMail(indexNumber, "Welcome to Our Platform", generateWelcomeEmailHtml(student.name));
+    sendTokenCookies(res, accessToken, refreshToken);
+
+    await SendMail(
+        student.universityEmail,
+        "Welcome to Our Platform",
+        generateWelcomeEmailHtml(student.name)
+    );
+
     return sendResponse(res, 200, true, "OTP verified successfully");
 });
 
-// ✅ Login Student
-export const LoginStudent = TryCatch(async (req: Request, res: Response) => {
-    const { indexNumber, password } = req.body;
+// ✅ Student Login
+export const StudentLogin = TryCatch(async (req: Request, res: Response) => {
+    const accessTokenFromCookie = req.cookies.accessToken;
+    const refreshTokenFromCookie = req.cookies.refreshToken;
 
-    const token = req.cookies.accessToken;
-    if (token) {
-        const session = await Session.findOne({ accessToken: token });
-        if (session) return sendResponse(res, 400, true, "Already logged in");
+    // 🔹 1️⃣ Check Access Token in cookies
+    if (accessTokenFromCookie) {
+        try {
+            const studentId = decodeAccessToken(accessTokenFromCookie);
+            if (studentId) {
+                const activeSession = await Session.findOne({
+                    studentId,
+                    accessToken: accessTokenFromCookie,
+                    sessionType: "LOGIN",
+                    expireAt: { $gt: new Date() }
+                });
+
+                if (activeSession) {
+                    const student = await Student.findById(studentId);
+                    if (student) {
+                        return sendResponse(res, 200, true, "Student is already logged in", {
+                            student: {
+                                id: student._id,
+                                name: student.name,
+                                indexNumber: student.indexNumber,
+                                universityEmail: student.universityEmail,
+                                degree: student.degree,
+                                year: student.year,
+                                photo: student.photo
+                            }
+                        }, true);
+                    }
+                }
+            }
+        } catch (err) {
+            // Invalid access token → try refresh token below
+        }
     }
 
-    const student = await Student.findOne({ indexNumber });
-    if (!student) return sendResponse(res, 404, false, "No student found");
+    // 🔹 2️⃣ Check Refresh Token in cookies
+    if (refreshTokenFromCookie) {
+        try {
+            const studentIdFromRefresh = decodeAccessToken(refreshTokenFromCookie);
+            if (studentIdFromRefresh) {
+                const activeSession = await Session.findOne({
+                    studentId: studentIdFromRefresh,
+                    refreshToken: refreshTokenFromCookie,
+                    sessionType: "LOGIN",
+                    expireAt: { $gt: new Date() }
+                });
 
-    const isPasswordCorrect = await student.comparePass(password);
-    if (!isPasswordCorrect) return sendResponse(res, 400, false, "Invalid credentials");
+                if (activeSession) {
+                    const newAccessToken = generateAccessToken(studentIdFromRefresh);
+                    const newRefreshToken = generateRefreshToken(studentIdFromRefresh);
 
+                    // Update session with new tokens
+                    activeSession.accessToken = newAccessToken;
+                    activeSession.refreshToken = newRefreshToken;
+                    await activeSession.save();
+
+                    // Send updated cookies
+                    sendTokenCookies(res, newAccessToken, newRefreshToken);
+
+                    const student = await Student.findById(studentIdFromRefresh);
+                    if (student) {
+                        return sendResponse(res, 200, true, "Student is already logged in (session refreshed)", {
+                            student: {
+                                id: student._id,
+                                name: student.name,
+                                indexNumber: student.indexNumber,
+                                universityEmail: student.universityEmail,
+                                degree: student.degree,
+                                year: student.year,
+                                photo: student.photo
+                            }
+                        }, true);
+                    }
+                }
+            }
+        } catch (err) {
+            // Invalid refresh token → fall back to normal login
+        }
+    }
+
+    // 🔹 3️⃣ Normal Login Flow
+    const { universityEmail, password } = req.body;
+    if (!universityEmail || !password) {
+        return sendResponse(res, 400, false, "University email and password are required");
+    }
+
+    const student = await Student.findOne({ universityEmail });
+    if (!student) {
+        return sendResponse(res, 404, false, "Student not found");
+    }
+
+    if (!student.isVerified) {
+        return sendResponse(res, 403, false, "Please verify your email first");
+    }
+
+    const isPasswordValid = await student.comparePass(password);
+    if (!isPasswordValid) {
+        return sendResponse(res, 401, false, "Invalid password");
+    }
+
+    // End old sessions
+    await Session.updateMany(
+        { studentId: student._id, sessionType: "LOGIN" },
+        { $set: { sessionType: "LOGOUT" } }
+    );
+
+    // Generate new tokens
     const accessToken = generateAccessToken(student._id as string);
-    sendTokenAsCookie(res, accessToken);
+    const refreshToken = generateRefreshToken(student._id as string);
+
+    // Create new login session
     await Session.create({
         studentId: student._id,
         accessToken,
+        refreshToken,
         sessionType: "LOGIN",
         expireAt: OneDayFromNow(),
         date: new Date(),
     });
 
-    return sendResponse(res, 200, true, "Login successful");
+    // Send cookies
+    sendTokenCookies(res, accessToken, refreshToken);
+
+    return sendResponse(res, 200, true, "Login successful", {
+        student: {
+            id: student._id,
+            name: student.name,
+            indexNumber: student.indexNumber,
+            universityEmail: student.universityEmail,
+            degree: student.degree,
+            year: student.year,
+            photo: student.photo
+        }
+    }, true);
 });
 
-// ✅ Logout Student
-export const LogoutStudent = TryCatch(async (req: Request, res: Response) => {
-    const token = req.cookies.accessToken;
-    if (!token) return sendResponse(res, 400, false, "No token found");
 
-    const session = await Session.findOne({ accessToken: token });
-    if (!session) return sendResponse(res, 404, false, "No session found");
+// ✅ Upload Student Profile Photo
+export const UploadStudentPhoto = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const student = req.user;
 
-    await session.deleteOne();
-    res.clearCookie("accessToken");
+    if (!student || !student.id) {
+        return sendResponse(res, 401, false, "Unauthorized: Student not found");
+    }
 
-    return sendResponse(res, 200, true, "Logout successful");
+    const file = req.file as Express.Multer.File | undefined;
+    if (!file) {
+        return sendResponse(res, 400, false, "No file uploaded");
+    }
+
+    const uploadResult = await cloudinary.uploader.upload(file.path, {
+        folder: "students_photos",
+    });
+
+    const foundStudent = await Student.findById(student.id);
+    if (!foundStudent) {
+        return sendResponse(res, 404, false, "Student not found");
+    }
+
+    foundStudent.photo = uploadResult.secure_url;
+    await foundStudent.save();
+
+    return sendResponse(res, 200, true, "Profile photo uploaded successfully", {
+        photoUrl: uploadResult.secure_url,
+        publicId: uploadResult.public_id
+    });
 });
 
 // ✅ Forgot Password
-export const ForgotStudentPassword = TryCatch(async (req: Request, res: Response) => {
-    const { indexNumber } = req.body;
+export const StudentForgotPassword = TryCatch(async (req: Request, res: Response) => {
+    const { universityEmail } = req.body;
 
-    const student = await Student.findOne({ indexNumber });
+    const student = await Student.findOne({ universityEmail });
     if (!student) return sendResponse(res, 404, false, "Student not found");
 
-    const otp = CreateOTP();
-    await SendMail(indexNumber, "Password Reset OTP", generateResetOtpEmailHtml(otp));
+    const otpCode = CreateOTP();
     await OTP.create({
-        email: indexNumber,
-        OTP: otp,
+        email: universityEmail,
+        OTP: otpCode,
         OTPexpire: FifteenMinutesFromNow(),
-        Type: "Reset",
+        Type: "Reset"
     });
+
+    await SendMail(universityEmail, "Password Reset OTP", generateResetOtpEmailHtml(otpCode));
 
     return sendResponse(res, 200, true, "OTP sent for password reset");
 });
 
 // ✅ Reset Password
-export const ResetStudentPassword = TryCatch(async (req: Request, res: Response) => {
-    const { indexNumber, otp, password } = req.body;
+export const StudentResetPassword = TryCatch(async (req: Request, res: Response) => {
+    const { universityEmail, otp, password } = req.body;
 
-    const otpRecord = await OTP.findOne({ email: indexNumber, Type: "Reset" });
+    const otpRecord = await OTP.findOne({ email: universityEmail, Type: "Reset" });
     if (!otpRecord) return sendResponse(res, 400, false, "Invalid or expired OTP");
 
     const isOtpValid = await otpRecord.compareOtp(otp);
     const isOtpExpired = otpRecord.OTPexpire < new Date();
     if (!isOtpValid || isOtpExpired) return sendResponse(res, 400, false, "Invalid or expired OTP");
 
-    const student = await Student.findOne({ indexNumber });
+    const student = await Student.findOne({ universityEmail });
     if (!student) return sendResponse(res, 404, false, "Student not found");
 
     student.password = password;
     await student.save();
+
     await otpRecord.deleteOne();
 
     return sendResponse(res, 200, true, "Password reset successfully");
 });
 
-// ✅ Update Student Profile
-export const UpdateStudentProfile = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const token = req.cookies.accessToken;
-
-    if (!token) {
+// ✅ Student Logout
+export const StudentLogout = TryCatch(async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
         return sendResponse(res, 401, false, "Not logged in");
     }
 
-    const session = await Session.findOne({ accessToken: token, sessionType: "LOGIN" });
-    if (!session) {
-        return sendResponse(res, 401, false, "Session expired or invalid");
-    }
+    await Session.updateOne(
+        { refreshToken, sessionType: "LOGIN" },
+        { $set: { sessionType: "LOGOUT" } }
+    );
 
-    const student = await Student.findById(session.studentId);
-    if (!student) {
-        return sendResponse(res, 404, false, "Student not found");
-    }
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
-    // Extract updatable fields from the request body
-    const {
-        name,
-        gender,
-        contactNumber,
-        emergencyNumber,
-        bloodType,
-        allergies,
-        degree,
-        presentYear,
-        photo // optional if you're handling profile pictures
-    } = req.body;
-
-    // Update fields if provided
-    if (name) student.name = name;
-    if (gender) student.gender = gender;
-    if (contactNumber) student.contactNumber = contactNumber;
-    if (emergencyNumber) student.emergencyNumber = emergencyNumber;
-    if (bloodType) student.bloodType = bloodType;
-    if (allergies !== undefined) student.allergies = allergies;
-    if (degree) student.degree = degree;
-    if (presentYear) student.presentYear = presentYear;
-    if (photo) student.photo = photo;
-
-    await student.save();
-
-    return sendResponse(res, 200, true, "Profile updated successfully", {
-        student: {
-            id: student._id,
-            name: student.name,
-            gender: student.gender,
-            contactNumber: student.contactNumber,
-            emergencyNumber: student.emergencyNumber,
-            bloodType: student.bloodType,
-            allergies: student.allergies,
-            degree: student.degree,
-            presentYear: student.presentYear,
-            photo: student.photo
-        }
-    });
+    return sendResponse(res, 200, true, "Logout successful");
 });
 
-
-
-// check Student is Login
+// ✅ Check if Student is logged in
 export const CheckIsStudentLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const token = req.cookies.accessToken;
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
 
-    if (!token) {
-        return sendResponse(res, 401, false, "Not logged in");
+    if (accessToken) {
+        try {
+            const studentId = decodeAccessToken(accessToken);
+            if (studentId) {
+                const session = await Session.findOne({ accessToken, sessionType: "LOGIN" });
+                if (session) {
+                    const student = await Student.findById(session.studentId);
+                    if (student) {
+                        return sendResponse(res, 200, true, "Student is logged in", { student }, true);
+                    }
+                }
+            }
+        } catch { }
     }
 
-    const session = await Session.findOne({ accessToken: token, sessionType: "LOGIN" });
-    if (!session) {
-        return sendResponse(res, 401, false, "Session not found or expired");
-    }
+    if (!refreshToken) return sendResponse(res, 401, false, "Not logged in");
+
+    const studentIdFromRefresh = decodeAccessToken(refreshToken);
+    if (!studentIdFromRefresh) return sendResponse(res, 401, false, "Invalid or expired refresh token");
+
+    const session = await Session.findOne({
+        refreshToken,
+        sessionType: "LOGIN",
+        expireAt: { $gt: new Date() }
+    });
+
+    if (!session) return sendResponse(res, 401, false, "Session expired or not found");
+
+    const newAccessToken = generateAccessToken(studentIdFromRefresh);
+    const newRefreshToken = generateRefreshToken(studentIdFromRefresh);
+
+    session.accessToken = newAccessToken;
+    session.refreshToken = newRefreshToken;
+    await session.save();
+
+    sendTokenCookies(res, newAccessToken, newRefreshToken);
 
     const student = await Student.findById(session.studentId);
-    if (!student) {
-        return sendResponse(res, 404, false, "Student not found");
-    }
+    if (!student) return sendResponse(res, 404, false, "Student not found");
 
-    return sendResponse(res, 200, true, "Student is logged in", {
-        student: {
-            id: student._id,
-            name: student.name,
-            indexNumber: student.indexNumber,
-            gender: student.gender,
-            photo: student.photo,
-            contactNumber: student.contactNumber,
-            degree: student.degree,
-            presentYear: student.presentYear,
-        }
-    });
+    return sendResponse(res, 200, true, "Student is logged in (refreshed)", { student }, true);
 });

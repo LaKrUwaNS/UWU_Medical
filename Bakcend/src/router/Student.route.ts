@@ -1,61 +1,64 @@
 import { Router } from "express";
+import multer from "multer";
 import { TestMail } from "../controller/doctor/Auth.controller";
 import { validateMiddleware } from "../middleware/validate.middleware";
 
-// Import your student Zod schemas here
 import {
     StudentregisterStudentSchema,
     StudentverifyStudentOtpSchema,
     StudentloginStudentSchema,
     StudentforgotPasswordSchema,
     StudentresetPasswordSchema,
-    StudentlogoutStudentSchema
-} from "../middleware/validate.middleware";  // Adjust path if needed
+} from "../middleware/validate.middleware";
 
 import {
     RegisterStudent,
-    VerifyStudentOTP,
-    LoginStudent,
-    ForgotStudentPassword,
-    ResetStudentPassword,
-    LogoutStudent,
-    UpdateStudentProfile,
+    VerifyStudentRegisterOTP,
+    StudentLogin,
+    StudentForgotPassword,
+    StudentResetPassword,
+    StudentLogout,
+    UploadStudentPhoto,
     CheckIsStudentLoggedIn
 } from "../controller/student/Auth.Student.controller";
 
+import { isStudentLoggedIn } from "../middleware/CheckLogin/isStudentlogin";
+
+const upload = multer({ dest: "uploads/" }); // configure multer as needed
+
 const StudentRouter = Router();
 
-// ! Test mail (you might want to move this to doctor router if it belongs there)
-StudentRouter.post('/test', TestMail);   // localhost:5000/student/test
+StudentRouter.post('/test', TestMail);
+// POST localhost:5000/student/test
 
-// ! Student Register
-StudentRouter.post("/register", validateMiddleware(StudentregisterStudentSchema), RegisterStudent);      // localhost:5000/student/register
+StudentRouter.post("/register", validateMiddleware(StudentregisterStudentSchema), RegisterStudent);
+// POST localhost:5000/student/register
 
-// ! Student Verify OTP
-StudentRouter.post("/verify-otp", validateMiddleware(StudentverifyStudentOtpSchema), VerifyStudentOTP); // localhost:5000/student/verify-otp
+StudentRouter.post("/verify-otp", validateMiddleware(StudentverifyStudentOtpSchema), VerifyStudentRegisterOTP);
+// POST localhost:5000/student/verify-otp
 
-// ! Student Login
-StudentRouter.post("/login", validateMiddleware(StudentloginStudentSchema), LoginStudent);             // localhost:5000/student/login
+StudentRouter.post("/login", validateMiddleware(StudentloginStudentSchema), StudentLogin);
+// POST localhost:5000/student/login
 
-// ! Student Forgot Password
-StudentRouter.post("/forgot-password", validateMiddleware(StudentforgotPasswordSchema), ForgotStudentPassword); // localhost:5000/student/forgot-password
+StudentRouter.post("/forgot-password", validateMiddleware(StudentforgotPasswordSchema), StudentForgotPassword);
+// POST localhost:5000/student/forgot-password
 
-// ! Student Reset Password
-StudentRouter.post("/reset-password", validateMiddleware(StudentresetPasswordSchema), ResetStudentPassword);       // localhost:5000/student/reset-password
+StudentRouter.post("/reset-password", validateMiddleware(StudentresetPasswordSchema), StudentResetPassword);
+// POST localhost:5000/student/reset-password
 
-// ! Student Logout
-StudentRouter.post("/logout", validateMiddleware(StudentlogoutStudentSchema), LogoutStudent);            // localhost:5000/student/logout
+StudentRouter.post("/logout", StudentLogout);
+// POST localhost:5000/student/logout
 
-// ! Check Student Login Status
-StudentRouter.get("/check-login", CheckIsStudentLoggedIn); // localhost:5000/student/check-login
+StudentRouter.get("/check-login", CheckIsStudentLoggedIn);
+// GET localhost:5000/student/check-login
 
-// ! Update Student Profile
-StudentRouter.put("/update-profile", UpdateStudentProfile); // localhost:5000/student/update-profile
-
-
-
-
-// Genaral Api Routes
-// You can add more routes here as needed
+// Upload Student Profile Photo route
+StudentRouter.post(
+    "/profile-photo-upload",
+    isStudentLoggedIn,
+    upload.single("image"),
+    UploadStudentPhoto
+);
+// POST localhost:5000/student/profile-photo-upload
 
 export default StudentRouter;
