@@ -1,10 +1,11 @@
 import "./App.css";
-import ApplyMedical from "./pages/Apply Medical/applyMedical"; // Keep the import as-is
+import Home from "./pages/Home/Home";
+
 
 function App() {
   return (
     <>
-      <ApplyMedical />
+    <Home />
     </>
   );
 }

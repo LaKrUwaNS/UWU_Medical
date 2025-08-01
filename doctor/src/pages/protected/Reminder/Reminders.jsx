@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import MessageCard from '../../../components/MessageCard/MessageCard';
 import './Reminders.css';
+import UserProfile from '../../../components/UserProfile/UseraProfile';
+import images from '../../../assets/images';
 
 function Reminders() {
   const [activeTab, setActiveTab] = useState("Massages");
@@ -18,7 +20,43 @@ function Reminders() {
       studentId: "UWU/ICT/22/064",
       content: "I would like to request an appointment for a check-up..."
     },
-    // Add more as needed
+     {
+      id: 1,
+      type: "Massage",
+      studentId: "UWU/ICT/22/064",
+      content: "I would like to request an appointment for a check-up..."
+    },
+    {
+      id: 2,
+      type: "Article",
+      studentId: "UWU/ICT/22/064",
+      content: "I would like to request an appointment for a check-up..."
+    },
+     {
+      id: 1,
+      type: "Massage",
+      studentId: "UWU/ICT/22/064",
+      content: "I would like to request an appointment for a check-up..."
+    },
+    {
+      id: 2,
+      type: "Article",
+      studentId: "UWU/ICT/22/064",
+      content: "I would like to request an appointment for a check-up..."
+    },
+     {
+      id: 1,
+      type: "Massage",
+      studentId: "UWU/ICT/22/064",
+      content: "I would like to request an appointment for a check-up..."
+    },
+    {
+      id: 2,
+      type: "Article",
+      studentId: "UWU/ICT/22/064",
+      content: "I would like to request an appointment for a check-up..."
+    },
+    
   ]);
 
   const handleDelete = (id) => {
@@ -38,9 +76,9 @@ function Reminders() {
           <button className={activeTab === "Massages" ? "tab active" : "tab"} onClick={() => setActiveTab("Massages")}>Massages</button>
           <button className={activeTab === "Read" ? "tab active" : "tab"} onClick={() => setActiveTab("Read")}>Read</button>
         </div>
-        <div className="profile">
-          <img src="/images/profile.png" alt="Profile" />
-        </div>
+         <div className="profile">
+            <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
+          </div>
       </header>
 
       <div className="message-grid">

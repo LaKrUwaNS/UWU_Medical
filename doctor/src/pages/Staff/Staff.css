@@ -1,0 +1,80 @@
+.directory-container {
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  max-width: 900px;
+  margin: auto;
+  background-color: #fff;
+}
+
+.directory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.directory-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.directory-header p {
+  margin: 0;
+  font-size: 14px;
+  color: #777;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.summary-box {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  gap: 20px;
+}
+
+.count-box {
+  background-color: #e8f5e9;
+  border: 2px solid #4caf50;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  border-radius: 8px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.staff-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.staff-table th {
+  background-color: #d0f0c0;
+  padding: 10px;
+  text-align: left;
+}
+
+.staff-table td {
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}

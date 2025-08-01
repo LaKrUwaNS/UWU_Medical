@@ -1,107 +1,190 @@
+/* Modern White Sidebar - Fit to Page */
 .Sidebar {
-  background: #fff;
-  width: 275px;
+  background: #ffffff;
+  width: 280px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  border-right: 2px solid #ccc;
-  transition: width 0.3s ease;
+  border-right: 1px solid #e5e7eb;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 10;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .Sidebar.collapsed {
-  width: 80px;
+  width: 72px;
 }
 
-/* Header Section */
+/* Header Section - Compact */
 .header {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 15px 0;
-  gap: 5px;
+  padding: 20px 0 16px 0;
+  gap: 12px;
+  position: relative;
+  background: #ffffff;
+  border-bottom: 1px solid #f3f4f6;
+  flex-shrink: 0;
 }
 
 .slideBar-logo {
-  position: relative;
-  height: 60px;
-  top: 30px;
-  right: 5em;
-  
- 
-}
-.Sidebar.collapsed .slideBar-logo {
-  left: 0.2em;
-  
+  height: 40px;
+  width: 40px;
+  border-radius: 10px;
+  padding: 6px;
+  background: #4f46e5;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+  transition: all 0.3s ease;
+  object-fit: contain;
 }
 
-/* Medical Center Text */
+.Sidebar.collapsed .slideBar-logo {
+  margin: 0 auto;
+}
+
+.slideBar-logo:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* Medical Center Text - Compact */
 .medical-center {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #000;
+  color: #1f2937;
   text-align: center;
   white-space: nowrap;
-  position: relative;
-  left: 20px;
-  top: -28px;
- 
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  letter-spacing: -0.3px;
 }
 
-/* Menu Section */
+/* Menu Section - Optimized Height */
 .menu-section {
   flex: 1;
-  padding: 10px 0;
+  padding: 12px 0 8px 0;
   position: relative;
- 
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-section::-webkit-scrollbar {
+  display: none;
+}
+
+.menu-group {
+  flex-shrink: 0;
 }
 
 .menu-title {
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 600;
-  color: #777;
+  color: #9ca3af;
   text-transform: uppercase;
-  padding: 8px 20px;
+  padding: 12px 24px 4px;
+  letter-spacing: 0.8px;
+  margin-bottom: 2px;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 10px 20px;
+  padding: 10px 24px;
+  margin: 2px 16px;
   text-decoration: none;
-  color: #333;
-  transition: background 0.3s ease;
+  color: #6b7280;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  font-weight: 500;
+  font-size: 14px;
+  min-height: 40px;
 }
 
 .menu-item:hover {
-  background: #f0f0f0;
+  background: #f8fafc;
+  color: #374151;
+  transform: translateX(2px);
+}
+
+.menu-item.active {
+  background: #f0f7ff;
+  color: #4f46e5;
+  border-left: 3px solid #4f46e5;
+  margin-left: 13px;
+  padding-left: 21px;
 }
 
 .iconimg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.menu-item:hover .iconimg {
+  transform: scale(1.05);
 }
 
 .text {
-  margin-left: 15px;
+  margin-left: 14px;
   font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .Sidebar.collapsed .text {
-  display: none;
+  opacity: 0;
+  transform: translateX(-10px);
+  pointer-events: none;
 }
 
-.bottom-section {
+.Sidebar.collapsed .menu-item {
+  justify-content: center;
+  margin: 2px 8px;
   padding: 10px;
+}
+
+.Sidebar.collapsed .menu-title {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Active indicator for collapsed state */
+.active-indicator {
+  position: absolute;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  background: #4f46e5;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+/* Bottom Section - Compact */
+.bottom-section {
+  padding: 16px 20px;
   display: flex;
   justify-content: flex-end;
-  position: relative;
-  
+  background: #ffffff;
+  border-top: 1px solid #f3f4f6;
+  flex-shrink: 0;
 }
 
 .Sidebar.collapsed .bottom-section {
@@ -109,12 +192,153 @@
 }
 
 .toggle-btn {
-  background: none;
-  border: none;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-btn:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-icon {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
+.Sidebar.collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .Sidebar {
+    width: 100%;
+    transform: translateX(-100%);
+  }
+  
+  .Sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .Sidebar.collapsed {
+    width: 100%;
+    transform: translateX(-100%);
+  }
+}
+
+/* Height optimization for smaller screens */
+@media (max-height: 700px) {
+  .header {
+    padding: 16px 0 12px 0;
+  }
+  
+  .medical-center {
+    font-size: 14px;
+    bottom: -20px;
+  }
+  
+  .menu-item {
+    padding: 8px 24px;
+    min-height: 36px;
+  }
+  
+  .menu-title {
+    padding: 8px 24px 2px;
+  }
+  
+  .bottom-section {
+    padding: 12px 20px;
+  }
+}
+
+@media (max-height: 600px) {
+  .header {
+    padding: 12px 0 8px 0;
+  }
+  
+  .slideBar-logo {
+    height: 36px;
+    width: 36px;
+  }
+  
+  .medical-center {
+    font-size: 13px;
+    bottom: -18px;
+  }
+  
+  .menu-item {
+    padding: 6px 24px;
+    min-height: 32px;
+  }
+  
+  .menu-title {
+    padding: 6px 24px 2px;
+    font-size: 9px;
+  }
+  
+  .iconimg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .text {
+    font-size: 13px;
+    margin-left: 12px;
+  }
+}
+
+/* Accessibility improvements */
+.menu-item:focus {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+.toggle-btn:focus {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* Clean entrance animation */
+.Sidebar.mounted {
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Subtle menu item animations */
+.menu-item {
+  animation: fadeIn 0.3s ease backwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
