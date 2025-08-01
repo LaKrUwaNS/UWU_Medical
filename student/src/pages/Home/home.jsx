@@ -3,23 +3,23 @@ import './home.css';
 import images from "../../assets/Image";
 
 
-function Home(){
-    return(
-       
+function Home() {
+    return (
+
         <div className="home-wrapper" >
 
             <div className="bg-overlay"
-            style={{ backgroundImage: `url(${images.home})` }}>
+                style={{ backgroundImage: `url(${images.home})` }}>
             </div>
 
             <div className="header">
-                <img className="logo-img"src={images.logo} alt="logo" />
+                <img className="logo-img" src={images.logo} alt="logo" />
                 <button className="login-btn">Doctor Login</button>
             </div>
 
             <div className="content">
                 <h1 className="main-title">
-                     your <span className="highlight">Health</span> Over Missition<br />
+                    your <span className="highlight">Health</span> Over Missition<br />
                     University Medical Center
 
                 </h1>
@@ -37,12 +37,12 @@ function Home(){
 
             </div>
 
-            <img className='smilingDocs'src={images.SmilingDoctors} alt="doctors" />
+            <img className='smilingDocs' src={images.SmilingDoctors} alt="doctors" />
 
-           
+
 
         </div>
-        
+
     );
 }
 

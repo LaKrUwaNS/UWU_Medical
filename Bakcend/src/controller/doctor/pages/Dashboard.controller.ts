@@ -1,139 +1,128 @@
 import { Request, Response } from "express";
-import { AuthenticatedRequest } from "../../../middleware/CheckLogin/isDotorlogin";
+import { AuthenticatedRequest } from "../../../middleware/CheckLogin/isDotorlogin"; // confirm filename typo
 import { Prescription } from "../../../models/prescription.model";
 import { TryCatch } from "../../../utils/Error/ErrorHandler";
 import { Staff } from "../../../models/Staff.model";
 import { MedicalRequest } from "../../../models/MedicalRequest.model";
 import Student from "../../../models/Student.model";
-import { DayDate } from "../../../models/DayData.model";
 import { sendResponse } from "../../../utils/response";
 
-// Type for populated medical request
-interface PopulatedMedicalRequest {
-    studentId: {
-        name: string;
-        indexNumber: string;
-        photo?: string;
-    };
-    schedule: Date;
-    status: string;
+// Interface for populated student
+interface PopulatedStudent {
+    _id: string;
+    name: string;
+    indexNumber: string;
+    degree?: string;
+    department?: string;
+    photo?: string;
+    isVerified?: boolean;
 }
 
 export const getDashBoard = TryCatch(async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const doctor = req.user;
-
-    // === Student List Data ===
-    const studentList = await Student.find(/*{ isVerified: true }*/)
-        .select('name department indexNumber photo')
+    /** =========================
+     * 1. RECENT STUDENTS
+     * ========================= */
+    const recentStudents = await Student.find()
+        .select("_id name degree indexNumber photo")
         .limit(4)
         .lean();
 
-    const formattedStudentList = studentList.map(student => ({
+    const formattedStudentList = recentStudents.map(student => ({
+        id: student._id,
         name: student.name,
         department: student.degree,
         emn: student.indexNumber,
-        image: student.photo || '/images/default.jpg'
+        image: student.photo || "/images/default.jpg"
     }));
 
-    // === Dashboard Stats ===
-    const totalStudents = await Student.countDocuments({ isVerified: true });
-    const totalStaff = await Staff.countDocuments({ isVerified: true });
-    const absentStaff = await Staff.countDocuments({
-        isVerified: true,
-        isAvailable: false,
-        reason: 'absent'
-    });
-    const staffOnLeave = await Staff.countDocuments({
-        isVerified: true,
-        isAvailable: false,
-        reason: { $in: ['annual leave', 'sick leave', 'personal leave'] }
-    });
-    const pendingMedicalRequests = await MedicalRequest.countDocuments({ status: 'pending' });
-
-    // Get next medical appointment
-    const nextAppointment = await MedicalRequest.findOne({
-        status: 'approved',
-        schedule: { $gte: new Date() }
-    })
-        .populate('studentId', 'name indexNumber photo')
-        .sort({ schedule: 1 }) as PopulatedMedicalRequest | null;
-
-    const nextMedicalTime = nextAppointment
-        ? nextAppointment.schedule.toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        })
-        : null;
-
-    // === Donut Chart Data (Patient data by department) ===
-    // Get actual patients from prescriptions with date filter and group by department
-    const currentDate = new Date();
-    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59, 999);
-
-    const prescriptionPatients = await Prescription.aggregate([
-        {
-            $match: {
-                createdAt: { $gte: startOfMonth, $lte: endOfMonth }
-            }
-        },
-        {
-            $lookup: {
-                from: 'students',
-                localField: 'studentId',
-                foreignField: '_id',
-                as: 'student'
-            }
-        },
-        {
-            $unwind: '$student'
-        },
-        {
-            $match: {
-                'student.isVerified': true
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    department: '$student.department',
-                    studentId: '$studentId'
-                }
-            }
-        },
-        {
-            $group: {
-                _id: '$_id.department',
-                uniquePatients: { $sum: 1 }
-            }
-        },
-        {
-            $project: {
-                department: '$_id',
-                value: '$uniquePatients',
-                _id: 0
-            }
-        }
+    /** =========================
+     * 2. GENERAL COUNTS
+     * ========================= */
+    const [totalStudents, totalStaff, absentStaff, staffOnLeave, pendingMedicalRequests] = await Promise.all([
+        Student.countDocuments({ isVerified: true }),
+        Staff.countDocuments({ isVerified: true }),
+        Staff.countDocuments({ isVerified: true, isAvailable: false, reason: "absent" }),
+        Staff.countDocuments({ isVerified: true, isAvailable: false, reason: { $in: ["annual leave", "sick leave", "personal leave"] } }),
+        MedicalRequest.countDocuments({ status: "pending" })
     ]);
 
-    // Map department names to abbreviations for the chart
-    const departmentMap: { [key: string]: string } = {
-        'Information Communication': 'ICT',
-        'Engineering Technology': 'ET',
-        'Environmental Technology': 'ENM',
-        'Aquaculture Technology': 'AQT',
-        'BIO system technology': 'BST'
+    /** =========================
+     * 3. NEXT MEDICAL APPOINTMENT (Nearest Future Schedule)
+     * ========================= */
+    const now = new Date();
+
+    const nearestRequest = await MedicalRequest.findOne({
+        status: "approved",
+        schedule: { $gte: now }
+    })
+        .populate<{ studentId: PopulatedStudent }>("studentId", "_id photo indexNumber")
+        .sort({ schedule: 1 })
+        .lean();
+
+    const nextPatient = nearestRequest && nearestRequest.studentId
+        ? {
+            id: nearestRequest.studentId._id,
+            photo: nearestRequest.studentId.photo || "/images/default.jpg",
+            indexNumber: nearestRequest.studentId.indexNumber,
+            schedule: nearestRequest.schedule
+        } : null
+    console.log("nearestRequest:", nearestRequest);
+    console.log("studentId:", nearestRequest?.studentId);
+    console.log("Current time:", now);
+
+
+
+    /** =========================
+     * 4. PATIENT CHART DATA FROM PRESCRIPTIONS
+     * ========================= */
+    const prescriptionPatients = await Prescription.find()
+        .populate<{ studentId: PopulatedStudent }>(
+            "studentId",
+            "_id name degree indexNumber photo isVerified"
+        )
+        .lean();
+
+    const verifiedPatients = prescriptionPatients.filter(p => p.studentId?.isVerified);
+
+    const deptMap = new Map<string, Set<string>>();
+    verifiedPatients.forEach(p => {
+        const rawDegree = p.studentId.degree || "Unknown";
+        const degreeMap: Record<string, string> = {
+            ICT: "Information Communication",
+            BBST: "BIO system technology",
+            BET: "Engineering Technology",
+            CST: "Computer Science and Technology",
+            AQL: "Aquaculture Technology"
+        };
+        const key = Object.keys(degreeMap).find(k =>
+            k.toLowerCase() === rawDegree.toLowerCase() ||
+            degreeMap[k].toLowerCase() === rawDegree.toLowerCase()
+        );
+        const normalizedDegree = key ? degreeMap[key] : rawDegree;
+
+        if (!deptMap.has(normalizedDegree)) deptMap.set(normalizedDegree, new Set());
+        deptMap.get(normalizedDegree)!.add(p.studentId._id.toString());
+    });
+
+    const departmentMap: Record<string, string> = {
+        "Information Communication": "ICT",
+        "Engineering Technology": "BET",
+        "BIO system technology": "BBST",
+        "Aquaculture Technology": "AQL",
+        "Computer Science and Technology": "CST",
+        "Unknown": "Unknown"
     };
 
-    const patientData = prescriptionPatients.map(dept => ({
-        name: departmentMap[dept.department] || dept.department,
-        value: dept.value
+    const patientData = Array.from(deptMap.entries()).map(([dept, students]) => ({
+        name: departmentMap[dept] || dept,
+        value: students.size
     }));
 
-    // === Bar Chart Data (Weekly patient visits) ===
+    /** =========================
+     * 5. WEEKLY PATIENT VISITS
+     * ========================= */
     const weekStart = new Date();
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Start of current week
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
     weekStart.setHours(0, 0, 0, 0);
 
     const weekEnd = new Date(weekStart);
@@ -141,72 +130,50 @@ export const getDashBoard = TryCatch(async (req: AuthenticatedRequest, res: Resp
     weekEnd.setHours(23, 59, 59, 999);
 
     const weeklyVisits = await MedicalRequest.aggregate([
-        {
-            $match: {
-                createdAt: { $gte: weekStart, $lte: weekEnd },
-                status: { $in: ['approved', 'pending'] }
-            }
-        },
-        {
-            $group: {
-                _id: { $dayOfWeek: "$createdAt" },
-                count: { $sum: 1 }
-            }
-        },
-        {
-            $project: {
-                dayNumber: "$_id",
-                patients: "$count",
-                _id: 0
-            }
-        }
+        { $match: { createdAt: { $gte: weekStart, $lte: weekEnd } } },
+        { $group: { _id: { $dayOfWeek: "$createdAt" }, count: { $sum: 1 } } },
+        { $project: { dayNumber: "$_id", patients: "$count", _id: 0 } }
     ]);
 
-    // Map day numbers to day names (MongoDB $dayOfWeek: 1=Sunday, 2=Monday, etc.)
-    const dayMap = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const weeklyData = Array.from({ length: 7 }, (_, i) => {
-        // Reorder to start with Monday (i=0 -> Monday, i=6 -> Sunday)
-        const dayIndex = (i + 1) % 7; // 0->1(Mon), 1->2(Tue), ..., 6->0(Sun)
-        const mongoDay = dayIndex === 0 ? 1 : dayIndex + 1; // Convert to MongoDB numbering
+        const dayIndex = (i + 1) % 7;
+        const mongoDay = dayIndex === 0 ? 1 : dayIndex + 1;
         const dayData = weeklyVisits.find(d => d.dayNumber === mongoDay);
-        return {
-            day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-            patients: dayData ? dayData.patients : 0
-        };
+        return { day: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i], patients: dayData ? dayData.patients : 0 };
     });
 
-    // Calculate student increase (compare with last month)
+    /** =========================
+     * 6. STUDENT INCREASE STATISTICS
+     * ========================= */
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
+    lastMonth.setHours(0, 0, 0, 0);
+
     const studentsLastMonth = await Student.countDocuments({
         isVerified: true,
-        createdAt: { $lt: lastMonth }
+        createdAt: { $gte: lastMonth }
     });
-    const studentIncrease = totalStudents - studentsLastMonth;
 
+    const studentIncrease = studentsLastMonth;
+
+    /** =========================
+     * 7. FINAL RESPONSE
+     * ========================= */
     const dashboardStats = {
         studentCount: totalStudents,
-        studentIncrease: Math.max(0, studentIncrease),
+        studentIncrease,
         staffCount: totalStaff,
         staffAbsent: absentStaff,
         staffLeave: staffOnLeave,
         medicalRequests: pendingMedicalRequests,
-        nextMedicalTime: nextMedicalTime || "No appointments"
+        nextMedicalTime: nextPatient?.schedule || "No appointments"
     };
 
-    const nextPatient = nextAppointment ? {
-        name: nextAppointment.studentId.name,
-        id: nextAppointment.studentId.indexNumber,
-        imageUrl: nextAppointment.studentId.photo || '/images/default.jpg'
-    } : null;
-
-    const dashboardData = {
+    sendResponse(res, 200, true, "Dashboard data retrieved successfully", {
         studentList: formattedStudentList,
-        patientData: patientData,
-        weeklyData: weeklyData,
-        nextPatient: nextPatient,
-        dashboardStats: dashboardStats
-    };
-
-    sendResponse(res, 200, true, "Dashboard data retrieved successfully", dashboardData);
+        patientData,
+        weeklyData,
+        nextPatient,
+        dashboardStats
+    });
 });

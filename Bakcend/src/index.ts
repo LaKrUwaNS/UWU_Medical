@@ -5,7 +5,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import cors from 'cors'; 
+import cors from 'cors';
 import dotenv from 'dotenv';
 
 import mongoConnect from './config/mongoDB';
@@ -41,7 +41,7 @@ const server = express();
 server.use(morgan('dev'));
 server.use(helmet());
 server.use(cors({
-    origin: 'http://localhost:5173',
+    origin: true,
     credentials: true
 }));
 server.use(express.json());
