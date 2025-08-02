@@ -10,8 +10,8 @@ import { getDashBoard } from "../controller/doctor/pages/Dashboard.controller";
 import { ProfilePhotoupload } from "../controller/doctor/Auth.controller";
 import { upload } from "../config/Multer";
 import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
-import { createPrescription, getStudentMedicalProfile, getStudentPrescriptions, updatePrescriptionStatus } from "../controller/doctor/pages/StudentsDate.controller";
 import { deleteMedicine, getMedicineList, addNewMedicine, updateMedicine } from "../controller/doctor/pages/Medicine.controller";
+import { createPrescription, getStudentMedicalProfile, getStudentPrescriptions, updatePrescriptionStatus } from "../controller/doctor/pages/StudentsDate.controller";
 
 const DoctorRouter = Router();
 
@@ -52,17 +52,28 @@ DoctorRouter.get("/dashboard", isDoctorLogin, getDashBoard); //localhost:5000/do
 DoctorRouter.post("/profile-photo-upload", isDoctorLogin, upload.single("image"), ProfilePhotoupload); //localhost:5000/doctor/profile-photo-upload
 
 
+// ==========================
 // Student Data Page Routers
+// ==========================
 
-// !Doctor Students Date
-DoctorRouter.get("/students-date/:id", isDoctorLogin, getStudentMedicalProfile); //localhost:5000/doctor/students-date/:id
-// !Doctor Adding New Prescription
-DoctorRouter.post("/adding-new-prescription", isDoctorLogin, getStudentPrescriptions); //localhost:5000/doctor/adding-new-prescription
-// !Doctor Sending Medicine Data
-DoctorRouter.post("/sending-medicine-data/:id", isDoctorLogin, createPrescription); //localhost:5000/doctor/sending-medicine-data/:id
-// !Doctor Update Prescription Status
-DoctorRouter.patch("/update-prescription-status/:id", isDoctorLogin, updatePrescriptionStatus); //localhost:5000/doctor/update-prescription-status/:id
+// !Get complete student medical profile
+// Example: GET localhost:5000/doctor/student/64ff7f8bfc13ae37c6000001
+DoctorRouter.get("/student/:id", isDoctorLogin, getStudentMedicalProfile);
 
+// !Get all prescriptions for a student with pagination
+// Example: GET localhost:5000/doctor/student/prescriptions/:id
+DoctorRouter.get("/student/prescriptions/:id", isDoctorLogin, getStudentPrescriptions);
+
+// !Create new prescription for student (indexNumber comes from request body, not params)
+// Example: POST localhost:5000/doctor/student/prescriptions
+DoctorRouter.post("/student/prescriptions", isDoctorLogin, createPrescription);
+
+// !Update prescription status
+// Example: PATCH localhost:5000/doctor/student/prescriptions/:id/status
+DoctorRouter.patch("/student/prescriptions/:id/status", isDoctorLogin, updatePrescriptionStatus);
+
+//!Get Medicine Data
+DoctorRouter.get("/medicine", isDoctorLogin, getMedicineList);   // localhost:5000/doctor/medicine
 
 
 // Medicine Page Routers
