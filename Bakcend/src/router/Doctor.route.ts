@@ -47,7 +47,7 @@ DoctorRouter.get("/check-login", CheckIsDoctorLoggedIn) //localhost:5000/doctor/
 // Page Routers Need to Login user to process
 
 // !Doctor Dashboard
-DoctorRouter.get("/dashboard", isDoctorLogin, getDashBoard); //localhost:5000/doctor/dashboard
+DoctorRouter.get("/dashboard", getDashBoard); //localhost:5000/doctor/dashboard
 // !Doctor Profile Photo Upload
 DoctorRouter.post("/profile-photo-upload", isDoctorLogin, upload.single("image"), ProfilePhotoupload); //localhost:5000/doctor/profile-photo-upload
 
