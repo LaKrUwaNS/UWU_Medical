@@ -190,15 +190,17 @@
   border: 2px solid transparent;
 }
 
-.save-btn.secondary {
+.save-btn.cancel {
   background: white;
-  color: #6c757d;
-  border-color: #dee2e6;
+  color: #dc3545;
+  border-color: #dc3545;
 }
 
-.save-btn.secondary:hover {
-  background: #f8f9fa;
-  border-color: #adb5bd;
+.save-btn.cancel:hover {
+  background: #dc3545;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
 
 .save-btn.primary {

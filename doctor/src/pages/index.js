@@ -9,6 +9,7 @@ import Reports from './protected/Reports/Reports';
 import StudentData from './protected/StudentsData/StudentsData.jsx';
 import Updates from './protected/Updates/Updates';
 import Staff from './protected/Staff/Staff.jsx';
+import Home from './Home/Home';
 
 
 export {
@@ -22,5 +23,6 @@ export {
     Reports,
     StudentData,
     Updates,
-    Staff
+    Staff,
+    Home
 };

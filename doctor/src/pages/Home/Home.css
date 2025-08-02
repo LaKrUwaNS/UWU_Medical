@@ -1,0 +1,166 @@
+.home-wrapper {
+ position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+.bg-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(80%);
+  z-index: 1;
+}
+.home-header{
+   position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+}
+.logo-img{
+  height: 70px;
+}
+.login-btn{
+ color: white;
+  font-weight: bold;
+  width: 133px;
+  height: 41px;
+  background: rgba(0, 199, 0, 0.70);
+  border-radius: 20px;
+  border:rgba(16, 41, 16, 0.36); 
+  cursor: pointer;
+
+
+
+}
+.content{
+  position: relative;
+  z-index: 2;
+  max-width: 60%;
+  margin-top: 50px;
+  padding: 0 40px;
+}
+.main-title{
+  font-family: Inter;
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 100%;
+  letter-spacing: 0%;
+
+}
+.highlight{
+  color: rgba(5, 255, 5, 1);
+
+  
+}
+.description{
+  position: relative;
+  font-weight: 570;
+  margin-top: 25px;
+  font-size: 1rem;
+  line-height: 1.6;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 15px;
+  border-radius: 8px;
+   max-width: 80%;
+   margin-left: 30px;
+}
+.enter-btn{
+  position: relative;
+  font-size: large;
+  margin-top: 10px;
+  width: 165px;
+  height: 38px;
+  border-radius: 20px;
+  background: rgba(0, 199, 0, 1);
+  color: rgb(243, 236, 236);
+  font-weight: bold;
+  border: none;
+  margin-left: 210px;
+  cursor: pointer;
+
+}
+.smilingDocs{
+  position: absolute;
+  bottom: 0;
+  right: 70px;
+  height: 500px;
+  z-index: 2;
+  pointer-events: none;
+}
+.mobile-description{
+  display: none;
+
+}
+@media screen and (max-width: 768px) {
+  .login-btn {
+    display: none;
+  }
+
+  .content {
+    max-width: 90%;
+    margin-left: 10px;
+  }
+
+  .description {
+   display: none;
+  }
+
+  .enter-btn {
+    margin-left: 50px;
+  }
+
+  .main-title {
+    font-size: 32px;
+    line-height: 1.2;
+    max-width: 100%;
+    position: relative;
+    top: -10px;
+    text-align: center;
+  }
+
+  .smilingDocs {
+    height: 250px;
+    right: 10px;
+    position: relative;
+    bottom: 26em;
+    margin-left: 6em;
+  }
+
+  .logo-img {
+    height: 90px;
+    position: relative;
+    margin-left: 7em;
+  }
+  .mobile-description{
+    display: block;
+    position: relative;
+    font-weight: 570;
+    margin-top: 16.7em;
+    font-size: 1rem;
+    line-height: 1.6;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    max-width: 100%;
+    padding: 15px;
+    text-align: center;
+      
+
+    
+
+    
+
+
+  }
+
+}
+

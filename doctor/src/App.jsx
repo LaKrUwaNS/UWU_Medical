@@ -10,10 +10,12 @@ import {
   Settings,
   StudentData,
   Updates,
-  Staff 
+  Staff,
+  
   
 } from "./pages";
 import Register from "./pages/Register/Register";
+
 import Layout from "./pages/protected/layout";
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
@@ -25,6 +27,7 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes */}
+        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
