@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import './Settings.css';
 
 const Settings = () => {
-  const [profileData, setProfileData] = useState({
-    name: 'Lakruwan saraka rishashanka',
+  const initialProfileData = {
+    name: '',
     gender: '',
     dateOfBirth: '',
     mobileNumber: '',
     email: ''
-  });
+  };
 
+  const [profileData, setProfileData] = useState(initialProfileData);
   const [profileImage, setProfileImage] = useState(null);
 
   const handleInputChange = (e) => {
@@ -31,14 +32,20 @@ const Settings = () => {
     }
   };
 
+  const handleRemovePhoto = () => {
+    setProfileImage(null);
+  };
+
   const handleSaveChanges = () => {
     console.log('Saving changes:', profileData);
     alert('Changes saved successfully!');
   };
 
-  const handleSaveChangesPrimary = () => {
-    console.log('Saving changes (primary):', profileData);
-    alert('Changes saved successfully!');
+  const handleCancel = () => {
+    setProfileData(initialProfileData);
+    setProfileImage(null);
+    console.log('All data cleared');
+    alert('All changes have been cancelled and data cleared!');
   };
 
   return (
@@ -74,7 +81,9 @@ const Settings = () => {
                   onChange={handleImageUpload}
                   style={{ display: 'none' }}
                 />
-                <button className="remove-btn">Remove Photo</button>
+                <button className="remove-btn" onClick={handleRemovePhoto}>
+                  Remove Photo
+                </button>
               </div>
             </div>
           </div>
@@ -90,6 +99,7 @@ const Settings = () => {
                 value={profileData.name}
                 onChange={handleInputChange}
                 className="form-input"
+                placeholder="Enter your name"
               />
             </div>
 
@@ -145,14 +155,14 @@ const Settings = () => {
 
             <div className="button-group">
               <button 
-                className="save-btn secondary"
-                onClick={handleSaveChanges}
+                className="save-btn cancel"
+                onClick={handleCancel}
               >
-                Save Changes
+                Cancel
               </button>
               <button 
                 className="save-btn primary"
-                onClick={handleSaveChangesPrimary}
+                onClick={handleSaveChanges}
               >
                 Save Changes
               </button>

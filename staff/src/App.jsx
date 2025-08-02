@@ -1,11 +1,12 @@
 import './App.css'
-import DoctorLogin from './assets/pages/test'
+import MedicalReports from './Pages/MedicalReports/MedicalReports';
 
 function App() {
 
   return (
     <>
-      <DoctorLogin />
+    <MedicalReports/>
+      
     </>
   )
 }
