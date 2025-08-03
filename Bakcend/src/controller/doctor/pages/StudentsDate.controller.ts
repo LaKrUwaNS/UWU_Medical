@@ -10,7 +10,7 @@ import { Inventory } from "../../../models/Inventory.model";
 import { SortOrder } from "mongoose";
 
 /**
- * @description Get complete medical profile of a student including prescriptions and medical requests
+ * !@description Get complete medical profile of a student including prescriptions and medical requests
  * @route GET /api/medical/student/:id
  * @access Doctor
  */
@@ -42,7 +42,7 @@ export const getStudentMedicalProfile = TryCatch(async (req: AuthenticatedReques
 });
 
 /**
- * @description Get all prescriptions for a student with pagination
+ * !@description Get all prescriptions for a student with pagination
  * @route GET /api/medical/student/prescriptions/:id
  * @access Doctor
  */
@@ -88,7 +88,7 @@ export const getStudentPrescriptions = TryCatch(async (req: AuthenticatedRequest
 });
 
 /**
- * @description Create a new prescription for a student
+ * !@description Create a new prescription for a student
  * @route POST /api/medical/prescriptions
  * @access Doctor
  */
@@ -179,7 +179,7 @@ export const createPrescription = TryCatch(async (req: AuthenticatedRequest, res
 
 
 /**
- * @description Update prescription status
+ * !@description Update prescription status
  * @route PATCH /api/medical/prescriptions/:id/status
  * @access Doctor
  */

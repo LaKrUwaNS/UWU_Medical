@@ -5,13 +5,13 @@ import { otpVerificationSchema } from "../middleware/validate.middleware";
 import { loginSchema } from "../middleware/validate.middleware";
 import { forgotPasswordSchema } from "../middleware/validate.middleware";
 import { resetPasswordSchema } from "../middleware/validate.middleware";
-
 import { getDashBoard } from "../controller/doctor/pages/Dashboard.controller";
 import { ProfilePhotoupload } from "../controller/doctor/Auth.controller";
 import { upload } from "../config/Multer";
-import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
+//import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
 import { deleteMedicine, getMedicineList, addNewMedicine, updateMedicine } from "../controller/doctor/pages/Medicine.controller";
 import { createPrescription, getStudentMedicalProfile, getStudentPrescriptions, updatePrescriptionStatus } from "../controller/doctor/pages/StudentsDate.controller";
+import { ChangeMedicalRequestStatus, GetMedicalRequests } from "../controller/doctor/pages/MedicalRequests.controller";
 
 const DoctorRouter = Router();
 
@@ -25,8 +25,6 @@ DoctorRouter.post('/test-multer', upload.single("image"), TestMulter);   // loca
 // !Doctor Register
 DoctorRouter.post("/register", validateMiddleware(RegisterDoctorZodSchema), RegisterDoctor);      //localhost:5000/doctor/register
 DoctorRouter.post("/verify-otp", validateMiddleware(otpVerificationSchema), VerifyRegisterOTP); //localhost:5000/doctor/verify-otp
-
-
 // !Doctor Login
 DoctorRouter.post("/login", validateMiddleware(loginSchema), DoctorLogging); //localhost:5000/doctor/login
 
@@ -43,56 +41,64 @@ DoctorRouter.post("/logout", Logout); //localhost:5000/doctor/logout
 DoctorRouter.get("/check-login", CheckIsDoctorLoggedIn) //localhost:5000/doctor/check-login
 
 
-
+// ==========================
+// Dashboard Page Routers
+// ==========================
 // Page Routers Need to Login user to process
 
 // !Doctor Dashboard
 DoctorRouter.get("/dashboard", getDashBoard); //localhost:5000/doctor/dashboard
 // !Doctor Profile Photo Upload
-DoctorRouter.post("/profile-photo-upload", isDoctorLogin, upload.single("image"), ProfilePhotoupload); //localhost:5000/doctor/profile-photo-upload
+DoctorRouter.post("/profile-photo-upload", upload.single("image"), ProfilePhotoupload); //localhost:5000/doctor/profile-photo-upload
+
+
 
 
 // ==========================
 // Student Data Page Routers
 // ==========================
-
 // !Get complete student medical profile
 // Example: GET localhost:5000/doctor/student/64ff7f8bfc13ae37c6000001
-DoctorRouter.get("/student/:id", isDoctorLogin, getStudentMedicalProfile);
+DoctorRouter.get("/student/:id", getStudentMedicalProfile);
 
 // !Get all prescriptions for a student with pagination
 // Example: GET localhost:5000/doctor/student/prescriptions/:id
-DoctorRouter.get("/student/prescriptions/:id", isDoctorLogin, getStudentPrescriptions);
+DoctorRouter.get("/student/prescriptions/:id", getStudentPrescriptions);
 
 // !Create new prescription for student (indexNumber comes from request body, not params)
 // Example: POST localhost:5000/doctor/student/prescriptions
-DoctorRouter.post("/student/prescriptions", isDoctorLogin, createPrescription);
+DoctorRouter.post("/student/prescriptions", createPrescription);
 
 // !Update prescription status
 // Example: PATCH localhost:5000/doctor/student/prescriptions/:id/status
-DoctorRouter.patch("/student/prescriptions/:id/status", isDoctorLogin, updatePrescriptionStatus);
+DoctorRouter.patch("/student/prescriptions/:id/status", updatePrescriptionStatus);
 
 //!Get Medicine Data
-DoctorRouter.get("/medicine", isDoctorLogin, getMedicineList);   // localhost:5000/doctor/medicine
+DoctorRouter.get("/medicine", getMedicineList);   // localhost:5000/doctor/medicine
 
 
+
+// ==========================
+// Student Data Page Routers
+// ==========================
 // Medicine Page Routers
-
 // !Doctor Medicine List
-DoctorRouter.get("/medicine-list", isDoctorLogin, getMedicineList); //localhost:5000/doctor/medicine-list
+DoctorRouter.get("/medicine-list", getMedicineList); //localhost:5000/doctor/medicine-list
 // !Doctor Adding New Medicine
-DoctorRouter.post("/adding-new-medicine", isDoctorLogin, addNewMedicine); //localhost:5000/doctor/adding-new-medicine
+DoctorRouter.post("/adding-new-medicine", addNewMedicine); //localhost:5000/doctor/adding-new-medicine
 // !Doctor Updating Medicine
-DoctorRouter.put("/updating-medicine/:id", isDoctorLogin, updateMedicine); //localhost:5000/doctor/updating-medicine/:id
+DoctorRouter.put("/updating-medicine/:id", updateMedicine); //localhost:5000/doctor/updating-medicine/:id
 // !Doctor Deleting Medicine
-DoctorRouter.delete("/deleting-medicine/:id", isDoctorLogin, deleteMedicine); //localhost:5000/doctor/deleting-medicine/:id
+DoctorRouter.delete("/deleting-medicine/:id", deleteMedicine); //localhost:5000/doctor/deleting-medicine/:id
 
 
 
-
-
-
-
+// ==========================
+// Medical Request Page Routers
+// ==========================
+// !Get Medical Requests
+DoctorRouter.get("/medical-requests", GetMedicalRequests); //localhost:5000/doctor/medical-requests
+DoctorRouter.patch("/medical-requests/:id/status", ChangeMedicalRequestStatus); //localhost:5000/doctor/medical-requests/:id/status
 
 
 

@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import './Dashboard.css';
 import images from "../../../assets/images";
+import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
+
 
 // Components
 import UserProfile from '../../../components/UserProfile/UseraProfile';
@@ -10,69 +12,51 @@ import DonutChart from '../../../components/DonutChart/DonutChart';
 import AttendancebarChart from '../../../components/BarChart/Barchart';
 
 const Dashboard = () => {
-  // === Student List Data ===
-  const studentList = [
-    {
-      name: 'Nirmal',
-      department: 'Information Communication',
-      emn: 'BBST/22/XX',
-      image: '/images/nirmal.jpg',
-    },
-    {
-      name: 'Prasaa',
-      department: 'BIO system technology',
-      emn: 'BBST/22/XX',
-      image: '/images/prasaa.jpg',
-    },
-    {
-      name: 'Ashen',
-      department: 'Information Communication',
-      emn: 'BBST/22/XX',
-      image: '/images/ashen.jpg',
-    },
-    {
-      name: 'Kavindu',
-      department: 'Engineering Technology',
-      emn: 'BBST/22/XX',
-      image: '/images/kavindu.jpg',
-    },
-  ];
+  const [studentList, setStudentList] = useState([]);
+  const [patientData, setPatientData] = useState([]);
+  const [weeklyData, setWeeklyData] = useState([]);
+  const [nextPatient, setNextPatient] = useState(null);
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // === Donut Chart Data ===
-  const patientData = [
-    { name: 'ICT', value: 5 },
-    { name: 'ET', value: 4 },
-    { name: 'ENM', value: 6 },
-    { name: 'AQT', value: 3 },
-  ];
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/doctor/dashboard", {
+          method: "GET"
 
-  // === Bar Chart Data ===
-  const weeklyData = [
-    { day: 'Mon', patients: 1 },
-    { day: 'Tue', patients: 4 },
-    { day: 'Wed', patients: 3 },
-    { day: 'Thu', patients: 6 },
-    { day: 'Fri', patients: 7 },
-    { day: 'Sat', patients: 1 },
-    { day: 'Sun', patients: 0 },
-  ];
+        });
 
-  // === Next Patient Info ===
-  const nextPatient = {
-    name: "Lakruwan Sharaka",
-    id: "UWU/ICT/22/XX",
-    imageUrl: images.lakruwan,
-  };
-  const dashboardStats = {
-        studentCount: 20,
-        studentIncrease: 5,
-        staffCount: 2,
-        staffAbsent: 1,
-        staffLeave: 2,
-        medicalRequests: 5,
-        nextMedicalTime: "13.30"
-};
+        const result = await response.json();
 
+
+        if (result.success) {
+          const data = result.data;
+          setStudentList(data.studentList);
+          setPatientData(data.patientData);
+          setWeeklyData(data.weeklyData);
+          setNextPatient(data.nextPatient);
+          setDashboardStats(data.dashboardStats);
+        } else {
+          console.error("Failed to fetch:", result.message);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return <Loadinganimate />;
+  }
+
+  if (!dashboardStats) {
+    return <div className="error">Failed to load dashboard data</div>;
+  }
 
   return (
     <div className="dashboard">
@@ -94,7 +78,7 @@ const Dashboard = () => {
           </div>
           <img className="card-img" src={images.studentImage} alt="Student Icon" />
           <div className="count-box">{dashboardStats.studentCount}</div>
-          <p className="increase">+{dashboardStats.studentIncrease} students more than last day</p>
+          <p className="increase">+{dashboardStats.studentIncrease} students more than last month</p>
         </div>
 
         <div className="card staff">
@@ -110,19 +94,24 @@ const Dashboard = () => {
             </div>
             <div className="leave-sec">
               <span>Leave</span>
-              <span className="status-circle-leave">{dashboardStats.staffAbsent}</span>
+              <span className="status-circle-leave">{dashboardStats.staffLeave}</span>
             </div>
           </div>
         </div>
 
         <div className="card medical">
           <div className="card-header">
-            <span>Medical request</span>
+            <span>Medical Requests</span>
           </div>
           <img className="card-img" src={images.MedicaReq} alt="Medical Icon" />
           <div className="count-box">{dashboardStats.medicalRequests}</div>
           <p className="next-request">
-            Next medical request at <span className="time">{dashboardStats.nextMedicalTime}</span>
+            Next medical request at{" "}
+            <span className="time">
+              {dashboardStats.nextMedicalTime === "No appointments"
+                ? "No appointments"
+                : new Date(dashboardStats.nextMedicalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
           </p>
         </div>
       </div>
@@ -136,13 +125,17 @@ const Dashboard = () => {
       {/* --- Row: Next Patient + Bar Chart --- */}
       <div className="dashboard-row">
         <div className="next-patient-wrapper">
-          <NextPatientCard
-            name={nextPatient.name}
-            id={nextPatient.id}
-            imageUrl={nextPatient.imageUrl}
-            onProcess={() => alert('Processing...')}
-            onCancel={() => alert('Cancelled')}
-          />
+          {nextPatient ? (
+            <NextPatientCard
+              name={nextPatient.indexNumber}
+              id={nextPatient.id}
+              imageUrl={nextPatient.photo}
+              onProcess={() => alert('Processing...')}
+              onCancel={() => alert('Cancelled')}
+            />
+          ) : (
+            <div className="no-patient">No upcoming medical appointments</div>
+          )}
         </div>
         <div className="BarChart-wrapper">
           <AttendancebarChart attendanceData={weeklyData} />
