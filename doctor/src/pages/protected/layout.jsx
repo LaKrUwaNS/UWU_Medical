@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [doctor, setDoctor] = useState(null);
-
+    // Handle toggle for sidebar collapse
     const handleToggle = () => {
         setIsCollapsed(prev => !prev);
     };
