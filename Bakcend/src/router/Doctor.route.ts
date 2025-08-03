@@ -11,6 +11,7 @@ import { upload } from "../config/Multer";
 //import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
 import { deleteMedicine, getMedicineList, addNewMedicine, updateMedicine } from "../controller/doctor/pages/Medicine.controller";
 import { createPrescription, getStudentMedicalProfile, getStudentPrescriptions, updatePrescriptionStatus } from "../controller/doctor/pages/StudentsDate.controller";
+import { ChangeMedicalRequestStatus, GetMedicalRequests } from "../controller/doctor/pages/MedicalRequests.controller";
 
 const DoctorRouter = Router();
 
@@ -92,10 +93,12 @@ DoctorRouter.delete("/deleting-medicine/:id", deleteMedicine); //localhost:5000/
 
 
 
-
-
-
-
+// ==========================
+// Medical Request Page Routers
+// ==========================
+// !Get Medical Requests
+DoctorRouter.get("/medical-requests", GetMedicalRequests); //localhost:5000/doctor/medical-requests
+DoctorRouter.patch("/medical-requests/:id/status", ChangeMedicalRequestStatus); //localhost:5000/doctor/medical-requests/:id/status
 
 
 

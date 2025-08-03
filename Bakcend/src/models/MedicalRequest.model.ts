@@ -7,6 +7,7 @@ export interface IMedicalRequest extends Document {
     schedule: Date;
     status: "pending" | "approved" | "rejected";
     timeNeeded: string;
+    Report: "Need" | "External" | "havent";
     reason: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -24,6 +25,11 @@ const medicalRequestSchema = new Schema<IMedicalRequest>(
             default: "pending"
         },
         timeNeeded: { type: String, required: true, trim: true },
+        Report: {
+            type: String,
+            enum: ["Need", "External", "havent"],
+            default: "Need"
+        },
         reason: { type: String, required: true, trim: true },
     },
     {
