@@ -118,25 +118,25 @@ const Dashboard = () => {
           </div>
         </div>
 
+        
+
         <div className="card medical">
           <div className="card-header">
-            <span>🏥 Medical Requests</span>
+            <span>Medical Requests</span>
           </div>
           <img className="card-img" src={images.MedicaReq} alt="Medical Icon" />
           <div className="count-box">{dashboardStats.medicalRequests}</div>
           <p className="next-request">
-            ⏰ Next appointment at{" "}
+            Next medical request at{" "}
             <span className="time">
               {dashboardStats.nextMedicalTime === "No appointments"
                 ? "No appointments"
-                : new Date(dashboardStats.nextMedicalTime).toLocaleTimeString([], { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                  })}
+                : new Date(dashboardStats.nextMedicalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           </p>
         </div>
       </div>
+
 
       {/* --- Row: Student Table + Donut Chart --- */}
       <div className="dashboard-row">
