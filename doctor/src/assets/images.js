@@ -15,6 +15,8 @@ import respiratory from '../assets/Updates/respiratory-health.jpg';
 import swimming from '../assets/Updates/Swimming.jpg';
 import cool from '../assets/Updates/want-to-cool.jpg';
 import wildfires from '../assets/Updates/Wildfires.jpg';
+import fixbg from '../assets/Login/bgimg.jpg';
+
 
 
 const images = {
@@ -34,7 +36,8 @@ const images = {
     respiratory,
     swimming,
     cool,
-    wildfires
+    wildfires,
+    fixbg
     
 
 
