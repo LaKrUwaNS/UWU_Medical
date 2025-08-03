@@ -78,8 +78,8 @@ export default function MedicalCenterPortal() {
     },
     mobileMenuButtonHover: {
       backgroundColor: '#f3f4f6',
-      borderColor: '#10b981',
-      color: '#10b981'
+      borderColor: '#2073c2ff',
+      color: '#2073c2ff'
     },
     mainLayout: {
       display: 'flex',
@@ -129,7 +129,7 @@ export default function MedicalCenterPortal() {
     logoIcon: {
       width: '40px',
       height: '40px',
-      background: 'linear-gradient(135deg, #10b981, #059669)',
+      background: 'linear-gradient(135deg, #2073c2ff, #2073c2ff)',
       borderRadius: '8px',
       marginRight: sidebarCollapsed && !isMobile ? '0' : '12px',
       display: 'flex',
@@ -199,14 +199,14 @@ export default function MedicalCenterPortal() {
       position: 'relative'
     },
     navButtonActive: {
-      background: '#10b981',
+      background: '#5aa4e9ff',
       color: 'white',
       boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
       transform: 'scale(1.02)'
     },
     navButtonHover: {
       // backgroundColor: '#f0fdf4',
-      color: '#10b981',
+      color: '#2073c2ff',
       transform: 'scale(1.01)'
     },
     navIcon: {
@@ -253,7 +253,7 @@ export default function MedicalCenterPortal() {
     doctorAvatar: {
       width: sidebarCollapsed && !isMobile ? '32px' : '48px',
       height: sidebarCollapsed && !isMobile ? '32px' : '48px',
-      background: 'linear-gradient(135deg, #10b981, #059669)',
+      background: 'linear-gradient(135deg, #2073c2ff, #2073c2ff)',
       borderRadius: '50%',
       display: 'flex',
       alignItems: 'center',
@@ -272,7 +272,7 @@ export default function MedicalCenterPortal() {
     },
     doctorStatus: {
       fontSize: '12px',
-      color: '#059669',
+      color: '#2073c2ff',
       margin: 0,
       display: 'flex',
       alignItems: 'center'
@@ -280,7 +280,7 @@ export default function MedicalCenterPortal() {
     onlineIndicator: {
       width: '8px',
       height: '8px',
-      backgroundColor: '#10b981',
+      backgroundColor: '#2073c2ff',
       borderRadius: '50%',
       marginRight: '8px',
       animation: 'pulse 2s infinite'
@@ -362,7 +362,7 @@ export default function MedicalCenterPortal() {
     },
     button: {
       width: '100%',
-      backgroundColor: '#10b981',
+      backgroundColor: '#2073c2ff',
       color: 'white',
       padding: '12px',
       borderRadius: '8px',
@@ -373,7 +373,7 @@ export default function MedicalCenterPortal() {
       transition: 'background-color 0.2s, transform 0.1s'
     },
     buttonHover: {
-      backgroundColor: '#059669',
+      backgroundColor: '#2073c2ff',
       transform: 'translateY(-1px)'
     },
 
@@ -438,7 +438,7 @@ export default function MedicalCenterPortal() {
     doctorInfoAvatar: {
       width: '64px',
       height: '64px',
-      backgroundColor: '#10b981',
+      backgroundColor: '#2073c2ff',
       borderRadius: '50%',
       display: 'flex',
       alignItems: 'center',
@@ -505,7 +505,7 @@ export default function MedicalCenterPortal() {
       flexWrap: 'wrap'
     },
     secondaryButton: {
-      backgroundColor: '#059669',
+      backgroundColor: '#2073c2ff',
       color: 'white',
       padding: '8px 16px',
       borderRadius: '8px',
@@ -972,8 +972,8 @@ export default function MedicalCenterPortal() {
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = '#e5e7eb';
-                e.target.style.borderColor = '#10b981';
-                e.target.style.color = '#10b981';
+                e.target.style.borderColor = '#2073c2ff';
+                e.target.style.color = '#2073c2ff';
               }}
               onMouseLeave={(e) => {
                 e.target.style.backgroundColor = '#f3f4f6';
@@ -1016,7 +1016,7 @@ export default function MedicalCenterPortal() {
                       >
                         <Icon 
                           size={18} 
-                          color={isActive ? '#ffffff' : isHovered ? '#10b981' : '#6b7280'} 
+                          color={isActive ? '#ffffff' : isHovered ? '#2073c2ff' : '#6b7280'} 
                           style={styles.navIcon}
                         />
                         <span style={styles.navLabel}>{item.label}</span>
@@ -1053,7 +1053,7 @@ export default function MedicalCenterPortal() {
                       >
                         <Icon 
                           size={18} 
-                          color={isActive ? '#ffffff' : isHovered ? '#10b981' : '#6b7280'} 
+                          color={isActive ? '#ffffff' : isHovered ? '#2073c2ff' : '#6b7280'} 
                           style={styles.navIcon}
                         />
                         <span style={styles.navLabel}>{item.label}</span>
