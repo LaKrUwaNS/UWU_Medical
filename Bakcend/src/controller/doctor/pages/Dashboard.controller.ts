@@ -24,7 +24,6 @@ export const getDashBoard = TryCatch(async (req: AuthenticatedRequest, res: Resp
      * ========================= */
     const recentStudents = await Student.find()
         .select("_id name degree indexNumber photo")
-        .limit(4)
         .lean();
 
     const formattedStudentList = recentStudents.map(student => ({
