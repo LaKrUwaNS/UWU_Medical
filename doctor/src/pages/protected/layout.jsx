@@ -37,7 +37,7 @@ const Layout = ({ children }) => {
         };
 
         checkDoctorLogin(); // Run once immediately
-        const interval = setInterval(checkDoctorLogin, 1200000); // every 20 min
+        const interval = setInterval(checkDoctorLogin, 3600000); // every 60 min
         return () => clearInterval(interval);
     }, []);
 

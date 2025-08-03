@@ -6,6 +6,11 @@ const Home = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
 
+    const DoctorLogin = () => {
+        console.log("Doctor Login Clicked");
+        window.open("http://localhost:5174/login", "_blank");
+    };
+
     useEffect(() => {
         const observerOptions = {
             threshold: 0.1,
@@ -119,7 +124,7 @@ const Home = () => {
                         </div>
 
                         <div className="nav-actions">
-                            <button className="btn-login">
+                            <button className="btn-login" onClick={DoctorLogin}>
                                 <Users className="w-4 h-4" />
                                 <span>Staff Login</span>
                             </button>
@@ -139,7 +144,7 @@ const Home = () => {
                             <a href="#features">Features</a>
                             <a href="#workflow">Workflow</a>
                             <a href="#contact">Contact</a>
-                            <button className="mobile-login">
+                            <button className="mobile-login" onClick={DoctorLogin}>
                                 <Users className="w-4 h-4" />
                                 <span>Staff Login</span>
                             </button>
@@ -152,7 +157,7 @@ const Home = () => {
             <section id="home" className="hero-section">
                 <div className="hero-content">
                     <div className="hero-inner">
-                        
+
 
                         <h1 className="hero-title">
                             Secure <span className="highlight">Document</span><br />
@@ -166,7 +171,7 @@ const Home = () => {
                         </p>
 
                         <div className="hero-buttons">
-                            <button 
+                            <button
                                 className="btn-primary"
                                 onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
                             >
@@ -276,7 +281,7 @@ const Home = () => {
                             <div className="contact-features">
                                 {[
                                     "Free system consultation",
-                                    "Custom integration support", 
+                                    "Custom integration support",
                                     "Comprehensive staff training",
                                     "24/7 technical support"
                                 ].map((feature, index) => (

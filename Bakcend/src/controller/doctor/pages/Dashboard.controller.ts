@@ -42,7 +42,7 @@ export const getDashBoard = TryCatch(async (req: AuthenticatedRequest, res: Resp
         Staff.countDocuments({ isVerified: true }),
         Staff.countDocuments({ isVerified: true, isAvailable: false, reason: "absent" }),
         Staff.countDocuments({ isVerified: true, isAvailable: false, reason: { $in: ["annual leave", "sick leave", "personal leave"] } }),
-        MedicalRequest.countDocuments({ status: "pending" })
+        MedicalRequest.countDocuments({ status: "approved" })
     ]);
 
     /** =========================
