@@ -26,42 +26,36 @@ const upload = multer({ dest: "uploads/" });
 
 const StaffRouter = Router();
 
-// Staff Registration
-StaffRouter.post("/register", validateMiddleware(StaffRegisterSchema), RegisterStaff
-);// POST localhost:5000/staff/register
+// !Staff Registration
+StaffRouter.post("/register", validateMiddleware(StaffRegisterSchema), RegisterStaff);// POST localhost:5000/staff/register
 
 
-// Verify OTP
-StaffRouter.post("/verify-otp", validateMiddleware(StaffVerifyOtpSchema), VerifyStaffRegisterOTP
-);// POST localhost:5000/staff/verify-otp
+// !Verify OTP
+StaffRouter.post("/verify-otp", validateMiddleware(StaffVerifyOtpSchema), VerifyStaffRegisterOTP);// POST localhost:5000/staff/verify-otp
 
 
-// Login
-StaffRouter.post("/login", validateMiddleware(StaffLoginSchema), StaffLogin
-);// POST localhost:5000/staff/login
+// !Login
+StaffRouter.post("/login", validateMiddleware(StaffLoginSchema), StaffLogin);// POST localhost:5000/staff/login
 
 
-// Forgot Password
-StaffRouter.post("/forgot-password", validateMiddleware(StaffForgotPasswordSchema), StaffForgotPassword
-);// POST localhost:5000/staff/forgot-password
+// !Forgot Password
+StaffRouter.post("/forgot-password", validateMiddleware(StaffForgotPasswordSchema), StaffForgotPassword);// POST localhost:5000/staff/forgot-password
 
 
-// Reset Password
-StaffRouter.post("/reset-password", validateMiddleware(StaffResetPasswordSchema), StaffResetPassword
-);// POST localhost:5000/staff/reset-password
+// !Reset Password
+StaffRouter.post("/reset-password", validateMiddleware(StaffResetPasswordSchema), StaffResetPassword);// POST localhost:5000/staff/reset-password
 
 
-// Logout
+// !Logout
 StaffRouter.post("/logout", StaffLogout);// POST localhost:5000/staff/logout
 
 
-// Check if Logged In
+// !Check if Logged In
 StaffRouter.get("/check-login", CheckIsStaffLoggedIn);// GET localhost:5000/staff/check-login
 
 
-// Upload Staff Profile Photo
-StaffRouter.post("/profile-photo-upload", isStaffLoggedIn, upload.single("image"), UploadStaffPhoto
-);// POST localhost:5000/staff/profile-photo-upload
+// !Upload Staff Profile Photo
+StaffRouter.post("/profile-photo-upload", isStaffLoggedIn, upload.single("image"), UploadStaffPhoto);// POST localhost:5000/staff/profile-photo-upload
 
 
 export default StaffRouter;
