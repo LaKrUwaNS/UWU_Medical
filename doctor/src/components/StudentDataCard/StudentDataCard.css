@@ -2,13 +2,18 @@
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 5px;
+  padding: 15px;
   width: 100%;
-  max-width: 600px;
+  max-width: 100%;
   font-family: 'Segoe UI', sans-serif;
-  height: 100%;
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
+
+.table-wrapper {
+  max-height: 200px;     /* Adjust height to fit ~4 rows */
+  overflow-y: auto;
+}
+
 
 .table-header-row {
   display: flex;
@@ -31,7 +36,9 @@
 .student-table {
   width: 100%;
   border-collapse: collapse;
+
 }
+
 
 .student-table thead {
   background-color: #dfffea;

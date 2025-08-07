@@ -55,7 +55,7 @@ StaffRouter.get("/check-login", CheckIsStaffLoggedIn);// GET localhost:5000/staf
 
 
 // !Upload Staff Profile Photo
-StaffRouter.post("/profile-photo-upload", isStaffLoggedIn, upload.single("image"), UploadStaffPhoto);// POST localhost:5000/staff/profile-photo-upload
+StaffRouter.post("/profile-photo-upload", upload.single("image"), UploadStaffPhoto);// POST localhost:5000/staff/profile-photo-upload
 
 
 export default StaffRouter;

@@ -14,7 +14,7 @@ export const sendTokenCookies = (
     res.cookie('accessToken', accessToken, {
         httpOnly: true,
         sameSite: 'strict',
-        maxAge: FifteenMinutesFromNow().getTime() - Date.now(),
+        maxAge: OneDayFromNow().getTime() - Date.now(),
     });
 
     res.cookie('refreshToken', refreshToken, {

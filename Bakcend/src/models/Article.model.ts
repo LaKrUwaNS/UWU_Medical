@@ -8,6 +8,7 @@ export interface IArticle extends Document {
         doctorId: mongoose.Types.ObjectId;
         doctorName: string;
     };
+    photo?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -26,6 +27,10 @@ const ArticleSchema: Schema<IArticle> = new Schema(
         tags: {
             type: [String],
             default: [],
+        },
+        photo: {
+            type: String,
+            default: "",
         },
         createdBy: {
             doctorId: {

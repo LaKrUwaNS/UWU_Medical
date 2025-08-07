@@ -1,8 +1,9 @@
-import { model, Schema, Types, Document } from "mongoose";
+import { Schema, Types, model, Document } from "mongoose";
 
-interface IDrugEntry {
-    medicineId: Types.ObjectId;
+interface IDrug {
+    medicineId: Types.ObjectId; // Reference to Medicine
     quantity: number;
+    MedicineName?: string; // Optional field to store medicine name
 }
 
 export interface IPrescription extends Document {
@@ -10,36 +11,20 @@ export interface IPrescription extends Document {
     doctorId: Types.ObjectId;
     date: Date;
     description: string;
-    drugs: IDrugEntry[];
-    inventoryId: Types.ObjectId;
-    queueStatus: 'waiting' | 'serving' | 'done'; 
+    drugs: IDrug[];
 }
 
-const prescriptionSchema = new Schema<IPrescription>(
-    {
-        studentId: { type: Schema.Types.ObjectId, ref: 'Student', required: true },
-        doctorId: { type: Schema.Types.ObjectId, ref: 'Doctor', required: true },
-        date: { type: Date, required: true },
-        description: { type: String, required: true },
-        drugs: [
-            {
-                medicineId: { type: Schema.Types.ObjectId, ref: 'Medicine', required: true },
-                quantity: { type: Number, required: true, min: 1 },
-            },
-        ],
-        inventoryId: { type: Schema.Types.ObjectId, ref: 'Inventory', required: true },
+const prescriptionSchema = new Schema<IPrescription>({
+    studentId: { type: Schema.Types.ObjectId, ref: "Student", required: true },
+    doctorId: { type: Schema.Types.ObjectId, ref: "Doctor", required: false },
+    date: { type: Date, required: true },
+    description: String,
+    drugs: [
+        {
+            medicineId: { type: Schema.Types.ObjectId, ref: "Medicine", required: true },
+            quantity: { type: Number, required: true }
+        }
+    ]
+});
 
-        queueStatus: {
-            type: String,
-            enum: ['waiting', 'serving', 'done'],
-            default: 'waiting',
-        },
-    },
-    {
-        timestamps: true,
-        toJSON: { virtuals: true },
-        toObject: { virtuals: true },
-    }
-);
-
-export const Prescription = model<IPrescription>('Prescription', prescriptionSchema);
+export const Prescription = model<IPrescription>("Prescription", prescriptionSchema);

@@ -35,14 +35,18 @@ const StudentDataCard = ({ students }) => {
         <h3 className='student-data'>Student Data</h3>
         <span className="dots">•••</span>
       </div>
+       
+      <div class="table-wrapper">
+
       <table className="student-table">
         <thead>
           <tr>
             <th>Name</th>
             <th>Department</th>
-            <th>EMN</th>
+            <th>Enrolment No</th>
           </tr>
         </thead>
+        
         <tbody>
           {students && students.length > 0 ? (
             students.map((student, idx) => (
@@ -62,7 +66,7 @@ const StudentDataCard = ({ students }) => {
           )}
         </tbody>
       </table>
-    </div>
+    </div></div>
   );
 };
 

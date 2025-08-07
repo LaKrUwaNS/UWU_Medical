@@ -3,7 +3,6 @@ import './Dashboard.css';
 import images from "../../../assets/images";
 import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
-
 // Components
 import UserProfile from '../../../components/UserProfile/UseraProfile';
 import NextPatientCard from '../../../components/NextPatientCard/NextPatientCard';
@@ -18,17 +17,16 @@ const Dashboard = () => {
   const [nextPatient, setNextPatient] = useState(null);
   const [dashboardStats, setDashboardStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const response = await fetch("http://localhost:5000/doctor/dashboard", {
           method: "GET"
-
         });
 
         const result = await response.json();
-
 
         if (result.success) {
           const data = result.data;
@@ -50,40 +48,61 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  const handleSearch = () => {
+    // Implement search functionality
+    console.log('Searching for:', searchTerm);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   if (loading) {
     return <Loadinganimate />;
   }
 
   if (!dashboardStats) {
-    return <div className="error">Failed to load dashboard data</div>;
+    return <div className="error">⚠️ Failed to load dashboard data</div>;
   }
 
   return (
     <div className="dashboard">
-      {/* --- Header --- */}
-      <header className="dashboard-header">
-        <h2>Daily Data</h2>
-        <div className="search-section">
-          <input type="text" placeholder="Search About Student" />
-          <button><img className="search-icon" src={images.search} alt="search-icon" /></button>
+      {/* --- Modern Header --- */}
+      <header className="dashboard-header1">
+        <h2>📊 Daily Overview</h2>
+        <div className="search-section1">
+          <input 
+            type="text" 
+            placeholder="🔍 Search for students..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={handleKeyPress}
+          />
+          <button onClick={handleSearch}>
+            <img className="search-icon" src={images.search} alt="search-icon" />
+          </button>
         </div>
         <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
       </header>
 
-      {/* --- Top Summary Cards --- */}
+      {/* --- Modern Summary Cards --- */}
       <div className="dashboard-cards">
         <div className="card student">
           <div className="card-header">
-            <span>Student Count</span>
+            <span>👥 Student Count</span>
           </div>
           <img className="card-img" src={images.studentImage} alt="Student Icon" />
           <div className="count-box">{dashboardStats.studentCount}</div>
-          <p className="increase">+{dashboardStats.studentIncrease} students more than last month</p>
+          <p className="increase">
+            📈 +{dashboardStats.studentIncrease} students more than last month
+          </p>
         </div>
 
         <div className="card staff">
           <div className="card-header">
-            <span>Staff Today</span>
+            <span>👨‍💼 Staff Today</span>
           </div>
           <img className="card-img" src={images.staffImage} alt="Staff Icon" />
           <div className="count-box">{dashboardStats.staffCount}</div>
@@ -93,11 +112,13 @@ const Dashboard = () => {
               <span className="status-circle-absent">{dashboardStats.staffAbsent}</span>
             </div>
             <div className="leave-sec">
-              <span>Leave</span>
+              <span>On Leave</span>
               <span className="status-circle-leave">{dashboardStats.staffLeave}</span>
             </div>
           </div>
         </div>
+
+        
 
         <div className="card medical">
           <div className="card-header">
@@ -116,10 +137,15 @@ const Dashboard = () => {
         </div>
       </div>
 
+
       {/* --- Row: Student Table + Donut Chart --- */}
       <div className="dashboard-row">
-        <StudentDataCard students={studentList} />
-        <DonutChart patientData={patientData} />
+        <div className="student-data-wrapper">
+          <StudentDataCard students={studentList} />
+        </div>
+        <div className="donut-chart-wrapper">
+          <DonutChart patientData={patientData} />
+        </div>
       </div>
 
       {/* --- Row: Next Patient + Bar Chart --- */}
@@ -130,11 +156,13 @@ const Dashboard = () => {
               name={nextPatient.indexNumber}
               id={nextPatient.id}
               imageUrl={nextPatient.photo}
-              onProcess={() => alert('Processing...')}
-              onCancel={() => alert('Cancelled')}
+              onProcess={() => alert('Processing patient...')}
+              onCancel={() => alert('Appointment cancelled')}
             />
           ) : (
-            <div className="no-patient">No upcoming medical appointments</div>
+            <div className="no-patient">
+              📅 No upcoming medical appointments
+            </div>
           )}
         </div>
         <div className="BarChart-wrapper">

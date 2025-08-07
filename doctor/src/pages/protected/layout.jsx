@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [doctor, setDoctor] = useState(null);
-
+    // Handle toggle for sidebar collapse
     const handleToggle = () => {
         setIsCollapsed(prev => !prev);
     };
@@ -37,7 +37,7 @@ const Layout = ({ children }) => {
         };
 
         checkDoctorLogin(); // Run once immediately
-        const interval = setInterval(checkDoctorLogin, 300000); // every 5 min
+        const interval = setInterval(checkDoctorLogin, 3600000); // every 60 min
         return () => clearInterval(interval);
     }, []);
 

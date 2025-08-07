@@ -12,6 +12,8 @@ import { upload } from "../config/Multer";
 import { deleteMedicine, getMedicineList, addNewMedicine, updateMedicine } from "../controller/doctor/pages/Medicine.controller";
 import { createPrescription, getStudentMedicalProfile, getStudentPrescriptions, updatePrescriptionStatus } from "../controller/doctor/pages/StudentsDate.controller";
 import { ChangeMedicalRequestStatus, GetMedicalRequests } from "../controller/doctor/pages/MedicalRequests.controller";
+import { createArticle, deleteArticle, getAllArticles, getArticleData, updateArticle } from "../controller/doctor/pages/Update.controller";
+import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
 
 const DoctorRouter = Router();
 
@@ -101,6 +103,24 @@ DoctorRouter.get("/medical-requests", GetMedicalRequests); //localhost:5000/doct
 DoctorRouter.patch("/medical-requests/:id/status", ChangeMedicalRequestStatus); //localhost:5000/doctor/medical-requests/:id/status
 
 
+
+
+// ==========================
+// Updates Page Routers
+// ==========================
+DoctorRouter.get("/articles", getAllArticles);// → GET http://localhost:5000/doctor/articles
+
+// POST new article with optional photo - PRIVATE (Doctor)
+DoctorRouter.post("/articles/create", isDoctorLogin, upload.single("photo"), createArticle);// → POST http://localhost:5000/doctor/articles/create
+
+// GET full article by ID - PUBLIC
+DoctorRouter.get("/articles/:id", getArticleData);// → GET http://localhost:5000/doctor/articles/:id
+
+// PUT update article by ID - PRIVATE (Doctor)
+DoctorRouter.put("/articles/:id", isDoctorLogin, upload.single("photo"), updateArticle);// → PUT http://localhost:5000/doctor/articles/:id
+
+// DELETE article by ID - PRIVATE (Doctor)
+DoctorRouter.delete("/articles/:id", isDoctorLogin, deleteArticle);// → DELETE http://localhost:5000/doctor/articles/:id
 
 
 export default DoctorRouter;

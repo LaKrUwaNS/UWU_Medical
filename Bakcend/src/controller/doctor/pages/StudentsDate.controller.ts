@@ -26,18 +26,15 @@ export const getStudentMedicalProfile = TryCatch(async (req: AuthenticatedReques
         return sendResponse(res, 404, false, "Student not found");
     }
 
-    const [prescriptions, medicalRequests] = await Promise.all([
-        Prescription.find({ studentId: id })
-            .populate("doctorId", "fullName title")
-            .populate("drugs.medicineId", "medicineName status")
-            .sort({ date: -1 as SortOrder }),
-        MedicalRequest.find({ studentId: id }).sort({ date: -1 as SortOrder }),
-    ]);
+    // Get prescriptions with full doctor & full medicine data
+    const prescriptions = await Prescription.find({ studentId: id })
+        .populate("doctorId") // All doctor fields
+        .populate("drugs.medicineId") // All medicine fields
+        .sort({ date: -1 });
 
     return sendResponse(res, 200, true, "Student medical profile retrieved", {
         student,
         prescriptions,
-        medicalRequests,
     });
 });
 
