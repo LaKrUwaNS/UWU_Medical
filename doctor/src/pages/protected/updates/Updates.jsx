@@ -1,73 +1,123 @@
-import React, { useState } from 'react';
-import './Updates.css';
-import BlogCard from '../../../components/BlogCard/BlogCard';
-import images from '../../../assets/images';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
+import React, { useState, useEffect } from "react";
+import "./Updates.css";
+import BlogCard from "../../../components/BlogCard/BlogCard";
+import UserProfile from "../../../components/UserProfile/UseraProfile";
+
+const BASE_URL = "http://localhost:5000/doctor";
 
 const Updates = () => {
-  const [blogs, setBlogs] = useState([
-    {
-      id: 1,
-      title: "Want to cool down? 14 ideas to try",
-      image: images.cool,
-      link: "https://www.health.harvard.edu/blog/want-to-cool-down-14-ideas-to-try-202408073065"
-    },
-    {
-      id: 2,
-      title: "What is a PSA test and how is it used?",
-      image: images.psa,
-      link: "https://www.health.harvard.edu/blog/what-is-a-psa-test-and-how-is-it-used-202507143101"
-    },
-    {
-      id: 3,
-      title: "Gratitude enhances health, brings happiness, and may even lengthen lives",
-      image: images.gratitude,
-      link: "https://www.health.harvard.edu/blog/gratitude-enhances-health-brings-happiness-and-may-even-lengthen-lives-202409113071"
-    },
-    {
-      id: 4,
-      title: "Respiratory health harms often follow flooding: taking these steps can help",
-      image: images.respiratory,
-      link: "https://www.health.harvard.edu/blog/respiratory-health-harms-often-follow-flooding-taking-these-steps-can-help-202211092848"
-    },
-    {
-      id: 5,
-      title: "Swimming lessons save lives: what parents should know",
-      image: images.swimming,
-      link: "https://www.health.harvard.edu/blog/swimming-lessons-save-lives-what-parents-should-know-201806151630"
-    },
-    {
-      id: 6,
-      title: "Wildfires: how to cope when smoke affects air quality and health",
-      image: images.wildfires,
-      link: "https://www.health.harvard.edu/blog/wildfires-how-to-cope-when-smoke-affects-air-quality-and-health-202306232947"
-    },
-  ]);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Modal state
+  const [selectedArticle, setSelectedArticle] = useState(null);
+
+  // Fetch all articles
+  useEffect(() => {
+    fetch(`${BASE_URL}/articles`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch articles");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setBlogs(data.data);
+        } else {
+          console.error("Error fetching articles:", data.message);
+        }
+      })
+      .catch((err) => {
+        console.error("Network error:", err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Handle Read (fetch full article by ID)
+  const handleRead = (id) => {
+    fetch(`${BASE_URL}/articles/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch article details");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setSelectedArticle(data.data); // Store article in modal state
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      })
+      .catch((err) => {
+        console.error("Read error:", err);
+        alert("Failed to fetch article content");
+      });
+  };
+
+  // Handle Delete
   const handleDelete = (id) => {
-    setBlogs(prev => prev.filter(blog => blog.id !== id));
+    if (!window.confirm("Are you sure you want to delete this article?")) return;
+
+    fetch(`${BASE_URL}/articles/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to delete article");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setBlogs((prev) => prev.filter((blog) => blog._id !== id));
+          alert("Article deleted successfully");
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      })
+      .catch((err) => {
+        console.error("Delete error:", err);
+        alert("Failed to delete article");
+      });
   };
 
   return (
-    <div className='updates-page'>
-      <div className='user'><UserProfile /></div>
+    <div className="updates-page">
+      <div className="user"><UserProfile /></div>
 
-      <header className='updates-header'>
+      <header className="updates-header">
         <h2>Notes already Submitted</h2>
         <button className="add-btn">New Add</button>
       </header>
 
-      <div className="blog-list">
-        {blogs.map(blog => (
-          <BlogCard
-            key={blog.id}
-            image={blog.image}
-            title={blog.title}
-            link={blog.link}
-            onDelete={() => handleDelete(blog.id)}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <p>Loading articles...</p>
+      ) : (
+        <div className="blog-list">
+          {blogs.map((blog) => (
+            <BlogCard
+              key={blog._id}
+              image={blog.photo}
+              title={blog.title}
+              onRead={() => handleRead(blog._id)}
+              onDelete={() => handleDelete(blog._id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Popup Modal */}
+      {selectedArticle && (
+        <div className="modal-overlay" onClick={() => setSelectedArticle(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>{selectedArticle.title}</h2>
+            <img
+              src={selectedArticle.photo}
+              alt={selectedArticle.title}
+              className="modal-image"
+            />
+            <p>{selectedArticle.content}</p>
+            <button className="modal-close" onClick={() => setSelectedArticle(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
