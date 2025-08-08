@@ -14,6 +14,7 @@ import { createPrescription, getStudentMedicalProfile, getStudentPrescriptions, 
 import { ChangeMedicalRequestStatus, GetMedicalRequests } from "../controller/doctor/pages/MedicalRequests.controller";
 import { createArticle, deleteArticle, getAllArticles, getArticleData, updateArticle } from "../controller/doctor/pages/Update.controller";
 import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
+import { GetAllStudents } from "../controller/doctor/pages/AllStudents.controller";
 
 const DoctorRouter = Router();
 
@@ -123,4 +124,6 @@ DoctorRouter.put("/articles/:id", isDoctorLogin, upload.single("photo"), updateA
 DoctorRouter.delete("/articles/:id", isDoctorLogin, deleteArticle);// → DELETE http://localhost:5000/doctor/articles/:id
 
 
+
+DoctorRouter.get("/students", GetAllStudents); // localhost:5000/doctor/students
 export default DoctorRouter;
