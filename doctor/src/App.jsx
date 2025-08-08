@@ -8,11 +8,10 @@ import {
   Reminder,
   Reports,
   Settings,
+  StudentRecords,
   StudentData,
   Updates,
   Staff,
-  
-  
 } from "./pages";
 import Register from "./pages/Register/Register";
 
@@ -27,7 +26,6 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes */}
-        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
@@ -40,17 +38,22 @@ function App() {
             <Route path="/reminder" element={<Layout><Reminder /></Layout>} />
             <Route path="/settings" element={<Layout><Settings /></Layout>} />
             <Route path="/reports" element={<Layout><Reports /></Layout>} />
-            <Route path="/students/:id" element={<Layout><StudentData /></Layout>} />
+            
+            {/* Student Routes */}
+            <Route path="/student-records" element={<Layout><StudentRecords /></Layout>} />
+            <Route path="/student-data/:id" element={<Layout><StudentData /></Layout>} />
+            <Route path="/student-data/:id/edit" element={<Layout><StudentData /></Layout>} />
+            
             <Route path="/updates" element={<Layout><Updates /></Layout>} />
             <Route path="/staff" element={<Layout><Staff /></Layout>} />
             
+            {/* Default redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </>
         
-          
-           
-            
-          
         
+        {/* Legacy route - redirect to new student records route */}
+        <Route path="/students/:id" element={<Navigate to="/student-records" replace />} />
       </Routes>
     </Router>
   );

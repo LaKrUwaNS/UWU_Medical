@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import SlideBar from "../../components/SlideBar/SlideBar";
 import { Navigate } from "react-router-dom";
-import { DoctorContext } from "../../context/DoctorContext"; // ⬅ import context
+import { DoctorContext } from "../../context/DoctorContext";
 import "./layout.css";
 
 const Layout = ({ children }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [doctor, setDoctor] = useState(null);
+
     // Handle toggle for sidebar collapse
     const handleToggle = () => {
         setIsCollapsed(prev => !prev);
@@ -36,8 +37,8 @@ const Layout = ({ children }) => {
             }
         };
 
-        checkDoctorLogin(); // Run once immediately
-        const interval = setInterval(checkDoctorLogin, 3600000); // every 60 min
+        checkDoctorLogin();
+        const interval = setInterval(checkDoctorLogin, 3600000);
         return () => clearInterval(interval);
     }, []);
 
@@ -52,7 +53,8 @@ const Layout = ({ children }) => {
     return (
         <DoctorContext.Provider value={doctor}>
             <div className="main-layout">
-                <div className={`sidebar-conatainer ${isCollapsed ? "collapsed" : ""}`}>
+                {/* Fix the typo: sidebar-conatainer -> sidebar-container */}
+                <div className={`sidebar-container ${isCollapsed ? "collapsed" : ""}`}>
                     <SlideBar isCollapsed={isCollapsed} onToggle={handleToggle} />
                 </div>
                 <div className={`main-content ${isCollapsed ? "collapsed" : ""}`}>
