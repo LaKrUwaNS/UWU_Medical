@@ -7,6 +7,38 @@
   box-sizing: border-box;
 }
 
+.date-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.search-bar {
+  position: absolute;
+  top: 80px;
+  right: 22px;
+  background: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2;
+}
+
+.search-bar label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+medical-history {
+  padding-top: 70px;
+  /* Add this if needed */
+}
+
 .student-data-container {
   background: #ffffff;
   border: 1px solid #e5e7eb;
@@ -135,7 +167,10 @@
   font-weight: 500;
 }
 
-.faculty, .year-gender, .email, .contacts {
+.faculty,
+.year-gender,
+.email,
+.contacts {
   margin-bottom: 12px;
   padding: 8px 12px;
   background: #f9fafb;
@@ -143,7 +178,8 @@
   border-left: 3px solid #10b981;
 }
 
-.faculty p, .email {
+.faculty p,
+.email {
   font-weight: 500;
   font-size: 14px;
   color: #374151;
@@ -367,7 +403,7 @@
   .student-data-content {
     flex-direction: column;
   }
-  
+
   .student-profile {
     width: 100%;
     position: static;
@@ -378,35 +414,35 @@
   .student-data-wrapper {
     padding: 16px;
   }
-  
+
   .student-data-container {
     padding: 16px;
     max-height: calc(100vh - 120px);
   }
-  
+
   .student-data-header-2 {
     flex-direction: column;
     gap: 16px;
     align-items: stretch;
   }
-  
+
   .pro-header {
     justify-content: space-between;
   }
-  
+
   .student-data-title {
     font-size: 24px;
     text-align: center;
   }
-  
+
   .student-profile {
     padding: 20px;
   }
-  
+
   .record-card {
     padding: 16px;
   }
-  
+
   .drug-table th,
   .drug-table td {
     padding: 10px 12px;
@@ -418,20 +454,20 @@
   .student-data-wrapper {
     padding: 12px;
   }
-  
+
   .student-data-container {
     padding: 12px;
   }
-  
+
   .student-profile .profile-img {
     width: 100px;
     height: 100px;
   }
-  
+
   .drug-table {
     font-size: 12px;
   }
-  
+
   .drug-table th,
   .drug-table td {
     padding: 8px 10px;
@@ -443,15 +479,24 @@
   animation: fadeInUp 0.6s ease backwards;
 }
 
-.record-card:nth-child(1) { animation-delay: 0.1s; }
-.record-card:nth-child(2) { animation-delay: 0.2s; }
-.record-card:nth-child(3) { animation-delay: 0.3s; }
+.record-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.record-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.record-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
