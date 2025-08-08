@@ -135,28 +135,7 @@ const AppointmentRequests = () => {
 
   return (
     <div className="appointments-container">
-      <div className="header">
-        <div className="header-left">
-          <div className="logo">
-            <Users className="logo-icon" />
-            <span>University Medical Center</span>
-          </div>
-        </div>
-        <div className="header-nav">
-          <nav className="nav-menu">
-            <a href="#" className="nav-item">Dashboard</a>
-            <a href="#" className="nav-item">Patients</a>
-            <a href="#" className="nav-item active">Appointments</a>
-            <a href="#" className="nav-item">Messages</a>
-            <a href="#" className="nav-item">Reports</a>
-          </nav>
-        </div>
-        <div className="header-right">
-          <div className="user-profile">
-            <div className="avatar"></div>
-          </div>
-        </div>
-      </div>
+    
 
       <div className="main-content">
         <div className="page-header">

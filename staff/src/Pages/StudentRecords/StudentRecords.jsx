@@ -116,19 +116,7 @@ const StudentRecords = () => {
 
   return (
     <div className="student-records-container">
-      <div className="header">
-        <div className="header-left">
-          <div className="logo">
-            <Users className="logo-icon" />
-            <span>University Medical Center</span>
-          </div>
-        </div>
-        <div className="header-right">
-          <div className="user-profile">
-            <div className="avatar"></div>
-          </div>
-        </div>
-      </div>
+      
 
       <div className="main-content">
         <div className="page-header">
@@ -171,10 +159,7 @@ const StudentRecords = () => {
             </div>
           </div>
           <div className="action-buttons">
-            <button className="btn-secondary">
-              <Download size={18} />
-              Export
-            </button>
+           
             <button className="btn-primary" onClick={() => setShowAddModal(true)}>
               <Plus size={18} />
               Add New Student
