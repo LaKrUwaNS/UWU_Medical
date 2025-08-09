@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Updates.css";
 import BlogCard from "../../../components/BlogCard/BlogCard";
 import UserProfile from "../../../components/UserProfile/UseraProfile";
+import AddNotePopup from "../../../components/AddNotePopup/AddNotePopup";
 import images from "../../../assets/images";
 
 const BASE_URL = "http://localhost:5000/doctor";
@@ -9,11 +10,9 @@ const BASE_URL = "http://localhost:5000/doctor";
 const Updates = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Modal state
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [showAddNotePopup, setShowAddNotePopup] = useState(false);
 
-  // Fetch all articles
   useEffect(() => {
     fetch(`${BASE_URL}/articles`)
       .then((res) => {
@@ -32,7 +31,6 @@ const Updates = () => {
       })
       .finally(() => setLoading(false));
   }, []);
-
 
   const handleRead = (id) => {
     fetch(`${BASE_URL}/articles/${id}`)
@@ -53,7 +51,6 @@ const Updates = () => {
       });
   };
 
-  // Handle Delete Function 
   const handleDelete = (id) => {
     if (!window.confirm("Are you sure you want to delete this article?")) return;
 
@@ -79,13 +76,50 @@ const Updates = () => {
       });
   };
 
+  const handleNewAdd = () => {
+    setShowAddNotePopup(true);
+  };
+
+  const handleSaveNote = (noteData) => {
+    const formData = new FormData();
+    formData.append("title", noteData.title);
+    formData.append("content", noteData.description);
+
+    fetch(`${BASE_URL}/articles`, {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to create article");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setBlogs((prev) => [data.data, ...prev]);
+          alert("Article created successfully");
+          setShowAddNotePopup(false);
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      })
+      .catch((err) => {
+        console.error("Create error:", err);
+        alert("Failed to create article");
+      });
+  };
+
   return (
     <div className="updates-page">
-      <div className="user"> <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} /></div>
+      <div className="user">
+        <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
+      </div>
 
       <header className="updates-header">
         <h2>Notes already Submitted</h2>
-        <button className="add-btn">New Add</button>
+        <button className="add-btn" onClick={handleNewAdd}>
+          New Add
+        </button>
       </header>
 
       {loading ? (
@@ -104,7 +138,6 @@ const Updates = () => {
         </div>
       )}
 
-      {/* Popup message modal  */}
       {selectedArticle && (
         <div className="modal-overlay" onClick={() => setSelectedArticle(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -115,10 +148,18 @@ const Updates = () => {
               className="modal-image"
             />
             <p>{selectedArticle.content}</p>
-            <button className="modal-close" onClick={() => setSelectedArticle(null)}>Close</button>
+            <button className="modal-close" onClick={() => setSelectedArticle(null)}>
+              Close
+            </button>
           </div>
         </div>
       )}
+
+      <AddNotePopup
+        isOpen={showAddNotePopup}
+        onClose={() => setShowAddNotePopup(false)}
+        onSave={handleSaveNote}
+      />
     </div>
   );
 };
