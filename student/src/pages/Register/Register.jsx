@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import './Register.css';
 import images from '../../assets/Image';
 
+
+
 function Register() {
     const [selectedGender, setSelectedGender] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -177,10 +179,12 @@ function Register() {
         return true;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
 
         if (!validateForm()) return;
+
+        const data = { ...formData, gender: selectedGender, password };
 
         setIsLoading(true);
 
