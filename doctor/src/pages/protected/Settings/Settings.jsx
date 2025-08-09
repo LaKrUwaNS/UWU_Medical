@@ -52,7 +52,7 @@ const Settings = () => {
 
   return (
     <div className="profile-page">
-      <div className="profile-header">
+      <div className="profile-header-settings">
         <div className="doctor-info">
            <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
         </div>

@@ -1,17 +1,63 @@
-.medical-request-page{
+.medical-request-page {
   min-height: 100vh;
-  overflow-y:auto;
+  overflow-y: auto;
   padding: 10px 20px 20px 20px;
- 
+}
+
+.header-MR {
+  display: flex;
+  justify-content: space-between; /* Title left, profile right */
+  align-items: center;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  gap:10em;
+   border-bottom: 2px solid #22c55e;
+}
+
+.MR {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.User-profile{
+  margin-left: 10em;
+}
+
+/* Slide-in effect */
+.user-profile-container.slide-in {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .requests-grid {
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 50px;
   margin-top: 20px;
   padding: 10px;
   transition: all 0.3s ease;
+}
+
+.requests-grid.two-cols {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.requests-grid.three-cols {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.requests-grid .card {
+  transition: all 0.3s ease;
+  padding: 16px;
+}
+
+.three-cols .card {
+  scale: 0.95;
+  transform: translateX(10px);
 }
 
 .cancel-btn {
@@ -23,6 +69,10 @@
   cursor: pointer;
 }
 
+.cancel-btn:hover {
+  background-color: #cc0000;
+}
+
 .submit-btn {
   background-color: #00cc66;
   color: white;
@@ -31,41 +81,11 @@
   border-radius: 5px;
   cursor: pointer;
 }
-.cancel-btn:hover {
-  background-color: #cc0000;
-}
 
 .submit-btn:hover {
   background-color: #00994d;
 }
-.requests-grid.two-cols{
-  grid-template-columns: repeat(2,1fr);
-  
-}
-.requests-grid.three-cols{
-  grid-template-columns: repeat(3,1fr);
-  
-}
 
-
-.requests-grid .card {
-  transition: all 0.3s ease;
-  padding: 16px;
-}
-.three-cols .card {
-  scale: 0.95;        
-  transform: translateX(10px);
-}
-.MR{
-  position: sticky;
-  top: 0;
-  text-align: center;
-  margin-top: 0;
-  padding-top: 10px;
-  font-size: 24px;
-  margin-left: 2em;
- 
-}
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -73,5 +93,3 @@
   font-size: 18px;
   font-style: italic;
 }
-
-
