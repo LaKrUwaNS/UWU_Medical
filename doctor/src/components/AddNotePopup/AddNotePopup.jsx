@@ -3,39 +3,74 @@ import './AddNotePopup.css';
 import images from "../../assets/images";
 import UserProfile from "../UserProfile/UseraProfile";
 
-const AddNotePopup = ({ isOpen, onClose, onSave }) => {
+const AddNotePopup = ({ isOpen, onClose }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const fileInputRef = useRef(null);
 
-  const handleCancel = () => {
+  const resetForm = () => {
     setTitle('');
     setDescription('');
     setSelectedImage(null);
     setImagePreview(null);
+    setErrorMsg('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleCancel = () => {
+    resetForm();
     onClose();
   };
 
-  const handleOk = () => {
-    if (title.trim() || description.trim()) {
-      onSave({ 
-        title, 
-        description, 
-        image: selectedImage 
+  const handleOk = async () => {
+    if (!title.trim() || !description.trim()) {
+      setErrorMsg('Title and Description are required.');
+      return;
+    }
+    if (!selectedImage) {
+      setErrorMsg('Please upload an image.');
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg('');
+
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", description);
+      formData.append("tags", JSON.stringify([]));
+      formData.append("photo", selectedImage);
+
+      const res = await fetch("http://localhost:5000/doctor/articles/create", {
+        method: "POST",
+        credentials: "include", // send cookies if using cookie-based auth
+        body: formData,
       });
-      setTitle('');
-      setDescription('');
-      setSelectedImage(null);
-      setImagePreview(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+
+      if (!res.ok) {
+        throw new Error(`Failed to create article: ${res.status}`);
       }
-      onClose();
+
+      const data = await res.json();
+      if (data.success) {
+        console.log("Article created:", data.data);
+        resetForm();
+        onClose();
+      } else {
+        setErrorMsg(data.message || 'Failed to create article.');
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+      setErrorMsg(err.message || 'Network error occurred.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,21 +81,16 @@ const AddNotePopup = ({ isOpen, onClose, onSave }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file type
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+        setErrorMsg('Please select an image file');
         return;
       }
-
-      // Check file size (optional - limit to 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        setErrorMsg('Image size should be less than 5MB');
         return;
       }
-
       setSelectedImage(file);
-      
-      // Create preview
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target.result);
@@ -78,7 +108,6 @@ const AddNotePopup = ({ isOpen, onClose, onSave }) => {
     }
   };
 
-  // Only render when open
   if (!isOpen) return null;
 
   return (
@@ -105,7 +134,7 @@ const AddNotePopup = ({ isOpen, onClose, onSave }) => {
               onChange={(e) => setTitle(e.target.value)}
               className="title-input"
             />
-            
+
             <div className="content-section">
               <textarea
                 placeholder="Enter the Description of the Note"
@@ -113,7 +142,7 @@ const AddNotePopup = ({ isOpen, onClose, onSave }) => {
                 onChange={(e) => setDescription(e.target.value)}
                 className="description-textarea"
               />
-              
+
               <div className="image-upload-section">
                 <input
                   type="file"
@@ -122,19 +151,19 @@ const AddNotePopup = ({ isOpen, onClose, onSave }) => {
                   ref={fileInputRef}
                   style={{ display: 'none' }}
                 />
-                
-                <div 
+
+                <div
                   className={`image-placeholder ${imagePreview ? 'has-image' : ''}`}
                   onClick={handleImageClick}
                 >
                   {imagePreview ? (
                     <div className="image-preview-container">
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
                         className="image-preview"
                       />
-                      <button 
+                      <button
                         className="remove-image-btn"
                         onClick={handleRemoveImage}
                         type="button"
@@ -145,21 +174,23 @@ const AddNotePopup = ({ isOpen, onClose, onSave }) => {
                   ) : (
                     <div className="upload-placeholder">
                       <div className="upload-icon">📷</div>
-                      <span>Click to Upload Image</span>
+                      <span>Click to Upload Image <br></br>(maximum size 5Mb) </span>
                     </div>
                   )}
                 </div>
               </div>
             </div>
           </div>
+
+          {errorMsg && <div className="error-message">{errorMsg}</div>}
         </div>
 
         <div className="popup-actions">
-          <button className="cancel-btn" onClick={handleCancel}>
+          <button className="cancel-btn" onClick={handleCancel} disabled={loading}>
             Cancel
           </button>
-          <button className="ok-btn" onClick={handleOk}>
-            Ok
+          <button className="ok-btn" onClick={handleOk} disabled={loading}>
+            {loading ? 'Saving...' : 'Ok'}
           </button>
         </div>
       </div>
