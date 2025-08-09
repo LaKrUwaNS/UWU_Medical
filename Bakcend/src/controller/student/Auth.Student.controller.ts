@@ -26,7 +26,6 @@ export const RegisterStudent = TryCatch(async (req: Request, res: Response) => {
         name,
         gender,
         contactNumber,
-        emergencyNumber,
         bloodType,
         allergies
     } = req.body;
@@ -43,7 +42,6 @@ export const RegisterStudent = TryCatch(async (req: Request, res: Response) => {
         name,
         gender,
         contactNumber,
-        emergencyNumber,
         bloodType,
         allergies,
         expireAt: OneDayFromNow(),
@@ -346,25 +344,30 @@ export const StudentLogout = TryCatch(async (req: Request, res: Response) => {
 
 // ✅ Check if Student is logged in
 export const CheckIsStudentLoggedIn = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const accessToken = req.cookies.accessToken;
-    const refreshToken = req.cookies.refreshToken;
+    const { accessToken, refreshToken } = req.cookies;
 
-    if (accessToken) {
-        try {
-            const studentId = decodeAccessToken(accessToken);
-            if (studentId) {
-                const session = await Session.findOne({ accessToken, sessionType: "LOGIN" });
-                if (session) {
-                    const student = await Student.findById(session.studentId);
-                    if (student) {
-                        return sendResponse(res, 200, true, "Student is logged in", { student }, true);
-                    }
-                }
-            }
-        } catch { }
+    if (!accessToken && !refreshToken) {
+        return sendResponse(res, 401, false, "Not logged in");
     }
 
-    if (!refreshToken) return sendResponse(res, 401, false, "Not logged in");
+    try {
+        const studentId = decodeAccessToken(accessToken);
+        if (studentId) {
+            // check session by accessToken
+            const session = await Session.findOne({ accessToken, sessionType: "LOGIN" });
+            if (!session) return sendResponse(res, 401, false, "Invalid session");
+
+            const student = await Student.findById(session.studentId);
+            if (!student) return sendResponse(res, 404, false, "Student not found");
+
+            return sendResponse(res, 200, true, "Student is logged in", { student }, true);
+        }
+    } catch {
+    }
+
+    if (!refreshToken) {
+        return sendResponse(res, 401, false, "Not logged in");
+    }
 
     const studentIdFromRefresh = decodeAccessToken(refreshToken);
     if (!studentIdFromRefresh) return sendResponse(res, 401, false, "Invalid or expired refresh token");
@@ -372,11 +375,12 @@ export const CheckIsStudentLoggedIn = TryCatch(async (req: AuthenticatedRequest,
     const session = await Session.findOne({
         refreshToken,
         sessionType: "LOGIN",
-        expireAt: { $gt: new Date() }
+        expireAt: { $gt: new Date() },
     });
 
     if (!session) return sendResponse(res, 401, false, "Session expired or not found");
 
+    // Generate new tokens
     const newAccessToken = generateAccessToken(studentIdFromRefresh);
     const newRefreshToken = generateRefreshToken(studentIdFromRefresh);
 

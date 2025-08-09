@@ -9,9 +9,9 @@ const Layout = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [doctor, setDoctor] = useState(null);
 
-    // Handle toggle for sidebar collapse
+    // Toggle sidebar collapse state
     const handleToggle = () => {
-        setIsCollapsed(prev => !prev);
+        setIsCollapsed((prev) => !prev);
     };
 
     useEffect(() => {
@@ -19,12 +19,18 @@ const Layout = ({ children }) => {
             try {
                 const res = await fetch("http://localhost:5000/doctor/check-login", {
                     method: "GET",
-                    credentials: "include",
+                    credentials: "include", // include cookies
                 });
+
+                if (!res.ok) {
+                    setIsAuthenticated(false);
+                    setDoctor(null);
+                    return;
+                }
 
                 const data = await res.json();
 
-                if (data.success && data.isAuthorized) {
+                if (data.success) {
                     setIsAuthenticated(true);
                     setDoctor(data.doctor);
                 } else {
@@ -37,9 +43,8 @@ const Layout = ({ children }) => {
             }
         };
 
+        // Only check login once on component mount
         checkDoctorLogin();
-        const interval = setInterval(checkDoctorLogin, 3600000);
-        return () => clearInterval(interval);
     }, []);
 
     if (isAuthenticated === null) {
@@ -53,7 +58,6 @@ const Layout = ({ children }) => {
     return (
         <DoctorContext.Provider value={doctor}>
             <div className="main-layout">
-                {/* Fix the typo: sidebar-conatainer -> sidebar-container */}
                 <div className={`sidebar-container ${isCollapsed ? "collapsed" : ""}`}>
                     <SlideBar isCollapsed={isCollapsed} onToggle={handleToggle} />
                 </div>

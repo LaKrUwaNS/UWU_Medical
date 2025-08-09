@@ -23,33 +23,34 @@ export default function MedicalCenterPortal() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-   useEffect(() => {
-        const checkStudentLogin = async () => {
-            try {
-                const res = await fetch("http://localhost:5000/student/check-login", {
-                    method: "GET",
-                    credentials: "include",
-                });
+  useEffect(() => {
+    const checkStudentLogin = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/student/check-login", {
+          method: "GET",
+          credentials: "include",
+        });
 
-                const data = await res.json();
+        const data = await res.json();
 
-                if (data.success && data.isAuthorized) {
-                    setIsAuthenticated(true);
-                    setStudent(data.student);
-                } else {
-                    setIsAuthenticated(false);
-                    setStudent(null);
-                }
-            } catch {
-                setIsAuthenticated(false);
-                setStudent(null);
-            }
-        };
+        if (data.success && data.isAuthorized) {
+          setIsAuthenticated(true);
+          setStudent(data.student);
+        } else {
+          setIsAuthenticated(false);
+          setStudent(null);
+        }
+      } catch {
+        setIsAuthenticated(false);
+        setStudent(null);
+      }
+    };
 
-        checkStudentLogin();
-        const interval = setInterval(checkStudentLogin, 3600000);
-        return () => clearInterval(interval);
-    }, []);
+    // Only check once when component mounts
+    checkStudentLogin();
+
+    // No interval or repeated check
+  }, []);
 
   const menuItems = [
     { id: 'apply', label: 'Apply medical', icon: Stethoscope },
@@ -79,11 +80,11 @@ export default function MedicalCenterPortal() {
         // Clear local state
         setIsAuthenticated(false);
         setStudent(null);
-        
+
         // Optional: Clear any local storage or session storage
         localStorage.removeItem('student');
         sessionStorage.clear();
-        
+
         console.log("Logout successful");
       } else {
         console.error("Logout failed");
@@ -435,12 +436,12 @@ export default function MedicalCenterPortal() {
   };
 
   if (isAuthenticated === null) {
-        return <div className="checking">Checking login status...</div>;
-    }
+    return <div className="checking">Checking login status...</div>;
+  }
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="containerForHomeUi">

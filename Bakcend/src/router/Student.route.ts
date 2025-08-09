@@ -1,6 +1,5 @@
 import { Router } from "express";
 import multer from "multer";
-import { TestMail } from "../controller/doctor/Auth.controller";
 import { studentUpdateSchema, validateMiddleware } from "../middleware/validate.middleware";
 
 import {
@@ -39,8 +38,6 @@ StudentRouter.post('/test-ai', generateSummary);   // localhost:5000/student/tes
 // ==========================
 //!Authontication Page Routers
 // ==========================
-StudentRouter.post('/test', TestMail);
-// POST localhost:5000/student/test
 
 StudentRouter.post("/register", validateMiddleware(StudentregisterStudentSchema), RegisterStudent);
 // POST localhost:5000/student/register

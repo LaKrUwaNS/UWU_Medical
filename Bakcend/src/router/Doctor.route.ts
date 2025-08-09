@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CheckIsDoctorLoggedIn, DoctorLogging, ForgotPassword, Logout, RegisterDoctor, ResetPassword, TestMail, TestMulter, VerifyRegisterOTP } from "../controller/doctor/Auth.controller";
+import { CheckIsDoctorLoggedIn, DoctorLogging, ForgotPassword, Logout, RegisterDoctor, ResetPassword, VerifyRegisterOTP } from "../controller/doctor/Auth.controller";
 import { RegisterDoctorZodSchema, validateMiddleware } from "../middleware/validate.middleware";
 import { otpVerificationSchema } from "../middleware/validate.middleware";
 import { loginSchema } from "../middleware/validate.middleware";
@@ -20,10 +20,6 @@ import { GetAllStaff } from "../controller/doctor/pages/Staff..controller";
 const DoctorRouter = Router();
 
 // Public Router
-
-// !Testing Routers
-DoctorRouter.post('/test', TestMail);   // localhost:5000/doctor/test
-DoctorRouter.post('/test-multer', upload.single("image"), TestMulter);   // localhost:5000/doctor/test-multer
 
 
 // !Doctor Register

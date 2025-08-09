@@ -10,7 +10,7 @@ import Apply_Medical from "./pages/Apply_Medical/ApplyMedical";
 
 
 function App() {
-    const isLoggedIn = !!localStorage.getItem("token"); // Example logic
+  //const isLoggedIn = !!localStorage.getItem("token"); // Example logic
 
   return (
     <Router>
@@ -18,7 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/medical" element={<HomeUi />} />
         <Route path="/login" element={<Login />} />
-         <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/ApplyMedical" element={<Apply_Medical />} />
 
       </Routes>
