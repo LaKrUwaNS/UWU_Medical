@@ -23,9 +23,9 @@ import {
 } from "../controller/student/Auth.Student.controller";
 
 import { isStudentLoggedIn } from "../middleware/CheckLogin/isStudentlogin";
-import { getMedicalData } from "../controller/staff/pages/GetMEdicales.controller";
-import { ApplyMedicalRequest } from "../controller/staff/pages/applyMedical.controller";
-import { StudentdataGET, StudentDateEdit, VerifyandUpdate } from "../controller/staff/pages/studnetData.controller";
+import { getMedicalData } from "../controller/student/pages/GetMEdicales.controller";
+import { ApplyMedicalRequest } from "../controller/student/pages/applyMedical.controller";
+import { StudentdataGET, StudentDateEdit, VerifyandUpdate } from "../controller/student/pages/studnetData.controller";
 
 
 const upload = multer({ dest: "uploads/" }); // configure multer as needed
