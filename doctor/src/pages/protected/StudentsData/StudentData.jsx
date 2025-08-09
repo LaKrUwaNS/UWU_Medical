@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';  // <-- Import useParams
 import './StudentData.css';
 import UserProfile from '../../../components/UserProfile/UseraProfile';
 import images from '../../../assets/images';
 import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
 const StudentData = () => {
+  const { id: studentId } = useParams(); // <-- Get studentId dynamically from URL
+
   const [student, setStudent] = useState(null);
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [searchDate, setSearchDate] = useState('');
 
-  const studentId = "688f6ea8a8ec46502f5be318"; // Change dynamically if needed
-
   useEffect(() => {
+    if (!studentId) return; // In case id is missing, skip fetch
+
     const fetchStudentData = async () => {
       try {
         const response = await fetch(`http://localhost:5000/doctor/student/${studentId}`, {

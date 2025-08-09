@@ -3,6 +3,8 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell
 } from 'recharts';
 import './Reports.css';
+import images from '../../../assets/images';
+import UserProfile from '../../../components/UserProfile/UseraProfile';
 
 const chartData = [
   { name: 'Technology', value: 30 },
@@ -21,8 +23,8 @@ const Reports = () => {
       {/* Header */}
       <div className="dashboard-header">
         <div className="user-info">
-          <span>Dr. Lakruwan Sharaka</span>
-          <div className="user-avatar">👨‍⚕️</div>
+           <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
+          
         </div>
       </div>
 

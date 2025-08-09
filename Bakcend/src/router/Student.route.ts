@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { TestMail } from "../controller/doctor/Auth.controller";
-import { validateMiddleware } from "../middleware/validate.middleware";
+import { studentUpdateSchema, validateMiddleware } from "../middleware/validate.middleware";
 
 import {
     StudentregisterStudentSchema,
@@ -23,11 +23,19 @@ import {
 } from "../controller/student/Auth.Student.controller";
 
 import { isStudentLoggedIn } from "../middleware/CheckLogin/isStudentlogin";
+import { getMedicalData } from "../controller/student/pages/GetMEdicales.controller";
+import { ApplyMedicalRequest } from "../controller/student/pages/applyMedical.controller";
+import { StudentdataGET, StudentDateEdit, VerifyandUpdate } from "../controller/student/pages/studnetData.controller";
+
 
 const upload = multer({ dest: "uploads/" }); // configure multer as needed
 
 const StudentRouter = Router();
 
+
+// ==========================
+//!Authontication Page Routers
+// ==========================
 StudentRouter.post('/test', TestMail);
 // POST localhost:5000/student/test
 
@@ -60,5 +68,28 @@ StudentRouter.post(
     UploadStudentPhoto
 );
 // POST localhost:5000/student/profile-photo-upload
+
+
+
+// ==========================
+// !SHOW Medical Request Page Routers
+// ==========================
+StudentRouter.get("/medical-data", isStudentLoggedIn, getMedicalData); // GET localhost:5000/student/medical-data
+
+
+
+// ==========================
+// Apply Medical Request Page Routers
+// ==========================
+StudentRouter.post("/apply-medical", isStudentLoggedIn, ApplyMedicalRequest); // post localhost:5000/student/apply-medical
+
+
+// ==========================
+// Settings Page Routers
+// ==========================
+StudentRouter.get("/settings", isStudentLoggedIn, StudentdataGET);   // GET localhost:5000/student/settings
+StudentRouter.post("/settings/edit", validateMiddleware(studentUpdateSchema), isStudentLoggedIn, StudentDateEdit); // PATCH localhost:5000/student/settings/edit
+StudentRouter.patch("/settings/verify-email", isStudentLoggedIn, VerifyandUpdate); // POST localhost:5000/student/settings/verify-email
+
 
 export default StudentRouter;

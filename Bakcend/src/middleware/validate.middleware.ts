@@ -202,7 +202,13 @@ export const StaffResetPasswordSchema = z.object({
     password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-
+// Student Setting page validations 
+export const studentUpdateSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters").optional(),
+    email: z.string().email("Invalid email address").optional(),
+    phone: z.string().regex(/^\d{10}$/, "Phone number must be 10 digits").optional(),
+    address: z.string().min(5, "Address must be at least 5 characters").optional(),
+}).strict();
 
 //! Middleware to validate and send simplified errors
 export const validateMiddleware = (schema: z.ZodType): RequestHandler => {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Search, Users } from 'lucide-react';
 import './Staff.css';
+import images from '../../../assets/images';
+import UserProfile from '../../../components/UserProfile/UseraProfile';
 
 const Staff = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,8 +38,14 @@ const Staff = () => {
     <div className="medical-staff-directory">
       <div className="header-section">
         <div className="title-section">
+          <div className="title-text">
           <h1>Medical Staff Directory</h1>
           <p>Find a Staff Member by Name</p>
+          </div>
+          <div className="user-info">
+           <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
+          
+        </div>
         </div>
 
         <div className="stats-card">

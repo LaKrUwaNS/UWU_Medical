@@ -7,7 +7,8 @@ export interface IMedicalRequest extends Document {
     schedule: Date;
     status: "pending" | "approved" | "rejected";
     timeNeeded: string;
-    Report: "Need" | "External" | "havent";
+    report: "need" | "external" | "havent";
+    servicetype: "infection" | "allergy" | "fracture" | "asthma" | "other";
     reason: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -16,21 +17,13 @@ export interface IMedicalRequest extends Document {
 const medicalRequestSchema = new Schema<IMedicalRequest>(
     {
         studentId: { type: Schema.Types.ObjectId, ref: "Student", required: true },
-        requestId: { type: String, required: true, unique: true, trim: true },
         date: { type: Date, required: true },
-        schedule: { type: Date, required: true, index: true }, // Index for fast queries
-        status: {
-            type: String,
-            enum: ["pending", "approved", "rejected"],
-            default: "pending"
-        },
-        timeNeeded: { type: String, required: true, trim: true },
-        Report: {
-            type: String,
-            enum: ["Need", "External", "havent"],
-            default: "Need"
-        },
+        schedule: { type: Date, required: true, index: true },
+        status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+        timeNeeded: { type: String, trim: true },
+        report: { type: String, enum: ["need", "external", "havent"], default: "need" },
         reason: { type: String, required: true, trim: true },
+        servicetype: { type: String, enum: ["infection", "allergy", "fracture", "asthma", "other"], required: true, trim: true },
     },
     {
         timestamps: true,
@@ -39,9 +32,6 @@ const medicalRequestSchema = new Schema<IMedicalRequest>(
     }
 );
 
-/**
- * Virtual field for formatted schedule time (e.g., "10:30")
- */
 medicalRequestSchema.virtual("formattedScheduleTime").get(function () {
     if (!this.schedule) return null;
     return new Date(this.schedule).toLocaleTimeString("en-US", {
@@ -51,14 +41,10 @@ medicalRequestSchema.virtual("formattedScheduleTime").get(function () {
     });
 });
 
-/**
- * Virtual field to check if request is upcoming
- */
 medicalRequestSchema.virtual("isUpcoming").get(function () {
     return this.schedule && this.schedule >= new Date();
 });
 
-export const MedicalRequest = model<IMedicalRequest>(
-    "MedicalRequest",
-    medicalRequestSchema
-);
+medicalRequestSchema.index({ studentId: 1, status: 1 });
+
+export const MedicalRequest = model<IMedicalRequest>("MedicalRequest", medicalRequestSchema);
