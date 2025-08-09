@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Eye, Edit } from 'lucide-react';
+import { Search, Filter, Eye, Edit, MoreVertical } from 'lucide-react';
 import './StudentRecords.css';
 import { Link } from 'react-router-dom';
 import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
@@ -57,6 +57,20 @@ const StudentRecords = () => {
   const capitalizeFirstLetter = (str) =>
     str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
 
+  const getInitials = (name) => {
+    return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  };
+
+  const getYearBadgeClass = (year) => {
+    switch (year) {
+      case '1st': return 'year-badge-1st';
+      case '2nd': return 'year-badge-2nd';
+      case '3rd': return 'year-badge-3rd';
+      case '4th': return 'year-badge-4th';
+      default: return 'year-badge-default';
+    }
+  };
+
   const filteredStudents = studentsData.filter((student) => {
     const matchesSearch =
       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,7 +87,6 @@ const StudentRecords = () => {
   });
 
   if (loading) {
-    // Full-screen loader
     return (
       <div className="loading-container">
         <Loadinganimate />
@@ -84,21 +97,20 @@ const StudentRecords = () => {
   return (
     <div className="app-container">
       <main className="main-content">
+        {/* Header */}
         <header className="page-header">
-          <div className="title-text">
-            <h2 className="page-title">Student Records</h2>
-            <p className="page-description">
-              Manage and view student information for the medical program
-            </p>
+          <div className="title-section">
+            <h1 className="page-title">Student Records</h1>
+            
           </div>
           <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-
         </header>
 
-        {/* Filters */}
+        {/* Filters Section */}
         <section className="filters-card">
           <div className="filters-content">
             <div className="filters-left">
+              {/* Search Input */}
               <div className="search-container">
                 <Search className="search-icon" size={20} aria-label="Search icon" />
                 <input
@@ -110,6 +122,8 @@ const StudentRecords = () => {
                   aria-label="Search input"
                 />
               </div>
+              
+              {/* Gender Filter */}
               <select
                 value={filterGender}
                 onChange={(e) => setFilterGender(e.target.value)}
@@ -120,6 +134,8 @@ const StudentRecords = () => {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
+              
+              {/* Year Filter */}
               <select
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
@@ -133,6 +149,7 @@ const StudentRecords = () => {
                 <option value="4th">4th Year</option>
               </select>
             </div>
+            
             <div className="filters-right">
               <button className="btn btn-secondary" aria-label="More filters">
                 <Filter size={16} />
@@ -146,7 +163,7 @@ const StudentRecords = () => {
         <section className="table-container">
           <div className="table-wrapper">
             <table className="students-table">
-              <thead>
+              <thead className="table-header">
                 <tr>
                   <th>Name</th>
                   <th>Enrollment No</th>
@@ -154,72 +171,112 @@ const StudentRecords = () => {
                   <th>Gender</th>
                   <th>Email</th>
                   <th>Mobile</th>
-                  <th>Actions</th>
+                  
                 </tr>
               </thead>
-              <tbody>
-                {filteredStudents.map((student) => (
-                  <tr key={student.enrollmentNumber}>
-                    <td>
-                      <Link
-                        to={`/student-data/${student.id}`}
-                        className="student-link"
-                        title="View Student Profile"
-                      >
-                        <div className="student-info">
-                          <div className="student-avatar">
-                            {student.photo ? (
-                              <img
-                                src={student.photo}
-                                alt={student.name}
-                                className="student-avatar-img"
-                              />
-                            ) : (
-                              student.name
-                                .split(' ')
-                                .map((n) => n[0])
-                                .join('')
-                                .slice(0, 2)
-                            )}
-                          </div>
-                          <div className="student-name">{student.name}</div>
-                        </div>
-                      </Link>
-                    </td>
-                    <td>{student.enrollmentNumber}</td>
-                    <td><span className="year-badge">{student.year}</span></td>
-                    <td>{student.gender}</td>
-                    <td>{student.email}</td>
-                    <td>{student.mobile}</td>
-                    <td>
-                      <div className="action-buttons">
+              <tbody className="table-body">
+                {filteredStudents.length > 0 ? (
+                  filteredStudents.map((student) => (
+                    <tr key={student.enrollmentNumber} className="table-row">
+                      <td>
                         <Link
                           to={`/student-data/${student.id}`}
-                          className="action-btn view-btn"
-                          title="View Student"
+                          className="student-link"
+                          title="View Student Profile"
                         >
-                          <Eye size={16} />
+                          <div className="student-info">
+                            <div className="student-avatar">
+                              {student.photo ? (
+                                <img
+                                  src={student.photo}
+                                  alt={student.name}
+                                  className="student-avatar-img"
+                                />
+                              ) : (
+                                <span className="student-initials">
+                                  {getInitials(student.name)}
+                                </span>
+                              )}
+                            </div>
+                            <div className="student-details">
+                              <div className="student-name">{student.name}</div>
+                            </div>
+                          </div>
                         </Link>
-                        <Link
-                          to={`/student-data/${student.id}/edit`}
-                          className="action-btn edit-btn"
-                          title="Edit Student"
+                      </td>
+                      <td>
+                        <span className="enrollment-number">{student.enrollmentNumber}</span>
+                      </td>
+                      <td>
+                        <span className={`year-badge ${getYearBadgeClass(student.year)}`}>
+                          {student.year}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="gender-text">{student.gender}</span>
+                      </td>
+                      <td>
+                        <a 
+                          href={`mailto:${student.email}`}
+                          className="email-link"
+                          title="Send email"
                         >
-                          <Edit size={16} />
-                        </Link>
+                          {student.email}
+                        </a>
+                      </td>
+                      <td>
+                        <span className="mobile-number">{student.mobile}</span>
+                      </td>
+                      <td>
+                        <div className="action-buttons">
+                          <Link
+                            to={`/student-data/${student.id}`}
+                            className="action-btn view-btn"
+                            title="View Student"
+                          >
+                            <Eye size={16} />
+                          </Link>
+                          <Link
+                            to={`/student-data/${student.id}/edit`}
+                            className="action-btn edit-btn"
+                            title="Edit Student"
+                          >
+                            <Edit size={16} />
+                          </Link>
+                          <button
+                            className="action-btn more-btn"
+                            title="More Options"
+                          >
+                            <MoreVertical size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="no-data">
+                      <div className="no-data-content">
+                        <p className="no-data-title">No matching students found</p>
+                        <p className="no-data-subtitle">Try adjusting your search or filter criteria</p>
                       </div>
                     </td>
-                  </tr>
-                ))}
-                {filteredStudents.length === 0 && (
-                  <tr>
-                    <td colSpan="7" className="no-data">No matching students found.</td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
         </section>
+
+        {/* Footer Info */}
+        <div className="table-footer">
+          <p className="table-info">
+            Showing {filteredStudents.length} of {studentsData.length} students
+          </p>
+          <p className="last-updated">
+            Last updated: {new Date().toLocaleDateString()}
+          </p>
+        </div>
       </main>
     </div>
   );
