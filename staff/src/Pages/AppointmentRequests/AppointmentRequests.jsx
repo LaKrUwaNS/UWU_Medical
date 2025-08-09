@@ -191,7 +191,7 @@ const AppointmentRequests = () => {
 
         <div className="controls">
           <div className="search-filter">
-            <div className="search-box">
+            <div className="search-box-AR">
               <Search className="search-icon" />
               <input
                 type="text"
@@ -201,12 +201,7 @@ const AppointmentRequests = () => {
               />
             </div>
           </div>
-          <div className="action-buttons">
-            <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-              <Plus size={18} />
-              New Appointment
-            </button>
-          </div>
+         
         </div>
 
         <div className="table-container">

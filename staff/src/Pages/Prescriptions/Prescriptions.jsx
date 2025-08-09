@@ -92,10 +92,7 @@ const Prescriptions = () => {
           />
         </div>
         
-        <button className="filter-btn">
-          <Filter size={18} />
-          Filter
-        </button>
+        
       </div>
 
       <div className="table-container">
