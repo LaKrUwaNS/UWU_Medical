@@ -158,13 +158,7 @@ const StudentRecords = () => {
               </select>
             </div>
           </div>
-          <div className="action-buttons">
-           
-            <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-              <Plus size={18} />
-              Add New Student
-            </button>
-          </div>
+          
         </div>
 
         <div className="table-container">

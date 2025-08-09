@@ -261,10 +261,7 @@ const MedicalReports = () => {
           </div>
           <div className="action-buttons">
            
-            <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-              <Plus size={18} />
-              New Report
-            </button>
+            
           </div>
         </div>
 

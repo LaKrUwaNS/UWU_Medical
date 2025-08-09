@@ -207,7 +207,8 @@
 
 .search-box {
   position: relative;
-  max-width: 500px;
+  max-width: 1010px;
+  
 }
 
 .search-box input {
@@ -216,7 +217,7 @@
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   background: white;
-  font-size: 1rem;
+  font-size: 12px;
   transition: all 0.3s ease;
 }
 
@@ -246,7 +247,7 @@
 
 .filters {
   display: flex;
-  gap: 1.5rem;
+  gap: 230px;
   flex-wrap: wrap;
 }
 
@@ -330,11 +331,13 @@
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   overflow: hidden;
+  border: 1px solid rgb(39, 161, 39);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .reports-table {
   width: 100%;
+  border: 1px solid rgb(39, 161, 39);
   border-collapse: collapse;
 }
 
@@ -346,7 +349,8 @@
   padding: 1.25rem 1.5rem;
   text-align: left;
   font-weight: 600;
-  color: #374151;
+  background: #229134;
+  color: #e7eaee;
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
