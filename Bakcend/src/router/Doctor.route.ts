@@ -15,6 +15,7 @@ import { ChangeMedicalRequestStatus, GetMedicalRequests } from "../controller/do
 import { createArticle, deleteArticle, getAllArticles, getArticleData, updateArticle } from "../controller/doctor/pages/Update.controller";
 import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
 import { GetAllStudents } from "../controller/doctor/pages/AllStudents.controller";
+import { GetAllStaff } from "../controller/doctor/pages/Staff..controller";
 
 const DoctorRouter = Router();
 
@@ -127,5 +128,12 @@ DoctorRouter.delete("/articles/:id", isDoctorLogin, deleteArticle);// → DELETE
 
 
 
-DoctorRouter.get("/students", GetAllStudents); // localhost:5000/doctor/students
+
+// ==========================
+// Staff Page Routers
+// ==========================
+DoctorRouter.get("/staff", GetAllStaff); // localhost:5000/doctor/staff
+
+
+DoctorRouter.get("/students", isDoctorLogin, GetAllStudents); // localhost:5000/doctor/students
 export default DoctorRouter;
