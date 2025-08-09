@@ -358,7 +358,7 @@ export default function MedicalCenterPortal() {
   };
 
   return (
-    <div className="container">
+    <div className="containerForHomeUi">
       {/* Overlay for mobile sidebar */}
       <div
         className={`overlay ${isMobile && sidebarOpen ? 'mobile-open' : ''}`}
