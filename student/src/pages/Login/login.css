@@ -27,6 +27,12 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.1);
 }
+.uni-logo-image {
+  max-width: 100px; /* limit max size */
+  width: 100%;      /* shrink to fit container */
+  height: auto;     /* keep proportions */
+}
+
 
 .main-contentlogin {
   position: absolute;
@@ -61,7 +67,6 @@ background: rgba(255, 255, 255, 0.5); /* 50% opaque, 50% transparent */
 .logo {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #fb923c 0%, #fbbf24 50%, #22c55e 100%);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -135,14 +140,15 @@ background: rgba(255, 255, 255, 0.5); /* 50% opaque, 50% transparent */
 }
 
 .forgot-password a {
-  color: #3b82f6;
+  color: #174691;
   font-size: 14px;
+  font-weight: 600;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .forgot-password a:hover {
-  color: #2563eb;
+  color: #062058;
 }
 
 .signin-btn {
@@ -199,18 +205,43 @@ background: rgba(255, 255, 255, 0.5); /* 50% opaque, 50% transparent */
 }
 
 .signup-text {
-  color: #6b7280;
+  color: #323e55;
   font-size: 14px;
+    font-weight: 600;
+
+
 }
 
 .signup-link {
-  color: #3b82f6;
+  color: #10408e;
   text-decoration: none;
+  font-weight: 600;
   transition: color 0.2s ease;
 }
 
 .signup-link:hover {
   color: #2563eb;
+}
+.message-text {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: slideIn 0.3s ease;
+}
+
+.message-text.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #065f46;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.message-text.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #991b1b;
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .university-footer {
@@ -218,8 +249,17 @@ background: rgba(255, 255, 255, 0.5); /* 50% opaque, 50% transparent */
 }
 
 .university-text {
-  color: #9ca3af;
+  color: #0f1c33;
   font-size: 12px;
+    font-weight: 600;
+
+}
+.a-link {
+    color: #1d52a7;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 0.25rem;
+    transition: color 0.2s ease;
 }
 
 /* Responsive Design */
