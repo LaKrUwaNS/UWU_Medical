@@ -19,19 +19,22 @@ import {
     StudentResetPassword,
     StudentLogout,
     UploadStudentPhoto,
-    CheckIsStudentLoggedIn
+    CheckIsStudentLoggedIn,
 } from "../controller/student/Auth.Student.controller";
 
 import { isStudentLoggedIn } from "../middleware/CheckLogin/isStudentlogin";
 import { getMedicalData } from "../controller/student/pages/GetMEdicales.controller";
 import { ApplyMedicalRequest } from "../controller/student/pages/applyMedical.controller";
 import { StudentdataGET, StudentDateEdit, VerifyandUpdate } from "../controller/student/pages/studnetData.controller";
+import { generateSummary } from "../controller/student/pages/CheckAI.controller";
 
 
 const upload = multer({ dest: "uploads/" }); // configure multer as needed
 
 const StudentRouter = Router();
 
+
+StudentRouter.post('/test-ai', generateSummary);   // localhost:5000/student/test-ai
 
 // ==========================
 //!Authontication Page Routers
