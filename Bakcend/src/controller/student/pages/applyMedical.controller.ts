@@ -3,6 +3,8 @@ import { TryCatch } from "../../../utils/Error/ErrorHandler";
 import { MedicalRequest } from "../../../models/MedicalRequest.model";
 import { AuthenticatedStudentRequest } from "../../../middleware/CheckLogin/isStudentlogin";
 
+
+// Apply the medical
 export const ApplyMedicalRequest = TryCatch(async (req: AuthenticatedStudentRequest, res: Response) => {
     const studentId = req.user?.id;
     const { medicalReason, date, servicetype } = req.body;

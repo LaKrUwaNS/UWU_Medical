@@ -9,7 +9,7 @@ import { getDashBoard } from "../controller/doctor/pages/Dashboard.controller";
 import { ProfilePhotoupload } from "../controller/doctor/Auth.controller";
 import { upload } from "../config/Multer";
 //import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
-import { deleteMedicine, getMedicineList, addNewMedicine, updateMedicine } from "../controller/doctor/pages/Medicine.controller";
+import { deleteMedicine, getMedicineList, addNewMedicine, updateMedicine, getAllInventories } from "../controller/doctor/pages/Medicine.controller";
 import { createPrescription, getStudentMedicalProfile, getStudentPrescriptions, updatePrescriptionStatus } from "../controller/doctor/pages/StudentsDate.controller";
 import { ChangeMedicalRequestStatus, GetMedicalRequests } from "../controller/doctor/pages/MedicalRequests.controller";
 import { createArticle, deleteArticle, getAllArticles, getArticleData, updateArticle } from "../controller/doctor/pages/Update.controller";
@@ -93,6 +93,8 @@ DoctorRouter.post("/adding-new-medicine", addNewMedicine); //localhost:5000/doct
 DoctorRouter.put("/updating-medicine/:id", updateMedicine); //localhost:5000/doctor/updating-medicine/:id
 // !Doctor Deleting Medicine
 DoctorRouter.delete("/deleting-medicine/:id", deleteMedicine); //localhost:5000/doctor/deleting-medicine/:id
+// !Get Inventory Data
+DoctorRouter.get("/inventory", getAllInventories); //localhost:5000/doctor/inventory
 
 
 

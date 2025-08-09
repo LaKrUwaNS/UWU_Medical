@@ -5,6 +5,7 @@ export interface IMedicine extends Document {
     status: 'in stock' | 'low' | 'out';
     quantity: number;
     inventoryKey: string;
+    expirationDate: Date;
     inventoryId: Types.ObjectId;
 }
 
@@ -14,6 +15,7 @@ const medicineSchema = new Schema<IMedicine>({
     quantity: { type: Number, required: true, min: 0 },
     inventoryKey: { type: String, required: true },
     inventoryId: { type: Schema.Types.ObjectId, ref: 'Inventory', required: true },
+    expirationDate: { type: Date, required: true },
 },
     {
         timestamps: true,
