@@ -9,7 +9,7 @@ export const getMedicalData = TryCatch(async (req: AuthenticatedStudentRequest, 
     const user = req.user;
 
     if (!user || !user.id) {
-        return sendResponse(res, 401, false, "Unauthorized: User not found");
+        return sendResponse(res, 401, false, "Unauthorized: User not found");   
     }
 
     const studentId = user.id;

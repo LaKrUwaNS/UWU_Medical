@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { TestMail } from "../controller/doctor/Auth.controller";
-import { validateMiddleware } from "../middleware/validate.middleware";
+import { studentUpdateSchema, validateMiddleware } from "../middleware/validate.middleware";
 
 import {
     StudentregisterStudentSchema,
@@ -25,6 +25,7 @@ import {
 import { isStudentLoggedIn } from "../middleware/CheckLogin/isStudentlogin";
 import { getMedicalData } from "../controller/staff/pages/GetMEdicales.controller";
 import { ApplyMedicalRequest } from "../controller/staff/pages/applyMedical.controller";
+import { StudentdataGET, StudentDateEdit, VerifyandUpdate } from "../controller/staff/pages/studnetData.controller";
 
 
 const upload = multer({ dest: "uploads/" }); // configure multer as needed
@@ -81,6 +82,14 @@ StudentRouter.get("/medical-data", isStudentLoggedIn, getMedicalData); // GET lo
 // Apply Medical Request Page Routers
 // ==========================
 StudentRouter.post("/apply-medical", isStudentLoggedIn, ApplyMedicalRequest); // post localhost:5000/student/apply-medical
+
+
+// ==========================
+// Settings Page Routers
+// ==========================
+StudentRouter.get("/settings", isStudentLoggedIn, StudentdataGET);   // GET localhost:5000/student/settings
+StudentRouter.post("/settings/edit", validateMiddleware(studentUpdateSchema), isStudentLoggedIn, StudentDateEdit); // PATCH localhost:5000/student/settings/edit
+StudentRouter.patch("/settings/verify-email", isStudentLoggedIn, VerifyandUpdate); // POST localhost:5000/student/settings/verify-email
 
 
 export default StudentRouter;
