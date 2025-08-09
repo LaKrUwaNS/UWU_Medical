@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Search, Filter, Eye, Edit } from 'lucide-react';
 import './StudentRecords.css';
 import { Link } from 'react-router-dom';
+import images from "../../../assets/images";
+import UserProfile from '../../../components/UserProfile/UseraProfile';
 
 const StudentRecords = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -117,10 +119,14 @@ const StudentRecords = () => {
     <div className="app-container">
       <main className="main-content">
         <header className="page-header">
+          <div className="title-text">
           <h2 className="page-title">Student Records</h2>
           <p className="page-description">
             Manage and view student information for the medical program
           </p>
+          </div>
+                  <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
+
         </header>
 
         {/* Filters */}

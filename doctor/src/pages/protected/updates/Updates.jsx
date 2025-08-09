@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Updates.css";
 import BlogCard from "../../../components/BlogCard/BlogCard";
 import UserProfile from "../../../components/UserProfile/UseraProfile";
+import images from "../../../assets/images";
 
 const BASE_URL = "http://localhost:5000/doctor";
 
@@ -80,7 +81,7 @@ const Updates = () => {
 
   return (
     <div className="updates-page">
-      <div className="user"><UserProfile /></div>
+      <div className="user"> <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} /></div>
 
       <header className="updates-header">
         <h2>Notes already Submitted</h2>
