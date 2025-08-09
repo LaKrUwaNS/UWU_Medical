@@ -38,3 +38,9 @@ export const PASSWORD = process.env.NODE_MAILER_PASSWORD;
 // Verify Code
 export const VERIFY_CODE = process.env.VERIFY_CODE;
 
+
+
+
+// GEmini
+export const GEMINI_API = process.env.GEMINI_API;
+export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
