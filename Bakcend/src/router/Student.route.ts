@@ -23,11 +23,18 @@ import {
 } from "../controller/student/Auth.Student.controller";
 
 import { isStudentLoggedIn } from "../middleware/CheckLogin/isStudentlogin";
+import { getMedicalData } from "../controller/staff/pages/GetMEdicales.controller";
+import { ApplyMedicalRequest } from "../controller/staff/pages/applyMedical.controller";
+
 
 const upload = multer({ dest: "uploads/" }); // configure multer as needed
 
 const StudentRouter = Router();
 
+
+// ==========================
+//!Authontication Page Routers
+// ==========================
 StudentRouter.post('/test', TestMail);
 // POST localhost:5000/student/test
 
@@ -60,5 +67,20 @@ StudentRouter.post(
     UploadStudentPhoto
 );
 // POST localhost:5000/student/profile-photo-upload
+
+
+
+// ==========================
+// !SHOW Medical Request Page Routers
+// ==========================
+StudentRouter.get("/medical-data", isStudentLoggedIn, getMedicalData); // GET localhost:5000/student/medical-data
+
+
+
+// ==========================
+// Apply Medical Request Page Routers
+// ==========================
+StudentRouter.post("/apply-medical", isStudentLoggedIn, ApplyMedicalRequest); // post localhost:5000/student/apply-medical
+
 
 export default StudentRouter;
