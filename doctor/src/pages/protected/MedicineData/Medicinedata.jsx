@@ -5,10 +5,8 @@ import UserProfile from '../../../components/UserProfile/UseraProfile';
 
 const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
-        case 'in stock': return 'status-badge green';
+        case 'have': return 'status-badge green';
         case 'low': return 'status-badge yellow';
-        case 'out of stock':
-        case 'out':
         case 'no': return 'status-badge red';
         default: return 'status-badge';
     }
@@ -21,7 +19,8 @@ function MedicineData() {
     const [loading, setLoading] = useState(true);
     const [editingIndex, setEditingIndex] = useState(null);
     const [inventoryId, setInventoryId] = useState('');
-    const [inventoryList, setInventoryList] = useState([]); // ✅ NEW STATE
+    const [inventoryList, setInventoryList] = useState([]);
+
     const [formData, setFormData] = useState({
         _id: '',
         name: '',
@@ -74,7 +73,7 @@ function MedicineData() {
             });
             const data = await res.json();
             if (data.success) {
-                setInventoryList(data.data); // ✅ store all inventory items
+                setInventoryList(data.data);
             } else {
                 console.error('Failed to fetch inventory:', data.message);
             }
@@ -95,59 +94,68 @@ function MedicineData() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+
+        if (name === 'id') {
+            setFormData(prev => ({ ...prev, id: value }));
+
+            const selectedInventory = inventoryList.find(inv => inv.inventoryKey === value);
+            setInventoryId(selectedInventory ? selectedInventory._id : '');
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
-    // Add / Update medicine
     const handleSubmit = async () => {
-        if (formData.name && formData.expire && formData.id && formData.quantity !== '') {
-            try {
-                const payload = {
-                    medicineName: formData.name,
-                    status:
-                        formData.status === 'Have'
-                            ? 'Have'
-                            : formData.status === 'Low'
-                                ? 'Low'
-                                : 'No',
-                    quantity: Number(formData.quantity),
-                    inventoryKey: formData.id,
-                    expirationDate: new Date(formData.expire).toISOString(),
-                    inventoryId: inventoryId
-                };
-
-                let url = 'http://localhost:5000/doctor/adding-new-medicine';
-                let method = 'POST';
-
-                if (editingIndex !== null) {
-                    url = `http://localhost:5000/doctor/updating-medicine/${formData._id}`;
-                    method = 'PUT';
-                }
-
-                const res = await fetch(url, {
-                    method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await res.json();
-
-                if (data.success) {
-                    fetchMedicines();
-                    resetForm();
-                    alert(editingIndex !== null ? 'Medicine updated successfully!' : 'Medicine added successfully!');
-                } else {
-                    alert(data.message || 'Operation failed.');
-                }
-            } catch (error) {
-                console.error('Error saving medicine:', error);
-                alert('Something went wrong. Please try again.');
-            }
-        } else {
+        // Validate required fields
+        if (!formData.name.trim() || !formData.expire || !formData.id || formData.quantity === '') {
             alert('Please fill in all required fields');
+            return;
+        }
+
+        if (!inventoryId) {
+            alert('Please select a valid Inventory ID');
+            return;
+        }
+
+        const payload = {
+            medicineName: formData.name.trim(),
+            status: formData.status.trim(),
+            quantity: Number(formData.quantity),
+            inventoryKey: formData.id.trim(),
+            expirationDate: new Date(formData.expire).toISOString(),
+            inventoryId: inventoryId
+        };
+
+        try {
+            let url = 'http://localhost:5000/doctor/adding-new-medicine';
+            let method = 'POST';
+
+            if (editingIndex !== null) {
+                url = `http://localhost:5000/doctor/updating-medicine/${formData._id}`;
+                method = 'PUT';
+            }
+
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                fetchMedicines();
+                resetForm();
+                alert(editingIndex !== null ? 'Medicine updated successfully!' : 'Medicine added successfully!');
+            } else {
+                alert(data.message || 'Operation failed.');
+            }
+        } catch (error) {
+            console.error('Error saving medicine:', error);
+            alert('Something went wrong. Please try again.');
         }
     };
 
@@ -155,6 +163,9 @@ function MedicineData() {
         setFormData(medicines[index]);
         setEditingIndex(index);
         setIsModalOpen(true);
+
+        const selectedInventory = inventoryList.find(inv => inv.inventoryKey === medicines[index].id);
+        setInventoryId(selectedInventory ? selectedInventory._id : '');
     };
 
     const handleDelete = async (index) => {
@@ -192,6 +203,7 @@ function MedicineData() {
             quantity: ''
         });
         setEditingIndex(null);
+        setInventoryId('');
         setIsModalOpen(false);
     };
 
@@ -326,6 +338,7 @@ function MedicineData() {
                                     onChange={handleInputChange}
                                     placeholder="e.g., 10"
                                     className="form-input"
+                                    min={0}
                                 />
                             </div>
                         </div>
