@@ -75,20 +75,25 @@ export const updateMedicine = TryCatch(async (req: AuthenticatedRequest, res: Re
     const updateData: Partial<IMedicine> = {};
 
     if (medicineName !== undefined) updateData.medicineName = medicineName;
+
     if (status !== undefined) {
-        if (!['in stock', 'low', 'out'].includes(status)) {
+        const normalizedStatus = status.toLowerCase();
+        if (!['have', 'low', 'no'].includes(normalizedStatus)) {
             return sendResponse(res, 400, false, "Invalid status value");
         }
-        updateData.status = status;
+        updateData.status = normalizedStatus;
     }
+
     if (quantity !== undefined) {
         if (isNaN(quantity) || quantity < 0) {
             return sendResponse(res, 400, false, "Quantity must be a positive number");
         }
         updateData.quantity = quantity;
     }
+
     if (inventoryKey !== undefined) updateData.inventoryKey = inventoryKey;
     if (expirationDate !== undefined) updateData.expirationDate = new Date(expirationDate);
+
     if (inventoryId !== undefined) {
         const inventoryExists = await Inventory.exists({ _id: inventoryId });
         if (!inventoryExists) {

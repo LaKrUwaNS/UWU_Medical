@@ -106,7 +106,6 @@ function MedicineData() {
     };
 
     const handleSubmit = async () => {
-        // Validate required fields
         if (!formData.name.trim() || !formData.expire || !formData.id || formData.quantity === '') {
             alert('Please fill in all required fields');
             return;
@@ -117,14 +116,18 @@ function MedicineData() {
             return;
         }
 
+        const normalizedStatus = formData.status.trim();
+
         const payload = {
             medicineName: formData.name.trim(),
-            status: formData.status.trim(),
+            status: normalizedStatus,
             quantity: Number(formData.quantity),
             inventoryKey: formData.id.trim(),
             expirationDate: new Date(formData.expire).toISOString(),
             inventoryId: inventoryId
         };
+
+        console.log('PUT payload:', payload);
 
         try {
             let url = 'http://localhost:5000/doctor/adding-new-medicine';
@@ -144,7 +147,16 @@ function MedicineData() {
                 body: JSON.stringify(payload)
             });
 
-            const data = await res.json();
+            const text = await res.text();  // get raw response for debugging
+            console.log('Response status:', res.status);
+            console.log('Response text:', text);
+
+            if (!res.ok) {
+                alert(`Error ${res.status}: ${text}`);
+                return;
+            }
+
+            const data = JSON.parse(text);
 
             if (data.success) {
                 fetchMedicines();
@@ -158,7 +170,6 @@ function MedicineData() {
             alert('Something went wrong. Please try again.');
         }
     };
-
     const handleEdit = (index) => {
         setFormData(medicines[index]);
         setEditingIndex(index);
@@ -249,8 +260,8 @@ function MedicineData() {
                                     </td>
                                 </tr>
                             ) : (
-                                filteredMedicines.map((med, idx) => (
-                                    <tr key={idx}>
+                                filteredMedicines.map((med) => (
+                                    <tr key={med._id}>
                                         <td>{med.name}</td>
                                         <td><span className={getStatusClass(med.status)}>{med.status}</span></td>
                                         <td>{med.expire}</td>
@@ -258,8 +269,8 @@ function MedicineData() {
                                         <td>{med.quantity}</td>
                                         <td>
                                             <div className="action-buttons">
-                                                <button className="edit-btn" onClick={() => handleEdit(idx)}>✏️</button>
-                                                <button className="delete-btn" onClick={() => handleDelete(idx)}>🗑️</button>
+                                                <button className="edit-btn" onClick={() => handleEdit(medicines.findIndex(m => m._id === med._id))}>✏️</button>
+                                                <button className="delete-btn" onClick={() => handleDelete(medicines.findIndex(m => m._id === med._id))}>🗑️</button>
                                             </div>
                                         </td>
                                     </tr>
