@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './MedicineData.css';
 import images from '../../../assets/images';
 import UserProfile from '../../../components/UserProfile/UseraProfile';
 
-const medicineList = [
-    { name: 'Paracetamol', status: 'Have', expire: '2025-05-24', id: 'F2256', quantity: 10 },
-    { name: 'Ibuprofen', status: 'Low', expire: '2025-07-10', id: 'F2257', quantity: 5 },
-    { name: 'Amoxicillin', status: 'No', expire: '2025-03-15', id: 'F2258', quantity: 0 },
-];
-
 const getStatusClass = (status) => {
-    switch (status) {
-        case 'Have': return 'status-badge green';
-        case 'Low': return 'status-badge yellow';
-        case 'No': return 'status-badge red';
+    switch (status?.toLowerCase()) {
+        case 'in stock': return 'status-badge green';
+        case 'low': return 'status-badge yellow';
+        case 'out of stock':
+        case 'out':
+        case 'no': return 'status-badge red';
         default: return 'status-badge';
     }
 };
@@ -21,15 +17,76 @@ const getStatusClass = (status) => {
 function MedicineData() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [medicines, setMedicines] = useState(medicineList);
+    const [medicines, setMedicines] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [editingIndex, setEditingIndex] = useState(null);
+    const [inventoryId, setInventoryId] = useState('');
+    const [inventoryList, setInventoryList] = useState([]); // ✅ NEW STATE
     const [formData, setFormData] = useState({
+        _id: '',
         name: '',
         status: 'Have',
         expire: '',
         id: '',
         quantity: ''
     });
+
+    // Fetch all medicines
+    const fetchMedicines = async () => {
+        try {
+            const res = await fetch('http://localhost:5000/doctor/medicine', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                const formattedData = data.data.map(med => ({
+                    _id: med._id,
+                    name: med.medicineName,
+                    status: med.status,
+                    expire: med.expirationDate?.split('T')[0] || '',
+                    id: med.inventoryKey,
+                    quantity: med.quantity
+                }));
+                setMedicines(formattedData);
+            } else {
+                console.error('Failed to fetch medicines:', data.message);
+            }
+        } catch (error) {
+            console.error('Error fetching medicines:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch inventory data for dropdown
+    const fetchInventoryData = async () => {
+        try {
+            const res = await fetch('http://localhost:5000/doctor/inventory', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                setInventoryList(data.data); // ✅ store all inventory items
+            } else {
+                console.error('Failed to fetch inventory:', data.message);
+            }
+        } catch (error) {
+            console.error('Error fetching inventory:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchMedicines();
+        fetchInventoryData();
+    }, []);
 
     const filteredMedicines = medicines.filter(med =>
         med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -38,24 +95,57 @@ function MedicineData() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = () => {
+    // Add / Update medicine
+    const handleSubmit = async () => {
         if (formData.name && formData.expire && formData.id && formData.quantity !== '') {
-            if (editingIndex !== null) {
-                const updatedMedicines = medicines.map((med, index) =>
-                    index === editingIndex ? formData : med
-                );
-                setMedicines(updatedMedicines);
-                setEditingIndex(null);
-            } else {
-                setMedicines(prev => [...prev, formData]);
+            try {
+                const payload = {
+                    medicineName: formData.name,
+                    status:
+                        formData.status === 'Have'
+                            ? 'in stock'
+                            : formData.status === 'Low'
+                                ? 'low'
+                                : 'out',
+                    quantity: Number(formData.quantity),
+                    inventoryKey: formData.id,
+                    expirationDate: new Date(formData.expire).toISOString(),
+                    inventoryId: inventoryId
+                };
+
+                let url = 'http://localhost:5000/doctor/adding-new-medicine';
+                let method = 'POST';
+
+                if (editingIndex !== null) {
+                    url = `http://localhost:5000/doctor/updating-medicine/${formData._id}`;
+                    method = 'PUT';
+                }
+
+                const res = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    fetchMedicines();
+                    resetForm();
+                    alert(editingIndex !== null ? 'Medicine updated successfully!' : 'Medicine added successfully!');
+                } else {
+                    alert(data.message || 'Operation failed.');
+                }
+            } catch (error) {
+                console.error('Error saving medicine:', error);
+                alert('Something went wrong. Please try again.');
             }
-            resetForm();
         } else {
             alert('Please fill in all required fields');
         }
@@ -67,21 +157,41 @@ function MedicineData() {
         setIsModalOpen(true);
     };
 
-    const handleDelete = (index) => {
+    const handleDelete = async (index) => {
+        const medId = medicines[index]._id;
         if (window.confirm('Are you sure you want to delete this medicine?')) {
-            const updatedMedicines = medicines.filter((_, i) => i !== index);
-            setMedicines(updatedMedicines);
+            try {
+                const res = await fetch(`http://localhost:5000/doctor/deleting-medicine/${medId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    fetchMedicines();
+                    alert('Medicine deleted successfully!');
+                } else {
+                    alert(data.message || 'Failed to delete medicine.');
+                }
+            } catch (error) {
+                console.error('Error deleting medicine:', error);
+                alert('Something went wrong.');
+            }
         }
     };
 
     const resetForm = () => {
         setFormData({
+            _id: '',
             name: '',
             status: 'Have',
             expire: '',
             id: '',
             quantity: ''
         });
+        setEditingIndex(null);
         setIsModalOpen(false);
     };
 
@@ -105,45 +215,50 @@ function MedicineData() {
             </div>
 
             <div className="table-container">
-                <table className='medicine-table'>
-                    <thead>
-                        <tr>
-                            <th>Drug Name</th>
-                            <th>Status</th>
-                            <th>Expire Date</th>
-                            <th>Inventory ID</th>
-                            <th>Quantity</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredMedicines.length === 0 ? (
+                {loading ? (
+                    <p>Loading medicine data...</p>
+                ) : (
+                    <table className='medicine-table'>
+                        <thead>
                             <tr>
-                                <td colSpan='6' className='no-data-message'>
-                                    🚫 No medicine data found for "{searchTerm}".
-                                </td>
+                                <th>Drug Name</th>
+                                <th>Status</th>
+                                <th>Expire Date</th>
+                                <th>Inventory ID</th>
+                                <th>Quantity</th>
+                                <th>Actions</th>
                             </tr>
-                        ) : (
-                            filteredMedicines.map((med, idx) => (
-                                <tr key={idx}>
-                                    <td>{med.name}</td>
-                                    <td><span className={getStatusClass(med.status)}>{med.status}</span></td>
-                                    <td>{med.expire}</td>
-                                    <td>{med.id}</td>
-                                    <td>{med.quantity}</td>
-                                    <td>
-                                        <div className="action-buttons">
-                                            <button className="edit-btn" onClick={() => handleEdit(idx)} title="Edit Medicine">✏️</button>
-                                            <button className="delete-btn" onClick={() => handleDelete(idx)} title="Delete Medicine">🗑️</button>
-                                        </div>
+                        </thead>
+                        <tbody>
+                            {filteredMedicines.length === 0 ? (
+                                <tr>
+                                    <td colSpan='6' className='no-data-message'>
+                                        🚫 No medicine data found for "{searchTerm}".
                                     </td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
+                            ) : (
+                                filteredMedicines.map((med, idx) => (
+                                    <tr key={idx}>
+                                        <td>{med.name}</td>
+                                        <td><span className={getStatusClass(med.status)}>{med.status}</span></td>
+                                        <td>{med.expire}</td>
+                                        <td>{med.id}</td>
+                                        <td>{med.quantity}</td>
+                                        <td>
+                                            <div className="action-buttons">
+                                                <button className="edit-btn" onClick={() => handleEdit(idx)}>✏️</button>
+                                                <button className="delete-btn" onClick={() => handleDelete(idx)}>🗑️</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                )}
             </div>
 
+            {/* Modal */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={resetForm}>
                     <div className="modal-container" onClick={(e) => e.stopPropagation()}>
@@ -188,14 +303,19 @@ function MedicineData() {
                             </div>
                             <div className="form-group">
                                 <label>Inventory ID *</label>
-                                <input
-                                    type="text"
+                                <select
                                     name="id"
                                     value={formData.id}
                                     onChange={handleInputChange}
-                                    placeholder="e.g., F2256"
-                                    className="form-input"
-                                />
+                                    className="form-select"
+                                >
+                                    <option value="">Select Inventory ID</option>
+                                    {inventoryList.map((inv) => (
+                                        <option key={inv._id} value={inv.inventoryKey}>
+                                            {inv.inventoryKey}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="form-group">
                                 <label>Quantity *</label>
