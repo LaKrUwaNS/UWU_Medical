@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Edit, Home, Calendar, Settings, User, Stethoscope, Bell, FileText, MessageCircle, Menu, X } from 'lucide-react';
+import { Edit, Home, Calendar, Settings, User, Stethoscope, Bell, FileText, MessageCircle, Menu, X, LogOut } from 'lucide-react';
+import { Navigate } from "react-router-dom";
 import './homeui.css'; // Import the CSS file
 
 export default function MedicalCenterPortal() {
@@ -8,6 +9,8 @@ export default function MedicalCenterPortal() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [student, setStudent] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -20,11 +23,40 @@ export default function MedicalCenterPortal() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  useEffect(() => {
+    const checkStudentLogin = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/student/check-login", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        const data = await res.json();
+
+        if (data.success && data.isAuthorized) {
+          setIsAuthenticated(true);
+          setStudent(data.student);
+        } else {
+          setIsAuthenticated(false);
+          setStudent(null);
+        }
+      } catch {
+        setIsAuthenticated(false);
+        setStudent(null);
+      }
+    };
+
+    // Only check once when component mounts
+    checkStudentLogin();
+
+    // No interval or repeated check
+  }, []);
+
   const menuItems = [
     { id: 'apply', label: 'Apply medical', icon: Stethoscope },
     { id: 'updates', label: 'Updates', icon: Bell },
-    { id: 'settings', label: 'Settings', icon: Settings },
-    { id: 'contact', label: 'Contact Doctor', icon: MessageCircle }
+    { id: 'contact', label: 'Contact Doctor', icon: MessageCircle },
+    { id: 'logout', label: 'Logout', icon: LogOut } // Changed icon and id to lowercase
   ];
 
   // Additional menu items for expanded sidebar
@@ -32,8 +64,51 @@ export default function MedicalCenterPortal() {
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'student-data', label: 'Student Data', icon: User },
     { id: 'medical-requests', label: 'Medical Requests', icon: FileText },
-    { id: 'reminders', label: 'Reminders', icon: Calendar }
+    { id: 'reminders', label: 'Reminders', icon: Calendar },
   ];
+
+  // Fixed logout function
+  const handleLogout = async () => {
+    try {
+      // Call logout API endpoint
+      const response = await fetch("http://localhost:5000/student/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        // Clear local state
+        setIsAuthenticated(false);
+        setStudent(null);
+
+        // Optional: Clear any local storage or session storage
+        localStorage.removeItem('student');
+        sessionStorage.clear();
+
+        console.log("Logout successful");
+      } else {
+        console.error("Logout failed");
+        // Even if API fails, clear local state for security
+        setIsAuthenticated(false);
+        setStudent(null);
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      // Clear local state even on error
+      setIsAuthenticated(false);
+      setStudent(null);
+    }
+  };
+
+  // Updated menu click handler
+  const handleMenuClick = (id) => {
+    if (id === "logout") {
+      handleLogout();
+    } else {
+      setActivePage(id);
+      setSidebarOpen(false);
+    }
+  };
 
   const getPageTitle = () => {
     switch (activePage) {
@@ -85,25 +160,25 @@ export default function MedicalCenterPortal() {
         <div>
           <div className="form-group">
             <label className="label">Student ID</label>
-            <input type="text" defaultValue="STU2024001" className="input" readOnly />
+            <input type="text" defaultValue={student?.indexNumber || "STU2024001"} className="input" readOnly />
           </div>
           <div className="form-group">
             <label className="label">Full Name</label>
-            <input type="text" defaultValue="John Doe" className="input" />
+            <input type="text" defaultValue={student?.name || "John Doe"} className="input" />
           </div>
           <div className="form-group">
             <label className="label">Email</label>
-            <input type="email" defaultValue="john.doe@university.edu" className="input" />
+            <input type="email" defaultValue={student?.personalMail || "john.doe@university.edu"} className="input" />
           </div>
         </div>
         <div>
           <div className="form-group">
             <label className="label">Phone Number</label>
-            <input type="tel" defaultValue="+94 77 123 4567" className="input" />
+            <input type="tel" defaultValue={student?.mobile || "+94 77 123 4567"} className="input" />
           </div>
           <div className="form-group">
-            <label className="label">Emergency Contact</label>
-            <input type="tel" defaultValue="+94 77 987 6543" className="input" />
+            <label className="label">Blood Type</label>
+            <input type="text" defaultValue={student?.bloodType || "O+"} className="input" readOnly />
           </div>
           <button className="button">Update Information</button>
         </div>
@@ -164,11 +239,11 @@ export default function MedicalCenterPortal() {
         <div>
           <div className="form-group">
             <label className="label">Full Name</label>
-            <input type="text" className="input" placeholder="Enter your full name" />
+            <input type="text" className="input" placeholder="Enter your full name" defaultValue={student?.name || ""} />
           </div>
           <div className="form-group">
             <label className="label">Student ID</label>
-            <input type="text" className="input" placeholder="Enter your student ID" />
+            <input type="text" className="input" placeholder="Enter your student ID" defaultValue={student?.indexNumber || ""} />
           </div>
           <div className="form-group">
             <label className="label">Medical Service Type</label>
@@ -246,11 +321,11 @@ export default function MedicalCenterPortal() {
           <div className="form-grid">
             <div className="form-group">
               <label className="label">Display Name</label>
-              <input type="text" defaultValue="Student User" className="input" />
+              <input type="text" defaultValue={student?.name || "Student User"} className="input" />
             </div>
             <div className="form-group">
               <label className="label">Email</label>
-              <input type="email" defaultValue="student@medicalcenter.edu" className="input" />
+              <input type="email" defaultValue={student?.personalMail || "student@medicalcenter.edu"} className="input" />
             </div>
           </div>
         </div>
@@ -278,6 +353,9 @@ export default function MedicalCenterPortal() {
           <div className="button-group">
             <button className="button">Change Password</button>
             <button className="secondary-button">Enable Two-Factor Auth</button>
+            <button className="secondary-button" onClick={handleLogout}>
+              Logout
+            </button>
           </div>
         </div>
       </div>
@@ -357,8 +435,16 @@ export default function MedicalCenterPortal() {
     }
   };
 
+  if (isAuthenticated === null) {
+    return <div className="checking">Checking login status...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
-    <div className="container">
+    <div className="containerForHomeUi">
       {/* Overlay for mobile sidebar */}
       <div
         className={`overlay ${isMobile && sidebarOpen ? 'mobile-open' : ''}`}
@@ -370,12 +456,17 @@ export default function MedicalCenterPortal() {
         <h1 className="header-title">
           {getPageTitle()}
         </h1>
-        <button
-          className="mobile-menu-button"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <div className="header-actions">
+          <div className="user-info">
+            Welcome, {student?.name || 'Student'}
+          </div>
+          <button
+            className="mobile-menu-button"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       <div className="main-layout">
@@ -418,10 +509,7 @@ export default function MedicalCenterPortal() {
                     <li key={item.id} className="nav-item">
                       <button
                         className={`nav-button ${isActive ? 'active' : ''}`}
-                        onClick={() => {
-                          setActivePage(item.id);
-                          setSidebarOpen(false);
-                        }}
+                        onClick={() => handleMenuClick(item.id)}
                         onMouseEnter={() => setHoveredNav(item.id)}
                         onMouseLeave={() => setHoveredNav(null)}
                       >
@@ -438,7 +526,7 @@ export default function MedicalCenterPortal() {
               </ul>
             </div>
 
-            {/* Current Menu Items */}
+            {/* Services Menu Section */}
             <div className="menu-section">
               <div className="menu-section-title">Services</div>
               <ul className="nav-list">
@@ -446,21 +534,19 @@ export default function MedicalCenterPortal() {
                   const Icon = item.icon;
                   const isActive = activePage === item.id;
                   const isHovered = hoveredNav === item.id;
+                  const isLogout = item.id === 'logout';
 
                   return (
                     <li key={item.id} className="nav-item">
                       <button
-                        className={`nav-button ${isActive ? 'active' : ''}`}
-                        onClick={() => {
-                          setActivePage(item.id);
-                          setSidebarOpen(false);
-                        }}
+                        className={`nav-button ${isActive ? 'active' : ''} ${isLogout ? 'logout-button' : ''}`}
+                        onClick={() => handleMenuClick(item.id)}
                         onMouseEnter={() => setHoveredNav(item.id)}
                         onMouseLeave={() => setHoveredNav(null)}
                       >
                         <Icon
                           size={18}
-                          color={isActive ? '#ffffff' : isHovered ? '#2073c2ff' : '#6b7280'}
+                          color={isLogout ? '#ef4444' : isActive ? '#ffffff' : isHovered ? '#2073c2ff' : '#6b7280'}
                           className="nav-icon"
                         />
                         <span className="nav-label">{item.label}</span>

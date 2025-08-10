@@ -1,13 +1,13 @@
+import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../../../middleware/CheckLogin/isDotorlogin";
 import { Inventory } from "../../../models/Inventory.model";
 import { IMedicine, Medicine } from "../../../models/Medicine.model";
 import { TryCatch } from "../../../utils/Error/ErrorHandler";
 import { sendResponse } from "../../../utils/response";
-import { Response } from "express";
 import { Types } from "mongoose";
 
 /**
- * @description Get list of all medicines
+ * !@description Get list of all medicines
  * @route GET /api/medicines
  * @access Authenticated
  */
@@ -17,31 +17,42 @@ export const getMedicineList = TryCatch(async (req: AuthenticatedRequest, res: R
 });
 
 /**
- * @description Add new medicine to inventory
+ * !@description Add new medicine to inventory
  * @route POST /api/medicines
  * @access Authenticated
  */
 export const addNewMedicine = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const { medicineName, status, quantity, inventoryKey, inventoryId } = req.body;
+    let { medicineName, status, quantity, inventoryKey, expirationDate } = req.body;
 
-    // Validate required fields
-    if (!medicineName || !quantity || !inventoryId) {
-        return sendResponse(res, 400, false, "Medicine name, quantity and inventory ID are required");
+    // Trim strings if they exist
+    medicineName = medicineName?.trim();
+    status = status?.trim();
+    inventoryKey = inventoryKey?.trim();
+
+    if (!medicineName || !quantity || !inventoryKey || !expirationDate) {
+        return sendResponse(res, 400, false, "Medicine name, quantity, expiration date, and inventory key are required");
     }
 
-    // Validate inventory exists
-    const inventoryExists = await Inventory.exists({ _id: inventoryId });
+    console.log(status);
+
+    const validStatuses = ['Have', 'Low', 'No'];
+
+    if (status && !validStatuses.includes(status)) {
+        return sendResponse(res, 400, false, `Invalid status value. Allowed values: ${validStatuses.join(', ')}`);
+    }
+
+    const inventoryExists = await Inventory.findOne({ inventoryKey });
     if (!inventoryExists) {
         return sendResponse(res, 404, false, "Inventory not found");
     }
 
-    // Create new medicine
     const medicine = await Medicine.create({
         medicineName,
-        status: status || 'in stock',
+        status: status || 'Have',  // default to 'Have' if not provided
         quantity,
         inventoryKey,
-        inventoryId: new Types.ObjectId(inventoryId)
+        inventoryId: inventoryExists._id,
+        expirationDate: new Date(expirationDate),
     });
 
     return sendResponse(res, 201, true, "Medicine added successfully", medicine);
@@ -54,31 +65,35 @@ export const addNewMedicine = TryCatch(async (req: AuthenticatedRequest, res: Re
  */
 export const updateMedicine = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
-    const { medicineName, status, quantity, inventoryKey, inventoryId } = req.body;
+    const { medicineName, status, quantity, inventoryKey, expirationDate, inventoryId } = req.body;
 
-    // Validate medicine exists
     const existingMedicine = await Medicine.findById(id);
     if (!existingMedicine) {
         return sendResponse(res, 404, false, "Medicine not found");
     }
 
-    // Build update object
     const updateData: Partial<IMedicine> = {};
 
     if (medicineName !== undefined) updateData.medicineName = medicineName;
+
     if (status !== undefined) {
-        if (!['in stock', 'low', 'out'].includes(status)) {
+        const normalizedStatus = status.toLowerCase();
+        if (!['have', 'low', 'no'].includes(normalizedStatus)) {
             return sendResponse(res, 400, false, "Invalid status value");
         }
-        updateData.status = status;
+        updateData.status = normalizedStatus;
     }
+
     if (quantity !== undefined) {
         if (isNaN(quantity) || quantity < 0) {
             return sendResponse(res, 400, false, "Quantity must be a positive number");
         }
         updateData.quantity = quantity;
     }
+
     if (inventoryKey !== undefined) updateData.inventoryKey = inventoryKey;
+    if (expirationDate !== undefined) updateData.expirationDate = new Date(expirationDate);
+
     if (inventoryId !== undefined) {
         const inventoryExists = await Inventory.exists({ _id: inventoryId });
         if (!inventoryExists) {
@@ -87,12 +102,10 @@ export const updateMedicine = TryCatch(async (req: AuthenticatedRequest, res: Re
         updateData.inventoryId = new Types.ObjectId(inventoryId);
     }
 
-    // Check if any valid fields were provided
     if (Object.keys(updateData).length === 0) {
         return sendResponse(res, 400, false, "No valid fields provided for update");
     }
 
-    // Perform update
     const updatedMedicine = await Medicine.findByIdAndUpdate(
         id,
         updateData,
@@ -123,7 +136,7 @@ export const deleteMedicine = TryCatch(async (req: AuthenticatedRequest, res: Re
 });
 
 /**
- * @description Get inventory data
+ * @description Get inventory data by user
  * @route GET /api/inventory
  * @access Authenticated
  */
@@ -133,11 +146,28 @@ export const getInventoryData = TryCatch(async (req: AuthenticatedRequest, res: 
         return sendResponse(res, 400, false, "User does not have an associated inventory ID");
     }
     const inventory = await Inventory.findById(inventoryId)
-        .populate('medicines', 'medicineName quantity status');
+        .populate('medicines', 'medicineName quantity status expirationDate');
 
     if (!inventory) {
         return sendResponse(res, 404, false, "Inventory not found");
     }
 
     return sendResponse(res, 200, true, "Inventory retrieved successfully", inventory);
+});
+
+/**
+ * @description Get all inventories (optionally with medicines)
+ * @route GET /api/inventories
+ * @access Public or Authenticated based on your setup
+ */
+export const getAllInventories = TryCatch(async (req: Request, res: Response) => {
+    try {
+        const inventories = await Inventory.find()
+            .sort({ createdAt: -1 });
+
+        return sendResponse(res, 200, true, "Inventories retrieved successfully", inventories);
+    } catch (error) {
+        console.error("Error fetching inventories:", error);
+        return sendResponse(res, 500, false, "Server Error: Unable to fetch inventories");
+    }
 });

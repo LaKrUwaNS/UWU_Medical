@@ -22,6 +22,7 @@ export const isDoctorLogin = TryCatch(
             return sendResponse(res, 401, false, "Not logged in");
         }
 
+        // Find session with valid access token and not expired
         const session = await Session.findOne({
             accessToken,
             sessionType: "LOGIN",
@@ -32,21 +33,21 @@ export const isDoctorLogin = TryCatch(
             return sendResponse(res, 401, false, "Session not found or expired");
         }
 
+        // Fetch doctor info from Doctor collection using session.doctorId
         const doctor = await Doctor.findById(session.doctorId);
         if (!doctor) {
             return sendResponse(res, 404, false, "Doctor not found");
         }
 
-        // Attach doctor data to the request object
+        // Attach doctor info to req.user
         req.user = {
             id: doctor._id.toString(),
-            fullName: doctor.fullName,
             userName: doctor.userName,
-            photo: doctor.photo,
+            fullName: doctor.fullName,
             professionalEmail: doctor.professionalEmail,
+            photo: doctor.photo,
         };
 
-        // Pass control to the next middleware or route
         next();
     }
 );

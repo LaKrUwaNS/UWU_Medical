@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import SlideBar from "../../components/SlideBar/SlideBar";
 import { Navigate } from "react-router-dom";
-import { DoctorContext } from "../../context/DoctorContext"; // ⬅ import context
+import { DoctorContext } from "../../context/DoctorContext";
 import "./layout.css";
 
 const Layout = ({ children }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [doctor, setDoctor] = useState(null);
-    // Handle toggle for sidebar collapse
+
+    // Toggle sidebar collapse state
     const handleToggle = () => {
-        setIsCollapsed(prev => !prev);
+        setIsCollapsed((prev) => !prev);
     };
 
     useEffect(() => {
@@ -18,12 +19,18 @@ const Layout = ({ children }) => {
             try {
                 const res = await fetch("http://localhost:5000/doctor/check-login", {
                     method: "GET",
-                    credentials: "include",
+                    credentials: "include", // include cookies
                 });
+
+                if (!res.ok) {
+                    setIsAuthenticated(false);
+                    setDoctor(null);
+                    return;
+                }
 
                 const data = await res.json();
 
-                if (data.success && data.isAuthorized) {
+                if (data.success) {
                     setIsAuthenticated(true);
                     setDoctor(data.doctor);
                 } else {
@@ -36,9 +43,8 @@ const Layout = ({ children }) => {
             }
         };
 
-        checkDoctorLogin(); // Run once immediately
-        const interval = setInterval(checkDoctorLogin, 3600000); // every 60 min
-        return () => clearInterval(interval);
+        // Only check login once on component mount
+        checkDoctorLogin();
     }, []);
 
     if (isAuthenticated === null) {
@@ -52,7 +58,7 @@ const Layout = ({ children }) => {
     return (
         <DoctorContext.Provider value={doctor}>
             <div className="main-layout">
-                <div className={`sidebar-conatainer ${isCollapsed ? "collapsed" : ""}`}>
+                <div className={`sidebar-container ${isCollapsed ? "collapsed" : ""}`}>
                     <SlideBar isCollapsed={isCollapsed} onToggle={handleToggle} />
                 </div>
                 <div className={`main-content ${isCollapsed ? "collapsed" : ""}`}>

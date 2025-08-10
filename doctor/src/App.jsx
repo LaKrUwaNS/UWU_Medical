@@ -8,11 +8,10 @@ import {
   Reminder,
   Reports,
   Settings,
+  StudentRecords,
   StudentData,
   Updates,
   Staff,
-  
-  
 } from "./pages";
 import Register from "./pages/Register/Register";
 
@@ -21,13 +20,12 @@ import Layout from "./pages/protected/layout";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
-  const isLoggedIn = !!localStorage.getItem("token"); // Example logic
+  //const isLoggedIn = !!localStorage.getItem("token"); // Example logic
 
   return (
     <Router>
       <Routes>
         {/* Public Routes */}
-        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
@@ -40,16 +38,17 @@ function App() {
             <Route path="/reminder" element={<Layout><Reminder /></Layout>} />
             <Route path="/settings" element={<Layout><Settings /></Layout>} />
             <Route path="/reports" element={<Layout><Reports /></Layout>} />
-            <Route path="/students/:id" element={<Layout><StudentData /></Layout>} />
+            
+            {/* Student Routes */}
+            <Route path="/student-records" element={<Layout><StudentRecords /></Layout>} />
+            <Route path="/student-records/:id" element={<Layout><StudentData /></Layout>} />
+
             <Route path="/updates" element={<Layout><Updates /></Layout>} />
             <Route path="/staff" element={<Layout><Staff /></Layout>} />
             
+            {/* Default redirect */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </>
-        
-          
-           
-            
-          
         
       </Routes>
     </Router>

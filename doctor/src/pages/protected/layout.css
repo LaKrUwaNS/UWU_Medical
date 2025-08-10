@@ -1,27 +1,40 @@
 .main-layout {
     display: flex;
     height: 100vh;
-    overflow-y: auto;
-     width: 100vw;
-
+    overflow: hidden; /* Prevent double scrollbars */
+    width: 100vw;
 }
-.slidebar-container {
-    
-    transition: width 0.3 ease;
+
+/* Fix the typo: sidebar-conatainer -> sidebar-container */
+.sidebar-container {
+    transition: width 0.3s ease; /* Fix: 0.3 -> 0.3s */
     width: 275px;
-
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
 }
-.slidebar-container.collapsed {
-    width:80px;
 
+.sidebar-container.collapsed {
+    width: 80px;
 }
+
 .main-content {
-  flex-grow: 1;
-  padding: 20px;
-  transition: margin-left 0.3s ease;
-  margin-left: 275px;
+    flex-grow: 1; /* Remove the extra 'a' */
+    padding: 20px;
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+    overflow-y: auto; /* Allow scrolling within content area */
+    /* Remove margin-left - let flexbox handle positioning */
 }
 
+/* Remove the collapsed margin styles since flexbox handles it automatically */
 .main-content.collapsed {
-  margin-left: 80px;
+    /* No need for margin changes with flexbox */
+}
+
+/* Optional: Add some styling for better UX */
+.checking {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 18px;
+    color: #666;
 }

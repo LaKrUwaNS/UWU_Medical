@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './Settings.css';
+import images from '../../../assets/images';
+import UserProfile from '../../../components/UserProfile/UseraProfile';
 
 const Settings = () => {
   const initialProfileData = {
@@ -50,10 +52,9 @@ const Settings = () => {
 
   return (
     <div className="profile-page">
-      <div className="profile-header">
+      <div className="profile-header-settings">
         <div className="doctor-info">
-          <span>Dr. Lakruwan Sharaka</span>
-          <div className="doctor-avatar">👨‍⚕️</div>
+           <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
         </div>
       </div>
 

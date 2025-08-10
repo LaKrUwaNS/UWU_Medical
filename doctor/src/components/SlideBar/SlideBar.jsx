@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import "./SlideBar.css";
 import images from "../../assets/Image";
 
-function SlideBar({ isCollapsed, onToggle }) {
+function SlideBar({ isCollapsed, onToggle, onLogout }) {
   const location = useLocation();
   const [mounted, setMounted] = useState(false);
 
@@ -11,13 +11,12 @@ function SlideBar({ isCollapsed, onToggle }) {
     setMounted(true);
   }, []);
 
-  // Enhanced menu items with better organization
   const menuItems = [
     {
       section: "Main Menu",
       items: [
         { to: "/dashboard", icon: images.dashboard, text: "Dashboard", id: "dashboard" },
-        { to: "/students/1", icon: images.studentData, text: "Student Data", id: "students" },
+        { to: "/student-records", icon: images.studentData, text: "Students Data", id: "students" },
         { to: "/medical-requests", icon: images.medicalReq, text: "Medical Requests", id: "medical-requests" },
         { to: "/reminder", icon: images.reminders, text: "Reminders", id: "reminder" },
         { to: "/updates", icon: images.updates, text: "Updates", id: "updates" }
@@ -36,6 +35,17 @@ function SlideBar({ isCollapsed, onToggle }) {
 
   const isActiveRoute = (path) => {
     return location.pathname === path;
+  };
+
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout(); // trigger logout function passed from parent
+    } else {
+      console.log("Logout clicked");
+      // Example: clear token & redirect
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
   };
 
   return (
@@ -86,8 +96,6 @@ function SlideBar({ isCollapsed, onToggle }) {
                 {!isCollapsed && (
                   <span className="text">{item.text}</span>
                 )}
-                
-                {/* Active indicator */}
                 {isActiveRoute(item.to) && !isCollapsed && (
                   <div className="active-indicator" aria-hidden="true" />
                 )}
@@ -97,8 +105,26 @@ function SlideBar({ isCollapsed, onToggle }) {
         ))}
       </nav>
 
-      {/* Toggle Button */}
+      {/* Bottom Section */}
       <div className="bottom-section">
+        {/* Logout Button */}
+        <button 
+          className="logout-btn"
+          onClick={handleLogout}
+          aria-label="Logout"
+          type="button"
+        >
+          <img 
+            className="iconimg" 
+            src={images.logout} // <-- Add logout icon to your images.js
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+          />
+          {!isCollapsed && <span className="text">Logout</span>}
+        </button>
+
+        {/* Toggle Button */}
         <button 
           className="toggle-btn" 
           onClick={onToggle}

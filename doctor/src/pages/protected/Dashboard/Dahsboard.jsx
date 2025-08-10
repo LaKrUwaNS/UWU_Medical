@@ -71,19 +71,8 @@ const Dashboard = () => {
     <div className="dashboard">
       {/* --- Modern Header --- */}
       <header className="dashboard-header1">
-        <h2>📊 Daily Overview</h2>
-        <div className="search-section1">
-          <input 
-            type="text" 
-            placeholder="🔍 Search for students..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <button onClick={handleSearch}>
-            <img className="search-icon" src={images.search} alt="search-icon" />
-          </button>
-        </div>
+        <h2> D<span className="green">ai</span>ly Ov<span className="green">er</span>view</h2>
+        
         <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
       </header>
 

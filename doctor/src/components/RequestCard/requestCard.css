@@ -601,7 +601,7 @@
 
 .approve-btn {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  color: rgb(1, 29, 9);
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
 }
 

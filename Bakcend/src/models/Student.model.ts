@@ -8,9 +8,9 @@ export interface IStudent {
     name: string;
     gender: 'male' | 'female' | 'other';
     contactNumber: string[];
-    emergencyNumber: string;
+    emergencyNumber?: string;
     bloodType: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
-    allergies?: string[];
+    allergies?: string;
     degree?: string;               // now required as a normal field
     presentYear?: number;          // now required as a normal field (1-4)
     isVerified: boolean;
@@ -31,13 +31,13 @@ const studentSchema = new Schema<IStudentDocument>(
         name: { type: String, required: true, trim: true },
         gender: { type: String, enum: ['male', 'female', 'other'], required: true },
         contactNumber: { type: [String], required: true },
-        emergencyNumber: { type: String, required: true },
+        emergencyNumber: { type: String, required: false },
         bloodType: {
             type: String,
             enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
             required: true,
         },
-        allergies: { type: [String], default: [] },
+        allergies: { type: String, default: "" },
         degree: { type: String },         // explicitly required
         presentYear: { type: Number, min: 1, max: 4 },  // explicitly required
         photo: { type: String },

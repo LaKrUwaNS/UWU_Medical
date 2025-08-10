@@ -9,7 +9,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+   font-size: 28px;
+  font-weight: 700;
+   border-bottom: 2px solid #22c55e;
 }
+.top-bar h2{
+  font-size: 28px;
+  font-weight: 700;
+}  
 
 .tabs {
   display: flex;

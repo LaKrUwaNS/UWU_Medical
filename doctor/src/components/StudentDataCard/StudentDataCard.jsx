@@ -35,38 +35,38 @@ const StudentDataCard = ({ students }) => {
         <h3 className='student-data'>Student Data</h3>
         <span className="dots">•••</span>
       </div>
-       
-      <div class="table-wrapper">
 
-      <table className="student-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Department</th>
-            <th>Enrolment No</th>
-          </tr>
-        </thead>
-        
-        <tbody>
-          {students && students.length > 0 ? (
-            students.map((student, idx) => (
-              <tr key={idx}>
-                <td className="student-name-cell">
-                  <img src={student.image} alt={student.name} className="avatar" />
-                  {student.name}
-                </td>
-                <td>{student.department}</td>
-                <td>{student.emn}</td>
-              </tr>
-            ))
-          ) : (
+      <div className="table-wrapper">
+
+        <table className="student-table">
+          <thead>
             <tr>
-              <td colSpan="3" style={{ textAlign: 'center', color: 'gray' }}>No student data available</td>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Enrolment No</th>
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div></div>
+          </thead>
+
+          <tbody>
+            {students && students.length > 0 ? (
+              students.map((student, idx) => (
+                <tr key={idx}>
+                  <td className="student-name-cell">
+                    <img src={student.image} alt={student.name} className="avatar" />
+                    {student.name}
+                  </td>
+                  <td>{student.department}</td>
+                  <td>{student.emn}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3" style={{ textAlign: 'center', color: 'gray' }}>No student data available</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div></div>
   );
 };
 

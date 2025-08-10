@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CheckIsDoctorLoggedIn, DoctorLogging, ForgotPassword, Logout, RegisterDoctor, ResetPassword, TestMail, TestMulter, VerifyRegisterOTP } from "../controller/doctor/Auth.controller";
+import { CheckIsDoctorLoggedIn, DoctorLogging, ForgotPassword, Logout, RegisterDoctor, ResetPassword, VerifyRegisterOTP } from "../controller/doctor/Auth.controller";
 import { RegisterDoctorZodSchema, validateMiddleware } from "../middleware/validate.middleware";
 import { otpVerificationSchema } from "../middleware/validate.middleware";
 import { loginSchema } from "../middleware/validate.middleware";
@@ -9,19 +9,19 @@ import { getDashBoard } from "../controller/doctor/pages/Dashboard.controller";
 import { ProfilePhotoupload } from "../controller/doctor/Auth.controller";
 import { upload } from "../config/Multer";
 //import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
-import { deleteMedicine, getMedicineList, addNewMedicine, updateMedicine } from "../controller/doctor/pages/Medicine.controller";
+import { deleteMedicine, getMedicineList, addNewMedicine, updateMedicine, getAllInventories } from "../controller/doctor/pages/Medicine.controller";
 import { createPrescription, getStudentMedicalProfile, getStudentPrescriptions, updatePrescriptionStatus } from "../controller/doctor/pages/StudentsDate.controller";
 import { ChangeMedicalRequestStatus, GetMedicalRequests } from "../controller/doctor/pages/MedicalRequests.controller";
 import { createArticle, deleteArticle, getAllArticles, getArticleData, updateArticle } from "../controller/doctor/pages/Update.controller";
 import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
+import { GetAllStudents } from "../controller/doctor/pages/AllStudents.controller";
+import { GetAllStaff } from "../controller/doctor/pages/Staff..controller";
+import { DoctorDataEdit, DoctorDataGET, VerifyAndUpdateDoctor } from "../controller/doctor/pages/Settings.controller";
+import Doctor from "../models/Doctor.model";
 
 const DoctorRouter = Router();
 
 // Public Router
-
-// !Testing Routers
-DoctorRouter.post('/test', TestMail);   // localhost:5000/doctor/test
-DoctorRouter.post('/test-multer', upload.single("image"), TestMulter);   // localhost:5000/doctor/test-multer
 
 
 // !Doctor Register
@@ -75,9 +75,6 @@ DoctorRouter.post("/student/prescriptions", createPrescription);
 // Example: PATCH localhost:5000/doctor/student/prescriptions/:id/status
 DoctorRouter.patch("/student/prescriptions/:id/status", updatePrescriptionStatus);
 
-//!Get Medicine Data
-DoctorRouter.get("/medicine", getMedicineList);   // localhost:5000/doctor/medicine
-
 
 
 // ==========================
@@ -85,13 +82,17 @@ DoctorRouter.get("/medicine", getMedicineList);   // localhost:5000/doctor/medic
 // ==========================
 // Medicine Page Routers
 // !Doctor Medicine List
-DoctorRouter.get("/medicine-list", getMedicineList); //localhost:5000/doctor/medicine-list
+DoctorRouter.get("/medicine", getMedicineList);   // localhost:5000/doctor/medicine
 // !Doctor Adding New Medicine
 DoctorRouter.post("/adding-new-medicine", addNewMedicine); //localhost:5000/doctor/adding-new-medicine
 // !Doctor Updating Medicine
 DoctorRouter.put("/updating-medicine/:id", updateMedicine); //localhost:5000/doctor/updating-medicine/:id
 // !Doctor Deleting Medicine
 DoctorRouter.delete("/deleting-medicine/:id", deleteMedicine); //localhost:5000/doctor/deleting-medicine/:id
+// !Get Inventory Data
+DoctorRouter.get("/inventory", getAllInventories); //localhost:5000/doctor/inventory
+
+
 
 
 
@@ -121,6 +122,30 @@ DoctorRouter.put("/articles/:id", isDoctorLogin, upload.single("photo"), updateA
 
 // DELETE article by ID - PRIVATE (Doctor)
 DoctorRouter.delete("/articles/:id", isDoctorLogin, deleteArticle);// → DELETE http://localhost:5000/doctor/articles/:id
+
+
+// ==========================
+// Staff Page Routers
+// ==========================
+DoctorRouter.get("/staff", GetAllStaff); // localhost:5000/doctor/staff
+
+
+
+// ==========================
+// Student Page Routers
+// ==========================
+DoctorRouter.get("/students", GetAllStudents); // localhost:5000/doctor/students
+
+
+
+
+
+// ==========================
+// Settings Page Routers
+// ==========================
+DoctorRouter.get("/settings", isDoctorLogin, DoctorDataGET);                        // localhost:5000/doctor/settings
+DoctorRouter.post("/settings/verify-email", isDoctorLogin, VerifyAndUpdateDoctor); // localhost:5000/doctor/settings/verify-email
+DoctorRouter.put("/settings", isDoctorLogin, DoctorDataEdit);                     // localhost:5000/doctor/settings
 
 
 export default DoctorRouter;

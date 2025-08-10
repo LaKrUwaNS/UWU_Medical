@@ -5,6 +5,8 @@ import DoctorInfo from '../../../components/DoctorInfo/DoctorInfo';
 
 import nirmal from '../../../assets/Medical-Request/nirmal.png';
 import ashen from '../../../assets/Medical-Request/Ashen.jpg';
+import images from "../../../assets/images";
+import UserProfile from "../../../components/UserProfile/UseraProfile";
 
 
 const medicalRequests = [
@@ -110,11 +112,15 @@ function MedicalRequests() {
 
   return (
     <div style={{ position: 'relative' }}>
-      <DoctorInfo />
+       
       <div style={{ display: 'flex' }}>
         <main className="medical-request-page">
-          <div className="header">
+          <div className="header-MR">
             <h2 className="MR">Medical Requests</h2>
+            <UserProfile 
+            className="User-profile"
+            name="Dr. Lakruwan Sharaka" 
+            image={images.lakruwan} />
           </div>
 
           {requests.length === 0 ? (

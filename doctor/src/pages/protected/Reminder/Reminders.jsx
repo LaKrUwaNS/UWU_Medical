@@ -72,10 +72,7 @@ function Reminders() {
     <div className="messages-page">
       <header className="top-bar">
         <h2>Massages From Students</h2>
-        <div className="tabs">
-          <button className={activeTab === "Massages" ? "tab active" : "tab"} onClick={() => setActiveTab("Massages")}>Massages</button>
-          <button className={activeTab === "Read" ? "tab active" : "tab"} onClick={() => setActiveTab("Read")}>Read</button>
-        </div>
+    
          <div className="profile">
             <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
           </div>
