@@ -16,7 +16,7 @@ function SlideBar({ isCollapsed, onToggle, onLogout }) {
       section: "Main Menu",
       items: [
         { to: "/dashboard", icon: images.dashboard, text: "Dashboard", id: "dashboard" },
-        { to: "/students/1", icon: images.studentData, text: "Students Data", id: "students" },
+        { to: "/student-records", icon: images.studentData, text: "Students Data", id: "students" },
         { to: "/medical-requests", icon: images.medicalReq, text: "Medical Requests", id: "medical-requests" },
         { to: "/reminder", icon: images.reminders, text: "Reminders", id: "reminder" },
         { to: "/updates", icon: images.updates, text: "Updates", id: "updates" }

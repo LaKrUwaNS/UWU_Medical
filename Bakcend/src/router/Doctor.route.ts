@@ -134,7 +134,7 @@ DoctorRouter.get("/staff", GetAllStaff); // localhost:5000/doctor/staff
 // ==========================
 // Student Page Routers
 // ==========================
-DoctorRouter.get("/students", isDoctorLogin, GetAllStudents); // localhost:5000/doctor/students
+DoctorRouter.get("/students", GetAllStudents); // localhost:5000/doctor/students
 
 
 

@@ -20,7 +20,7 @@ import Layout from "./pages/protected/layout";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
-  const isLoggedIn = !!localStorage.getItem("token"); // Example logic
+  //const isLoggedIn = !!localStorage.getItem("token"); // Example logic
 
   return (
     <Router>
@@ -41,9 +41,8 @@ function App() {
             
             {/* Student Routes */}
             <Route path="/student-records" element={<Layout><StudentRecords /></Layout>} />
-            <Route path="/student-data/:id" element={<Layout><StudentData /></Layout>} />
-            <Route path="/student-data/:id/edit" element={<Layout><StudentData /></Layout>} />
-            
+            <Route path="/student-records/:id" element={<Layout><StudentData /></Layout>} />
+
             <Route path="/updates" element={<Layout><Updates /></Layout>} />
             <Route path="/staff" element={<Layout><Staff /></Layout>} />
             
@@ -51,9 +50,6 @@ function App() {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </>
         
-        
-        {/* Legacy route - redirect to new student records route */}
-        <Route path="/students/:id" element={<Navigate to="/student-records" replace />} />
       </Routes>
     </Router>
   );
