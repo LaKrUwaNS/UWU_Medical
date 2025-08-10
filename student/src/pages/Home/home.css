@@ -320,9 +320,9 @@ body {
 }
 
 .container {
-    max-width: 1280px;
+    max-width: 300em;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 10px;
 }
 
 .section-header {
@@ -477,23 +477,28 @@ body {
     font-size: 2.5rem;
     font-weight: bold;
     color: #111827;
+    text-align: center;
 }
 
 .contact-description {
     font-size: 1.25rem;
     color: #6b7280;
+    text-align: center;
 }
 
 .contact-features {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 20px;
+    text-align: center;
+    margin-top: -18em;
 }
 
 .contact-feature {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-left: 60em;
 }
 
 .contact-feature .check-icon {
@@ -505,7 +510,9 @@ body {
     border-radius: 1rem;
     padding: 2rem;
 }
-
+.f-text{
+    font-size: 21px;
+}
 .form-group {
     display: flex;
     flex-direction: column;
@@ -520,6 +527,12 @@ body {
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
+.landingBelow{
+    height: 380px;
+    width: 750px;
+    border-radius: 22px;
+    margin-left: 20px;
+}
 
 .form-input:focus {
     border-color: #059669;
@@ -528,6 +541,10 @@ body {
 
 .form-textarea {
     resize: vertical;
+}
+.below{
+    display: flex;
+    flex-direction: column;
 }
 
 .form-submit {
