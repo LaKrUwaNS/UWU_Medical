@@ -223,7 +223,7 @@ function Register() {
             console.log('Response:', result); // Debug log
 
             if (response.ok && result.success) {
-                alert(result.message || 'Registration successful');
+                // alert(result.message || 'Registration successful');
                 setProfessionalEmail(requestBody.universityEmail);
                 setShowVerificationPopup(true);
                 // Handle successful registration (e.g., redirect to verification page)
@@ -477,7 +477,7 @@ function Register() {
                     </div>
                 </div>
             </div>
-            {showVerificationPopup && <Verificationmessage email={requestBody.universityEmail} />}
+            {showVerificationPopup && <Verificationmessage email={professionalEmail} />}
         </>
     );
 }
