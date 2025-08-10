@@ -116,8 +116,6 @@ export const StudentregisterStudentSchema = z.object({
         invalid_type_error: "Emergency number must be a string",
     }).min(7, { message: "Emergency number must be at least 7 characters" }),
     bloodType: bloodTypeEnum,
-    allergies: z.array(z.string().optional()),
-
 });
 
 export const StudentverifyStudentOtpSchema = z.object({

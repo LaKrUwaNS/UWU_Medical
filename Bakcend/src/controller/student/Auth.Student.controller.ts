@@ -14,7 +14,7 @@ import Student from "../../models/Student.model";
 import { sendResponse } from "../../utils/response";
 import { AuthenticatedRequest } from "../../middleware/CheckLogin/isDotorlogin";
 import { generateWelcomeEmailHtml } from "../../const/Mail/Welcome.templete";
-import { GEMINI_API, GEMINI_API_KEY } from "../../utils/dotenv";
+import { summarizeText } from "./pages/CheckAI.controller";
 
 
 // ✅ Register Student
@@ -43,7 +43,7 @@ export const RegisterStudent = TryCatch(async (req: Request, res: Response) => {
         gender,
         contactNumber,
         bloodType,
-        allergies,
+        allergies: await summarizeText(allergies),
         expireAt: OneDayFromNow(),
         isVerified: false
     });

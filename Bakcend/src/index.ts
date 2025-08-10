@@ -12,6 +12,7 @@ import mongoConnect from './config/mongoDB';
 import DoctorRouter from './router/Doctor.route';
 import StudentRouter from './router/Student.route';
 import StaffRouter from './router/staff.route';
+import AdminRouter from './router/Admin.route';
 
 // Load environment variables
 dotenv.config();
@@ -54,6 +55,7 @@ server.use(cookieParser());
 server.use('/doctor', DoctorRouter);
 server.use('/student', StudentRouter);
 server.use('/staff', StaffRouter);
+server.use('/admin', AdminRouter);
 
 // ==========================
 // Start server after DB connection

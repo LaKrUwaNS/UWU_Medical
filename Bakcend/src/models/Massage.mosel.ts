@@ -6,7 +6,6 @@ export interface MassageProps extends Document {
     content: string;
     subject?: string;
     type: "Article" | "Important";
-    timestamp: Date;
     urgent: boolean;
 }
 
@@ -16,8 +15,9 @@ const MassageSchema = new Schema<MassageProps>({
     content: { type: String, required: true },
     subject: { type: String },
     type: { type: String, enum: ["Article", "Important"], required: true },
-    timestamp: { type: Date, default: Date.now, required: true },
     urgent: { type: Boolean, default: false, required: true }
+}, {
+    timestamps: true,
 });
 
 const Massage = model<MassageProps>('Massage', MassageSchema);

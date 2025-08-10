@@ -26,3 +26,18 @@ export async function summarizeText(paragraph: string): Promise<any> {
     return response.text;
 }
 
+
+// Making the Grammer errors and make more clear meaning full massage
+export async function correctGrammar(text: string): Promise<any> {
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [
+            {
+                role: "user",
+                parts: [{ text: `Correct the grammar and make this message more clear:\n${text}` }],
+            },
+        ],
+    });
+
+    return response.text;
+}
