@@ -134,7 +134,7 @@ function MedicineData() {
                                     <td>
                                         <div className="action-buttons">
                                             <button className="edit-btn" onClick={() => handleEdit(idx)} title="Edit Medicine">✏️</button>
-                                            <button className="delete-btn" onClick={() => handleDelete(idx)} title="Delete Medicine">🗑️</button>
+                                            <button className="medicine-delete-btn" onClick={() => handleDelete(idx)} title="Delete Medicine">🗑️</button>
                                         </div>
                                     </td>
                                 </tr>

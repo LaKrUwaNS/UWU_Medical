@@ -79,8 +79,10 @@
 
 
 .avatar-character {
-  font-size: 48px;
+  font-size: 58px;
   filter: brightness(1.2);
+  margin-left: 18px;
+  margin-top: 2px;
 }
 
 .image-actions {
