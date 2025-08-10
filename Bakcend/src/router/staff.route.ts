@@ -19,6 +19,7 @@ import {
     CheckIsStaffLoggedIn
 } from "../controller/staff/Auth.staff.controller";
 import { isStaffLoggedIn } from "../middleware/CheckLogin/isStafflogin";
+import { MedicalRequestsStaff } from "../controller/staff/pages/MedicalRequest.controller";
 
 
 const upload = multer({ dest: "uploads/" });
@@ -56,6 +57,14 @@ StaffRouter.get("/check-login", CheckIsStaffLoggedIn);// GET localhost:5000/staf
 
 // !Upload Staff Profile Photo
 StaffRouter.post("/profile-photo-upload", upload.single("image"), UploadStaffPhoto);// POST localhost:5000/staff/profile-photo-upload
+
+
+
+
+
+
+// Medical Request page
+StaffRouter.get("/medical-requests", MedicalRequestsStaff);// GET localhost:5000/staff/medical-requests
 
 
 export default StaffRouter;
