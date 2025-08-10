@@ -4,13 +4,9 @@ import images from '../../../assets/images';
 import UserProfile from '../../../components/UserProfile/UseraProfile';
 
 const medicineList = [
-    { name: 'Paracetamol', status: 'Have', expire: '2025-05-24', id: 'F2256', quantity: '10 bottles' },
-    { name: 'Paracetamol', status: 'Low', expire: '2025-05-24', id: 'F2256', quantity: '10 bottles' },
-    { name: 'Vitamin C', status: 'No', expire: '2025-05-24', id: 'F2256', quantity: '10 bottles' },
-    { name: 'Paracetamol', status: 'Have', expire: '2025-05-24', id: 'F2257', quantity: '8 bottles' },
-    { name: 'Paracetamol', status: 'Have', expire: '2025-05-24', id: 'F2258', quantity: '12 bottles' },
-    { name: 'Paracetamol', status: 'Low', expire: '2025-05-24', id: 'F2259', quantity: '4 bottles' },
-    { name: 'Jeewani', status: 'No', expire: '2025-05-24', id: 'F2260', quantity: '0 bottles' },
+    { name: 'Paracetamol', status: 'Have', expire: '2025-05-24', id: 'F2256', quantity: 10 },
+    { name: 'Ibuprofen', status: 'Low', expire: '2025-07-10', id: 'F2257', quantity: 5 },
+    { name: 'Amoxicillin', status: 'No', expire: '2025-03-15', id: 'F2258', quantity: 0 },
 ];
 
 const getStatusClass = (status) => {
@@ -26,6 +22,7 @@ function MedicineData() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [medicines, setMedicines] = useState(medicineList);
+    const [editingIndex, setEditingIndex] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         status: 'Have',
@@ -34,7 +31,6 @@ function MedicineData() {
         quantity: ''
     });
 
-    // Filtered medicine list based on search term
     const filteredMedicines = medicines.filter(med =>
         med.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         med.id.toLowerCase().includes(searchTerm.toLowerCase())
@@ -49,23 +45,36 @@ function MedicineData() {
     };
 
     const handleSubmit = () => {
-        if (formData.name && formData.expire && formData.id && formData.quantity) {
-            setMedicines(prev => [...prev, formData]);
-            setFormData({
-                name: '',
-                status: 'Have',
-                expire: '',
-                id: '',
-                quantity: ''
-            });
-            setIsModalOpen(false);
+        if (formData.name && formData.expire && formData.id && formData.quantity !== '') {
+            if (editingIndex !== null) {
+                const updatedMedicines = medicines.map((med, index) =>
+                    index === editingIndex ? formData : med
+                );
+                setMedicines(updatedMedicines);
+                setEditingIndex(null);
+            } else {
+                setMedicines(prev => [...prev, formData]);
+            }
+            resetForm();
         } else {
             alert('Please fill in all required fields');
         }
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const handleEdit = (index) => {
+        setFormData(medicines[index]);
+        setEditingIndex(index);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = (index) => {
+        if (window.confirm('Are you sure you want to delete this medicine?')) {
+            const updatedMedicines = medicines.filter((_, i) => i !== index);
+            setMedicines(updatedMedicines);
+        }
+    };
+
+    const resetForm = () => {
         setFormData({
             name: '',
             status: 'Have',
@@ -73,13 +82,13 @@ function MedicineData() {
             id: '',
             quantity: ''
         });
+        setIsModalOpen(false);
     };
 
     return (
         <div className='medicine-page'>
             <div className="top-header">
                 <h2>Medicine Data</h2>
-
                 <div className="top-actions">
                     <input
                         type="text"
@@ -88,13 +97,7 @@ function MedicineData() {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <button 
-                        className='add-button'
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        New Add
-                    </button>
-
+                    <button className='add-button' onClick={() => setIsModalOpen(true)}>New Add</button>
                     <div className="doctor-profile">
                         <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
                     </div>
@@ -110,12 +113,13 @@ function MedicineData() {
                             <th>Expire Date</th>
                             <th>Inventory ID</th>
                             <th>Quantity</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredMedicines.length === 0 ? (
                             <tr>
-                                <td colSpan='5' className='no-data-message'>
+                                <td colSpan='6' className='no-data-message'>
                                     🚫 No medicine data found for "{searchTerm}".
                                 </td>
                             </tr>
@@ -127,6 +131,12 @@ function MedicineData() {
                                     <td>{med.expire}</td>
                                     <td>{med.id}</td>
                                     <td>{med.quantity}</td>
+                                    <td>
+                                        <div className="action-buttons">
+                                            <button className="edit-btn" onClick={() => handleEdit(idx)} title="Edit Medicine">✏️</button>
+                                            <button className="delete-btn" onClick={() => handleDelete(idx)} title="Delete Medicine">🗑️</button>
+                                        </div>
+                                    </td>
                                 </tr>
                             ))
                         )}
@@ -134,21 +144,14 @@ function MedicineData() {
                 </table>
             </div>
 
-            {/* Modal Overlay */}
             {isModalOpen && (
-                <div className="modal-overlay" onClick={closeModal}>
+                <div className="modal-overlay" onClick={resetForm}>
                     <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-                        {/* Modal Header */}
                         <div className="modal-header">
-                            <h3>Add New Medicine</h3>
-                            <button className="close-button" onClick={closeModal}>
-                                ×
-                            </button>
+                            <h3>{editingIndex !== null ? 'Edit Medicine' : 'Add New Medicine'}</h3>
+                            <button className="close-button" onClick={resetForm}>×</button>
                         </div>
-
-                        {/* Modal Body */}
                         <div className="modal-body">
-                            {/* Drug Name */}
                             <div className="form-group">
                                 <label>Drug Name *</label>
                                 <input
@@ -160,8 +163,6 @@ function MedicineData() {
                                     className="form-input"
                                 />
                             </div>
-
-                            {/* Status */}
                             <div className="form-group">
                                 <label>Status *</label>
                                 <select
@@ -175,8 +176,6 @@ function MedicineData() {
                                     <option value="No">No</option>
                                 </select>
                             </div>
-
-                            {/* Expire Date */}
                             <div className="form-group">
                                 <label>Expire Date *</label>
                                 <input
@@ -187,8 +186,6 @@ function MedicineData() {
                                     className="form-input"
                                 />
                             </div>
-
-                            {/* Inventory ID */}
                             <div className="form-group">
                                 <label>Inventory ID *</label>
                                 <input
@@ -200,28 +197,22 @@ function MedicineData() {
                                     className="form-input"
                                 />
                             </div>
-
-                            {/* Quantity */}
                             <div className="form-group">
                                 <label>Quantity *</label>
                                 <input
-                                    type="text"
+                                    type="number"
                                     name="quantity"
                                     value={formData.quantity}
                                     onChange={handleInputChange}
-                                    placeholder="e.g., 10 bottles"
+                                    placeholder="e.g., 10"
                                     className="form-input"
                                 />
                             </div>
                         </div>
-
-                        {/* Modal Footer */}
                         <div className="modal-footer">
-                            <button className="cancel-button" onClick={closeModal}>
-                                Cancel
-                            </button>
+                            <button className="cancel-button" onClick={resetForm}>Cancel</button>
                             <button className="submit-button" onClick={handleSubmit}>
-                                Add Medicine
+                                {editingIndex !== null ? 'Update Medicine' : 'Add Medicine'}
                             </button>
                         </div>
                     </div>

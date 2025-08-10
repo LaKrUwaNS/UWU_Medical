@@ -40,28 +40,32 @@
   padding: 15px;
   margin-top: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  min-width: 200px;
+  min-width: 300px;
   border: 2px solid rgb(104, 236, 115);
+  margin-left: 27em;
 }
 
 .stats-content {
+  margin-left: 50px;
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
 .stats-icon {
-  background: #3498db;
+  background: #34db95;
   color: white;
-  padding: 12px;
+  padding: 15px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 30px;
 }
 
 .stats-info p {
-  color: #7f8c8d;
+  color: #050505;
+  font-weight: 600;
   font-size: 14px;
   margin: 0 0 5px 0;
 }
