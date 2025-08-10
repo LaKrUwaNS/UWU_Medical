@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Register.css';
 import images from '../../assets/Image';
+import Verificationmessage from '../../components/VerificationMessage/Verificationmessage.jsx';
+
 
 
 function Register() {
@@ -9,6 +11,8 @@ function Register() {
     const [isLoading, setIsLoading] = useState(false);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [professionalEmail, setProfessionalEmail] = useState('');
+    const [showVerificationPopup, setShowVerificationPopup] = useState(false);
     const [passwordStrength, setPasswordStrength] = useState('');
     const [formData, setFormData] = useState({
         name: '',
@@ -35,19 +39,19 @@ function Register() {
             setPasswordStrength('');
             return;
         }
-        
+
         let score = 0;
-        
+
         // Length check
         if (password.length >= 6) score += 1; // Changed to match API requirement (min 6 chars)
         if (password.length >= 12) score += 1;
-        
+
         // Character variety checks
         if (/[a-z]/.test(password)) score += 1;
         if (/[A-Z]/.test(password)) score += 1;
         if (/[0-9]/.test(password)) score += 1;
         if (/[^A-Za-z0-9]/.test(password)) score += 1;
-        
+
         if (score < 3) {
             setPasswordStrength('weak');
         } else if (score < 4) {
@@ -184,7 +188,7 @@ function Register() {
         return true;
     };
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!validateForm()) return;
@@ -220,6 +224,8 @@ function Register() {
 
             if (response.ok && result.success) {
                 alert(result.message || 'Registration successful');
+                setProfessionalEmail(requestBody.universityEmail);
+                setShowVerificationPopup(true);
                 // Handle successful registration (e.g., redirect to verification page)
             } else {
                 alert("Registration failed: " + (result.message || 'Unknown error'));
@@ -235,241 +241,244 @@ function Register() {
     const strengthInfo = getPasswordStrengthText();
 
     return (
-        <div className='register-wrapper'>
-            <div className="bg-overlay"
-                style={{ backgroundImage: `url(${images.Register || images.Login})` }}>
-            </div>
+        <>
+            <div className='register-wrapper'>
+                <div className="bg-overlay"
+                    style={{ backgroundImage: `url(${images.Register || images.Login})` }}>
+                </div>
 
-            <div className="main-contentRegister">
-                <div className="register-card">
-                    {/* Logo */}
-                    <div className="logo-container">
-                        <div className="logo">
-                            <img src={images.LoginUniLogo} alt="University Logo" className='uni-logo-image' />
+                <div className="main-contentRegister">
+                    <div className="register-card">
+                        {/* Logo */}
+                        <div className="logo-container">
+                            <div className="logo">
+                                <img src={images.LoginUniLogo} alt="University Logo" className='uni-logo-image' />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Welcome Section */}
-                    <div className="welcome-section">
-                        <h1 className="welcome-title">
-                            R<span className="highlight">eg</span>ister
-                        </h1>
-                        <p className="welcome-subtitle">Uva Wellassa University Medical Center</p>
-                    </div>
+                        {/* Welcome Section */}
+                        <div className="welcome-section">
+                            <h1 className="welcome-title">
+                                R<span className="highlight">eg</span>ister
+                            </h1>
+                            <p className="welcome-subtitle">Uva Wellassa University Medical Center</p>
+                        </div>
 
-                    {/* Form Section */}
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-section">
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    className="form-input"
-                                    placeholder="Full Name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
+                        {/* Form Section */}
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-section">
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        placeholder="Full Name"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
 
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    className="form-input"
-                                    placeholder="Index Number (e.g., 2023/ICT/02/123)"
-                                    name="indexNumber"
-                                    value={formData.indexNumber}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        placeholder="Index Number (e.g., 2023/ICT/02/123)"
+                                        name="indexNumber"
+                                        value={formData.indexNumber}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
 
-                            {/* Gender Selection */}
-                            <div className="gender-group">
-                                <button
-                                    type="button"
-                                    className={`gender-btn1 ${selectedGender === 'male' ? 'active' : ''}`}
-                                    onClick={() => handleGenderSelect('male')}
-                                >
-                                    Male
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`gender-btn1 ${selectedGender === 'female' ? 'active' : ''}`}
-                                    onClick={() => handleGenderSelect('female')}
-                                >
-                                    Female
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`gender-btn1 ${selectedGender === 'other' ? 'active' : ''}`}
-                                    onClick={() => handleGenderSelect('other')}
-                                >
-                                    Other
-                                </button>
-                            </div>
+                                {/* Gender Selection */}
+                                <div className="gender-group">
+                                    <button
+                                        type="button"
+                                        className={`gender-btn1 ${selectedGender === 'male' ? 'active' : ''}`}
+                                        onClick={() => handleGenderSelect('male')}
+                                    >
+                                        Male
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`gender-btn1 ${selectedGender === 'female' ? 'active' : ''}`}
+                                        onClick={() => handleGenderSelect('female')}
+                                    >
+                                        Female
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`gender-btn1 ${selectedGender === 'other' ? 'active' : ''}`}
+                                        onClick={() => handleGenderSelect('other')}
+                                    >
+                                        Other
+                                    </button>
+                                </div>
 
-                            <div className="input-group">
-                                <input
-                                    type="tel"
-                                    className="form-input"
-                                    placeholder="Mobile Number"
-                                    name="mobile"
-                                    value={formData.mobile}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
+                                <div className="input-group">
+                                    <input
+                                        type="tel"
+                                        className="form-input"
+                                        placeholder="Mobile Number"
+                                        name="mobile"
+                                        value={formData.mobile}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
 
-                            <div className="input-group">
-                                <input
-                                    type="tel"
-                                    className="form-input"
-                                    placeholder="Emergency Contact Number"
-                                    name="emergencyNumber"
-                                    value={formData.emergencyNumber}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
+                                <div className="input-group">
+                                    <input
+                                        type="tel"
+                                        className="form-input"
+                                        placeholder="Emergency Contact Number"
+                                        name="emergencyNumber"
+                                        value={formData.emergencyNumber}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
 
-                            <div className="input-group">
-                                <input
-                                    type="email"
-                                    className="form-input"
-                                    placeholder="Personal Email (Optional)"
-                                    name="personalMail"
-                                    value={formData.personalMail}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+                                <div className="input-group">
+                                    <input
+                                        type="email"
+                                        className="form-input"
+                                        placeholder="Personal Email (Optional)"
+                                        name="personalMail"
+                                        value={formData.personalMail}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
 
-                            <div className="input-group">
-                                <input
-                                    type="email"
-                                    className="form-input"
-                                    placeholder="University Email"
-                                    name="professionalMail"
-                                    value={formData.professionalMail}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
+                                <div className="input-group">
+                                    <input
+                                        type="email"
+                                        className="form-input"
+                                        placeholder="University Email"
+                                        name="professionalMail"
+                                        value={formData.professionalMail}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
 
-                            {/* Password Fields */}
-                            <div className="password-row">
-                                <input
-                                    type="password"
-                                    className="form-input"
-                                    placeholder="Password (min 6 characters)"
-                                    value={password}
-                                    onChange={handlePasswordChange}
-                                    required
-                                />
-                                <input
-                                    type="password"
-                                    className="form-input"
-                                    placeholder="Confirm Password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
+                                {/* Password Fields */}
+                                <div className="password-row">
+                                    <input
+                                        type="password"
+                                        className="form-input"
+                                        placeholder="Password (min 6 characters)"
+                                        value={password}
+                                        onChange={handlePasswordChange}
+                                        required
+                                    />
+                                    <input
+                                        type="password"
+                                        className="form-input"
+                                        placeholder="Confirm Password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
 
-                            {/* Password Strength Indicator */}
-                            {password && strengthInfo && (
-                                <div className={`password-strength ${strengthInfo.class}`}>
-                                    <span className="password-icon">{strengthInfo.icon}</span>
-                                    <span>{strengthInfo.text}</span>
-                                    <div className="strength-bar">
-                                        <div className={`strength-fill ${strengthInfo.class}`}></div>
+                                {/* Password Strength Indicator */}
+                                {password && strengthInfo && (
+                                    <div className={`password-strength ${strengthInfo.class}`}>
+                                        <span className="password-icon">{strengthInfo.icon}</span>
+                                        <span>{strengthInfo.text}</span>
+                                        <div className="strength-bar">
+                                            <div className={`strength-fill ${strengthInfo.class}`}></div>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-
-                            {/* Password Match Indicator */}
-                            {confirmPassword && (
-                                <div className={`password-match ${password === confirmPassword ? 'match' : 'no-match'}`}>
-                                    <span className="password-icon">
-                                        {password === confirmPassword ? '✅' : '❌'}
-                                    </span>
-                                    <span>
-                                        {password === confirmPassword ? 'Passwords match perfectly' : 'Passwords do not match'}
-                                    </span>
-                                </div>
-                            )}
-
-                            <div className="input-group">
-                                <select
-                                    className="form-select"
-                                    name="bloodType"
-                                    value={formData.bloodType}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    <option value="">Select Blood Type</option>
-                                    <option value="A+">A+</option>
-                                    <option value="A-">A-</option>
-                                    <option value="B+">B+</option>
-                                    <option value="B-">B-</option>
-                                    <option value="AB+">AB+</option>
-                                    <option value="AB-">AB-</option>
-                                    <option value="O+">O+</option>
-                                    <option value="O-">O-</option>
-                                </select>
-                            </div>
-
-                            <div className="input-group">
-                                <textarea
-                                    className="form-textarea"
-                                    placeholder="Medical conditions or allergies (Optional)"
-                                    name="medicalInfo"
-                                    rows="3"
-                                    value={formData.medicalInfo}
-                                    onChange={handleInputChange}
-                                ></textarea>
-                            </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="button-group">
-                            <button
-                                type="button"
-                                className="btn1 btn1-clear"
-                                onClick={clearForm}
-                                disabled={isLoading}
-                            >
-                                Clear
-                            </button>
-                            <button
-                                type="submit"
-                                className="btn1 btn1-submit"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <span className="loading-spinner"></span>
-                                        Registering...
-                                    </>
-                                ) : (
-                                    'Register'
                                 )}
-                            </button>
+
+                                {/* Password Match Indicator */}
+                                {confirmPassword && (
+                                    <div className={`password-match ${password === confirmPassword ? 'match' : 'no-match'}`}>
+                                        <span className="password-icon">
+                                            {password === confirmPassword ? '✅' : '❌'}
+                                        </span>
+                                        <span>
+                                            {password === confirmPassword ? 'Passwords match perfectly' : 'Passwords do not match'}
+                                        </span>
+                                    </div>
+                                )}
+
+                                <div className="input-group">
+                                    <select
+                                        className="form-select"
+                                        name="bloodType"
+                                        value={formData.bloodType}
+                                        onChange={handleInputChange}
+                                        required
+                                    >
+                                        <option value="">Select Blood Type</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                    </select>
+                                </div>
+
+                                <div className="input-group">
+                                    <textarea
+                                        className="form-textarea"
+                                        placeholder="Medical conditions or allergies (Optional)"
+                                        name="medicalInfo"
+                                        rows="3"
+                                        value={formData.medicalInfo}
+                                        onChange={handleInputChange}
+                                    ></textarea>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="button-group">
+                                <button
+                                    type="button"
+                                    className="btn1 btn1-clear"
+                                    onClick={clearForm}
+                                    disabled={isLoading}
+                                >
+                                    Clear
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn1 btn1-submit"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <span className="loading-spinner"></span>
+                                            Registering...
+                                        </>
+                                    ) : (
+                                        'Register'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+
+                        <div className="signin-section">
+                            <span className="signin-text">Already have an account? </span>
+                            <Link to='/login' className="a-link">Sign in</Link>
                         </div>
-                    </form>
 
-                    <div className="signin-section">
-                        <span className="signin-text">Already have an account? </span>
-                        <Link to='/login' className="a-link">Sign in</Link>
-                    </div>
-
-                    {/* University Footer */}
-                    <div className="university-footer">
-                        <p className="university-text">University of Uva Wellassa</p>
+                        {/* University Footer */}
+                        <div className="university-footer">
+                            <p className="university-text">University of Uva Wellassa</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            {showVerificationPopup && <Verificationmessage email={requestBody.universityEmail} />}
+        </>
     );
 }
 
