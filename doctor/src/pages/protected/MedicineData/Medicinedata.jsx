@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './MedicineData.css';
 import images from '../../../assets/images';
 import UserProfile from '../../../components/UserProfile/UseraProfile';
+import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
 const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
@@ -30,7 +31,8 @@ function MedicineData() {
         quantity: ''
     });
 
-    // Fetch all medicines
+    const [originalData, setOriginalData] = useState(null);
+
     const fetchMedicines = async () => {
         try {
             const res = await fetch('http://localhost:5000/doctor/medicine', {
@@ -48,7 +50,8 @@ function MedicineData() {
                     status: med.status,
                     expire: med.expirationDate?.split('T')[0] || '',
                     id: med.inventoryKey,
-                    quantity: med.quantity
+                    quantity: med.quantity,
+                    inventoryId: med.inventoryId || ''
                 }));
                 setMedicines(formattedData);
             } else {
@@ -61,7 +64,6 @@ function MedicineData() {
         }
     };
 
-    // Fetch inventory data for dropdown
     const fetchInventoryData = async () => {
         try {
             const res = await fetch('http://localhost:5000/doctor/inventory', {
@@ -118,16 +120,31 @@ function MedicineData() {
 
         const normalizedStatus = formData.status.trim();
 
-        const payload = {
-            medicineName: formData.name.trim(),
-            status: normalizedStatus,
-            quantity: Number(formData.quantity),
-            inventoryKey: formData.id.trim(),
-            expirationDate: new Date(formData.expire).toISOString(),
-            inventoryId: inventoryId
-        };
+        // Build payload with only changed fields if editing
+        let payload = {};
+        if (editingIndex !== null && originalData) {
+            if (formData.name.trim() !== originalData.name) payload.medicineName = formData.name.trim();
+            if (normalizedStatus !== originalData.status) payload.status = normalizedStatus;
+            if (Number(formData.quantity) !== originalData.quantity) payload.quantity = Number(formData.quantity);
+            if (formData.id.trim() !== originalData.id) payload.inventoryKey = formData.id.trim();
+            if (formData.expire !== originalData.expire) payload.expirationDate = new Date(formData.expire).toISOString();
+            if (inventoryId !== originalData.inventoryId) payload.inventoryId = inventoryId;
 
-        console.log('PUT payload:', payload);
+            if (Object.keys(payload).length === 0) {
+                alert('No changes detected to update.');
+                return;
+            }
+        } else {
+            // For new medicine add all data
+            payload = {
+                medicineName: formData.name.trim(),
+                status: normalizedStatus,
+                quantity: Number(formData.quantity),
+                inventoryKey: formData.id.trim(),
+                expirationDate: new Date(formData.expire).toISOString(),
+                inventoryId: inventoryId
+            };
+        }
 
         try {
             let url = 'http://localhost:5000/doctor/adding-new-medicine';
@@ -147,7 +164,7 @@ function MedicineData() {
                 body: JSON.stringify(payload)
             });
 
-            const text = await res.text();  // get raw response for debugging
+            const text = await res.text();
             console.log('Response status:', res.status);
             console.log('Response text:', text);
 
@@ -170,12 +187,15 @@ function MedicineData() {
             alert('Something went wrong. Please try again.');
         }
     };
+
     const handleEdit = (index) => {
-        setFormData(medicines[index]);
+        const med = medicines[index];
+        setFormData(med);
+        setOriginalData(med);
         setEditingIndex(index);
         setIsModalOpen(true);
 
-        const selectedInventory = inventoryList.find(inv => inv.inventoryKey === medicines[index].id);
+        const selectedInventory = inventoryList.find(inv => inv.inventoryKey === med.id);
         setInventoryId(selectedInventory ? selectedInventory._id : '');
     };
 
@@ -215,6 +235,7 @@ function MedicineData() {
         });
         setEditingIndex(null);
         setInventoryId('');
+        setOriginalData(null);
         setIsModalOpen(false);
     };
 
@@ -239,7 +260,7 @@ function MedicineData() {
 
             <div className="table-container">
                 {loading ? (
-                    <p>Loading medicine data...</p>
+                    <Loadinganimate />
                 ) : (
                     <table className='medicine-table'>
                         <thead>
@@ -281,7 +302,6 @@ function MedicineData() {
                 )}
             </div>
 
-            {/* Modal */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={resetForm}>
                     <div className="modal-container" onClick={(e) => e.stopPropagation()}>
