@@ -34,6 +34,7 @@ export const RegisterStudent = TryCatch(async (req: Request, res: Response) => {
     if (existingStudent) {
         return sendResponse(res, 400, false, "Student already registered");
     }
+    
 
     const newStudent = new Student({
         indexNumber,
@@ -43,7 +44,7 @@ export const RegisterStudent = TryCatch(async (req: Request, res: Response) => {
         gender,
         contactNumber,
         bloodType,
-        allergies: await summarizeText(allergies),
+        allergies: await summarizeText(allergies), 
         expireAt: OneDayFromNow(),
         isVerified: false
     });
