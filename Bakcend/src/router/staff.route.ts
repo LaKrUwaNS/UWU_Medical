@@ -19,7 +19,10 @@ import {
     CheckIsStaffLoggedIn
 } from "../controller/staff/Auth.staff.controller";
 import { isStaffLoggedIn } from "../middleware/CheckLogin/isStafflogin";
-import { MedicalRequestsStaff } from "../controller/staff/pages/MedicalRequest.controller";
+import { ApproveMedicalRequest, MedicalRequestsStaff, RejectMedicalRequest } from "../controller/staff/pages/MedicalRequest.controller";
+import { MedicalReportsStaff } from "../controller/staff/pages/MedicalReports.controller";
+import { GetPrescriptionData } from "../controller/staff/pages/Prescription.controller";
+import { deleteStudentById, getAllStudents, getStudentById, updateStudentById } from "../controller/staff/pages/StudentRecord.controller";
 
 
 const upload = multer({ dest: "uploads/" });
@@ -63,8 +66,27 @@ StaffRouter.post("/profile-photo-upload", upload.single("image"), UploadStaffPho
 
 
 
-// Medical Request page
+// !Medical Request page
 StaffRouter.get("/medical-requests", MedicalRequestsStaff);// GET localhost:5000/staff/medical-requests
+StaffRouter.put("/medical-requests/:id/approve", isStaffLoggedIn, ApproveMedicalRequest); // localhost:5000/staff/medical-requests/:id/approve
+StaffRouter.put("/medical-requests/:id/reject", isStaffLoggedIn, RejectMedicalRequest); // localhost:5000/staff/medical-requests/:id/reject
 
+
+// !Medical Reports
+StaffRouter.get("/medical-reports", MedicalReportsStaff);// GET localhost:5000/staff/medical-reports
+
+
+
+
+// Prescription Data
+StaffRouter.get("/prescriptions", GetPrescriptionData);// GET localhost:5000/staff/prescriptions
+
+
+    
+// !Student Records
+StaffRouter.get("/students", getAllStudents); // GET localhost:5000/staff/students
+StaffRouter.get("/students/:id", getStudentById); // GET localhost:5000/staff/students/:id
+StaffRouter.put("/students/:id", updateStudentById); // PUT localhost:5000/staff/students/:id
+StaffRouter.delete("/students/:id", deleteStudentById); // DELETE localhost:5000/staff/students/:id
 
 export default StaffRouter;
