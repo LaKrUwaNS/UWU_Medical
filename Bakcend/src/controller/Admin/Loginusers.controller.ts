@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { Session } from "../../models/session.model";
 import { TryCatch } from "../../utils/Error/ErrorHandler";
+import { sendResponse } from "../../utils/response";
+import Student from "../../models/Student.model";
+import Doctor from "../../models/Doctor.model";
+import { Staff } from "../../models/Staff.model";
 
 export const LoginUsers = TryCatch(async (req: Request, res: Response) => {
     const sessions = await Session.find({
@@ -45,4 +49,20 @@ export const LoginUsers = TryCatch(async (req: Request, res: Response) => {
         count: data.length,
         users: data,
     });
+});
+
+
+export const GetAllStudents = TryCatch(async (req: Request, res: Response) => {
+    const students = await Student.find().select('-password'); // exclude password for security
+    return sendResponse(res, 200, true, "Students fetched successfully", students);
+});
+
+export const GetAllDoctors = TryCatch(async (req: Request, res: Response) => {
+    const doctors = await Doctor.find().select('-password'); // exclude sensitive fields
+    return sendResponse(res, 200, true, "Doctors fetched successfully", doctors);
+});
+
+export const GetAllStaff = TryCatch(async (req: Request, res: Response) => {
+    const staffMembers = await Staff.find().select('-password'); // exclude sensitive fields if any
+    return sendResponse(res, 200, true, "Staff fetched successfully", staffMembers);
 });
