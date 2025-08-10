@@ -106,10 +106,10 @@ function MedicineData() {
                     medicineName: formData.name,
                     status:
                         formData.status === 'Have'
-                            ? 'in stock'
+                            ? 'Have'
                             : formData.status === 'Low'
-                                ? 'low'
-                                : 'out',
+                                ? 'Low'
+                                : 'No',
                     quantity: Number(formData.quantity),
                     inventoryKey: formData.id,
                     expirationDate: new Date(formData.expire).toISOString(),
