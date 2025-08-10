@@ -22,24 +22,37 @@ export const getMedicineList = TryCatch(async (req: AuthenticatedRequest, res: R
  * @access Authenticated
  */
 export const addNewMedicine = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const { medicineName, status, quantity, inventoryKey, expirationDate, inventoryId } = req.body;
+    let { medicineName, status, quantity, inventoryKey, expirationDate } = req.body;
+
+    // Trim strings if they exist
+    medicineName = medicineName?.trim();
+    status = status?.trim();
+    inventoryKey = inventoryKey?.trim();
 
     if (!medicineName || !quantity || !inventoryKey || !expirationDate) {
-        return sendResponse(res, 400, false, "Medicine name, quantity, expiration date, and inventory ID are required");
+        return sendResponse(res, 400, false, "Medicine name, quantity, expiration date, and inventory key are required");
     }
 
-    const inventoryExists = await Inventory.find({ _id: inventoryId });
+    console.log(status);
+
+    const validStatuses = ['Have', 'Low', 'No'];
+
+    if (status && !validStatuses.includes(status)) {
+        return sendResponse(res, 400, false, `Invalid status value. Allowed values: ${validStatuses.join(', ')}`);
+    }
+
+    const inventoryExists = await Inventory.findOne({ inventoryKey });
     if (!inventoryExists) {
         return sendResponse(res, 404, false, "Inventory not found");
     }
 
     const medicine = await Medicine.create({
         medicineName,
-        status: status || 'in stock',
+        status: status || 'Have',  // default to 'Have' if not provided
         quantity,
         inventoryKey,
+        inventoryId: inventoryExists._id,
         expirationDate: new Date(expirationDate),
-        inventoryId: new Types.ObjectId(inventoryId)
     });
 
     return sendResponse(res, 201, true, "Medicine added successfully", medicine);
@@ -62,20 +75,25 @@ export const updateMedicine = TryCatch(async (req: AuthenticatedRequest, res: Re
     const updateData: Partial<IMedicine> = {};
 
     if (medicineName !== undefined) updateData.medicineName = medicineName;
+
     if (status !== undefined) {
-        if (!['in stock', 'low', 'out'].includes(status)) {
+        const normalizedStatus = status.toLowerCase();
+        if (!['have', 'low', 'no'].includes(normalizedStatus)) {
             return sendResponse(res, 400, false, "Invalid status value");
         }
-        updateData.status = status;
+        updateData.status = normalizedStatus;
     }
+
     if (quantity !== undefined) {
         if (isNaN(quantity) || quantity < 0) {
             return sendResponse(res, 400, false, "Quantity must be a positive number");
         }
         updateData.quantity = quantity;
     }
+
     if (inventoryKey !== undefined) updateData.inventoryKey = inventoryKey;
     if (expirationDate !== undefined) updateData.expirationDate = new Date(expirationDate);
+
     if (inventoryId !== undefined) {
         const inventoryExists = await Inventory.exists({ _id: inventoryId });
         if (!inventoryExists) {
