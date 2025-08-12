@@ -2,108 +2,64 @@ import { Response } from "express";
 import { AuthenticatedRequest } from "../../../middleware/CheckLogin/isDotorlogin";
 import { TryCatch } from "../../../utils/Error/ErrorHandler";
 import Doctor from "../../../models/Doctor.model";
-import OTP from "../../../models/OTP.model";
-import { SendMail } from "../../../config/Nodemailer";
-import { CreateOTP } from "../../../utils/OTPGen";
-import { generateAccountChangeOtpEmailHtml } from "../../../const/Mail/UpdateUser.templete";
+import { sendResponse } from "../../../utils/response";
+import { cloudinary } from "../../../config/Claudenary";
 
+// !Get the doctor's settings data (excluding sensitive fields and _id)
+export const GetAllDataSettings = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const doctor = req.user;
 
-
-// ---------------------
-// Get Doctor Data
-// ---------------------
-export const DoctorDataGET = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user?.id) {
-        return res.status(401).json({ success: false, message: "Unauthorized: User not found" });
-    }
-
-    const doctorData = await Doctor.findById(req.user.id).select("-password -securityCode");
-    if (!doctorData) {
-        return res.status(404).json({ success: false, message: "Doctor data not found" });
-    }
-
-    return res.status(200).json({ success: true, message: "Doctor data fetched", data: doctorData });
-});
-
-// ---------------------
-// Send OTP to Email for Verification
-// ---------------------
-export const DoctorDataEdit = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).json({ success: false, message: "Email is required to send OTP" });
-    }
-
-    const user = req.user;
-    if (!user?.id) {
-        return res.status(401).json({ success: false, message: "Unauthorized: User not found" });
-    }
-
-    const generatedOTP = CreateOTP();
-    const OTPexpire = new Date(Date.now() + 5 * 60 * 1000 * 3); // 15 mins
-
-    await OTP.deleteMany({ email, Type: "Email" });
-
-    await OTP.create({
-        email,
-        OTP: generatedOTP,
-        OTPexpire,
-        Type: "Email"
-    });
-
-    await SendMail(
-        email,
-        "OTP for updating doctor info",
-        generateAccountChangeOtpEmailHtml(user.fullName, generatedOTP)
-    );
-
-    return res.status(200).json({ success: true, message: "OTP sent to email" });
-});
-
-
-
-// ---------------------
-// Verify OTP & Update Doctor Data
-// ---------------------
-export const VerifyAndUpdateDoctor = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const userId = req.user?.id;
-    if (!userId) {
-        return res.status(401).json({ success: false, message: "Unauthorized: User not found" });
-    }
-
-    const { email, otp, ...updates } = req.body;
-
-    if (!email || !otp) {
-        return res.status(400).json({ success: false, message: "Email and OTP are required" });
-    }
-
-    const otpRecord = await OTP.findOne({
-        email,
-        Type: "Email",
-        OTPexpire: { $gt: new Date() }
-    });
-
-    if (!otpRecord) {
-        return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
-    }
-
-    const isMatch = await otpRecord.compareOtp(otp);
-    if (!isMatch) {
-        return res.status(400).json({ success: false, message: "Invalid OTP" });
-    }
-
-    const updateData = {
-        ...updates,
-        professionalEmail: email,
-    };
-
-    const doctor = await Doctor.findByIdAndUpdate(userId, updateData, { new: true });
     if (!doctor) {
-        return res.status(404).json({ success: false, message: "Doctor not found" });
+        return sendResponse(res, 400, false, "Doctor ID is required");
     }
 
-    await OTP.deleteOne({ _id: otpRecord._id });
+    // Find doctor by ID, exclude sensitive info and _id
+    const doctorData = await Doctor.findById(doctor.id)
+        .select("-password -professionalEmail -title -expireAt -createdAt -updatedAt -__v -Verified -_id -securityCode")
+        .lean();
 
-    return res.status(200).json({ success: true, message: "Doctor data updated successfully", data: doctor });
+    if (!doctorData) {
+        return sendResponse(res, 404, false, "Doctor not found");
+    }
+
+    return sendResponse(res, 200, true, "Doctor data retrieved", doctorData);
+});
+
+
+
+
+//putch Change the user data
+export const ChangeSettingsData = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    const doctor = req.user;
+    const { email, name, phone } = req.body;
+    const file = req.file as Express.Multer.File | undefined;
+
+    if (!doctor || !doctor.id) {
+        return sendResponse(res, 400, false, "Doctor ID is required");
+    }
+
+    let updateData: any = { email, name, phone };
+
+    // If a new image file was uploaded, upload it to Cloudinary and add photo URL to update data
+    if (file) {
+        const uploadResult = await cloudinary.uploader.upload(file.path, {
+            folder: "doctors_photos",
+        });
+        updateData.photo = uploadResult.url as string;
+    }
+
+    // Update the doctor document with new data
+    const updatedDoctor = await Doctor.findByIdAndUpdate(
+        doctor.id,
+        updateData,
+        { new: true }
+    )
+        .select("-password -professionalEmail -title -expireAt -createdAt -updatedAt -__v -Verified -_id -securityCode")
+        .lean();
+
+    if (!updatedDoctor) {
+        return sendResponse(res, 404, false, "Doctor not found");
+    }
+
+    return sendResponse(res, 200, true, "Doctor data updated successfully", updatedDoctor);
 });

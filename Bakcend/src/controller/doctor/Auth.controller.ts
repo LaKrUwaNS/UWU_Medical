@@ -309,6 +309,8 @@ export const RegisterDoctor = TryCatch(async (req: Request, res: Response) => {
     return sendResponse(res, 201, true, "Doctor registered successfully, OTP sent");
 });
 
+
+
 // ---------- Verify Register OTP ----------
 export const VerifyRegisterOTP = TryCatch(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
