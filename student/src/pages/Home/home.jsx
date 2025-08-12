@@ -147,7 +147,7 @@ const Home = () => {
                         <div className="nav-actions">
                             <button className="btn-login" onClick={StaffLogin}>
                                 <Stethoscope className="w-4 h-4" />
-                                <span>Staff Portal</span>
+                                <span>Login</span>
                             </button>
                             <button
                                 className="mobile-menu-btn"
@@ -165,10 +165,7 @@ const Home = () => {
                             <a href="#features">Features</a>
                             <a href="#workflow">How It Works</a>
                             <a href="#contact">About</a>
-                            <button className="mobile-login" onClick={StaffLogin}>
-                                <Stethoscope className="w-4 h-4" />
-                                <span>Staff Portal</span>
-                            </button>
+                            
                         </div>
                     )}
                 </div>
@@ -312,14 +309,7 @@ const Home = () => {
 
                             <div className="below">
                                 <img className='landingBelow' src={landingBelow} alt="Medical Center System" />
-                                <div className="contact-features">
-                                    {aboutFeatures.map((feature, index) => (
-                                        <div key={index} className="contact-feature">
-                                            <CheckCircle className="w-6 h-6 check-icon" />
-                                            <span className='f-text'>{feature}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                
                             </div>
 
                             
