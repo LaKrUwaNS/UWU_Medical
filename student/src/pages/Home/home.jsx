@@ -183,7 +183,7 @@ const Home = () => {
                         </div>
 
                         <h1 className="hero-title">
-                            Digital <span className="highlight">Medical Records</span><br />
+                            Digital Medical Records<br />
                             Management System
                         </h1>
 
@@ -192,7 +192,7 @@ const Home = () => {
                             system for students, doctors, and administrative staff to manage health records digitally.
                         </p>
 
-                        <div className="hero-buttons">
+                        {/* <div className="hero-buttons">
                             <button className="btn-primary" onClick={StudentLogin}>
                                 <Users className="w-5 h-5" />
                                 <span>Student Portal</span>
@@ -204,7 +204,7 @@ const Home = () => {
                                 <Download className="w-5 h-5" />
                                 <span>Learn More</span>
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </section>
@@ -216,10 +216,10 @@ const Home = () => {
                         <div className="section-badge">
                             System Features
                         </div>
-                        <h2 className="section-title">
-                            Comprehensive <span className="highlight">Healthcare Management</span>
+                        <h2 >
+                            Comprehensive 
                         </h2>
-                        <p className="section-description">
+                        <p>
                             Our system provides complete digital health record management tailored for the 
                             Uva Wellassa University Medical Center environment.
                         </p>
@@ -272,7 +272,7 @@ const Home = () => {
                             How It Works
                         </div>
                         <h2 className="section-title">
-                            Simple <span className="highlight">Medical Record</span> Process
+                            Simple Medical Record Process
                         </h2>
                         <p className="section-description">
                             Our streamlined workflow ensures efficient management of medical records 
@@ -303,12 +303,12 @@ const Home = () => {
                     <div className="contact-grid">
                         <div className="contact-content">
                             <h2 className="contact-title">
-                                About UWU <span className="highlight">Medical Center System</span>
+                                About UWU Medical Center System
                             </h2>
-                            <p className="contact-description">
+                            <h5 className="contact-description">
                                 Developed by ICT students as part of their Independent Study Project, this system 
                                 modernizes healthcare record management at Uva Wellassa University Medical Center.
-                            </p>
+                            </h5>
 
                             <div className="below">
                                 <img className='landingBelow' src={landingBelow} alt="Medical Center System" />
