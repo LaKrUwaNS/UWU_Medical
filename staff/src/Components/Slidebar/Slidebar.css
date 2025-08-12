@@ -2,7 +2,7 @@
 .sidebar {
   width: 280px;
   height: 100vh;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fffe 100%);
+  background: linear-gradient(#ffffff 0%, #f8fffe 100%);
   border-right: 1px solid #e0f2e0;
   display: flex;
   flex-direction: column;
@@ -214,4 +214,36 @@
 
 .sidebar::-webkit-scrollbar-thumb:hover {
   background: #bbf7d0;
+}
+
+
+{/*sidebar-user-logout*/}
+.sidebar-user-logout {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between icon and text */
+  padding: 10px 18px;
+  background-color: #ffffff; /* red for logout */
+  color: black;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.sidebar-user-logout:hover {
+  background-color: #5ac682; /* darker red on hover */
+  transform: translateY(-1px); /* lift effect */
+}
+
+.sidebar-user-logout:active {
+  background-color: #054919; /* darkest red on click */
+  transform: translateY(0);
+}
+
+.sidebar-user-logout svg {
+  font-size: 18px;
 }
