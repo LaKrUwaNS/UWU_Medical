@@ -146,8 +146,8 @@ const Home = () => {
 
                         <div className="nav-actions">
                             <button className="btn-login" onClick={StaffLogin}>
-                                <Stethoscope className="w-4 h-4" />
-                                <span>Login</span>
+                                <Users className="w-5 h-5" />
+                                <span>Student login</span>
                             </button>
                             <button
                                 className="mobile-menu-btn"
@@ -165,7 +165,10 @@ const Home = () => {
                             <a href="#features">Features</a>
                             <a href="#workflow">How It Works</a>
                             <a href="#contact">About</a>
-                            
+                            <button className="mobile-login" onClick={StaffLogin}>
+                                <Users className="w-5 h-5" />
+                                <span>Student login</span>
+                            </button>
                         </div>
                     )}
                 </div>
