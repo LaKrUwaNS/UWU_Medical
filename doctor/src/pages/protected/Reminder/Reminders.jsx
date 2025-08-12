@@ -1,92 +1,116 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MessageCard from '../../../components/MessageCard/MessageCard';
 import './Reminders.css';
-import images from '../../../assets/images';
 import { Toaster, toast } from 'react-hot-toast';
 
 function Reminders() {
-  const [activeTab, setActiveTab] = useState("Massages");
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: "Massage",
-      studentId: "UWU/ICT/22/064",
-      content: "I would like to request an appointment for a check-up..."
-    },
-    {
-      id: 2,
-      type: "Article",
-      studentId: "UWU/ICT/22/064",
-      content: "I would like to request an appointment for a check-up..."
-    },
-    {
-      id: 1,
-      type: "Massage",
-      studentId: "UWU/ICT/22/064",
-      content: "I would like to request an appointment for a check-up..."
-    },
-    {
-      id: 2,
-      type: "Article",
-      studentId: "UWU/ICT/22/064",
-      content: "I would like to request an appointment for a check-up..."
-    },
-    {
-      id: 1,
-      type: "Massage",
-      studentId: "UWU/ICT/22/064",
-      content: "I would like to request an appointment for a check-up..."
-    },
-    {
-      id: 2,
-      type: "Article",
-      studentId: "UWU/ICT/22/064",
-      content: "I would like to request an appointment for a check-up..."
-    },
-    {
-      id: 1,
-      type: "Massage",
-      studentId: "UWU/ICT/22/064",
-      content: "I would like to request an appointment for a check-up..."
-    },
-    {
-      id: 2,
-      type: "Article",
-      studentId: "UWU/ICT/22/064",
-      content: "I would like to request an appointment for a check-up..."
-    },
+  // ✅ Fetch reminders from backend
+  const fetchReminders = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/doctor/reminders", {
+        method: "GET",
+        credentials: "include", // send cookies for authentication
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
 
-  ]);
-
-  const handleDelete = (id) => {
-    setMessages(prev => prev.filter(msg => msg.id !== id));
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMessages(data.data);
+      } else {
+        toast.error(data.message || "Failed to fetch reminders");
+      }
+    } catch (err) {
+      console.error("Error fetching reminders:", err);
+      toast.error("Error fetching reminders");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleMarkAsRead = (id) => {
-    toast.success(`Marked message ID ${id} as read!`)
-    // You could move it to a "read" state or change status
+  // ✅ Mark reminder as read
+  const handleMarkAsRead = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/doctor/reminders/${id}/read`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("Marked as read");
+        fetchReminders(); // refresh list
+      } else {
+        toast.error(data.message || "Failed to mark as read");
+      }
+    } catch (err) {
+      console.error("Error marking as read:", err);
+      toast.error("Error marking as read");
+    }
   };
+
+  // ✅ Delete reminder
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/doctor/reminders/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("Reminder deleted");
+        setMessages(prev => prev.filter(msg => msg._id !== id));
+      } else {
+        toast.error(data.message || "Failed to delete reminder");
+      }
+    } catch (err) {
+      console.error("Error deleting reminder:", err);
+      toast.error("Error deleting reminder");
+    }
+  };
+
+  useEffect(() => {
+    fetchReminders();
+  }, []);
 
   return (
     <div className="messages-page">
       <Toaster position="top-center" reverseOrder={false} />
       <header className="top-bar">
-        <h2>Massages From Students</h2>
+        <h2>Reminders From Students</h2>
       </header>
 
-      <div className="message-grid">
-        {messages.map(msg => (
-          <MessageCard
-            key={msg.id}
-            type={msg.type}
-            id={msg.studentId}
-            content={msg.content}
-            onDelete={() => handleDelete(msg.id)}
-            onMarkRead={() => handleMarkAsRead(msg.id)}
-          />
-        ))}
-      </div>
+      {loading ? (
+        <p>Loading reminders...</p>
+      ) : messages.length === 0 ? (
+        <p>No reminders found.</p>
+      ) : (
+        <div className="message-grid">
+          {messages.map(msg => (
+            <MessageCard
+              key={msg._id}
+              type={msg.type}
+              id={msg.sender?.indexNumber || "Unknown"}
+              content={msg.content}
+              urgent={msg.urgent}
+              read={msg.Read}
+              onDelete={() => handleDelete(msg._id)}
+              onMarkRead={() => handleMarkAsRead(msg._id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
