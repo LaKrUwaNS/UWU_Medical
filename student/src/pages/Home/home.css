@@ -43,18 +43,25 @@ body {
 .nav-logo {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 25px;
+    position: relative;
+    
+    
 }
 
-.logo-icon {
-    width: 2.5rem;
+.logo-icon-L {
+    /* width: 2.5rem;
     height: 2.5rem;
     background: #059669;
     border-radius: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: white; */
+}
+.L-logo{
+    width: 65px;
+    height: 65px;
 }
 
 .logo-text h1 {
@@ -528,10 +535,11 @@ body {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 .landingBelow{
-    height: 380px;
+    height: 370px;
     width: 750px;
     border-radius: 22px;
     margin-left: 20px;
+    margin-bottom: 30px;
 }
 
 .form-input:focus {
