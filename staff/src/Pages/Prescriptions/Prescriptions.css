@@ -1,5 +1,3 @@
-/* StudentPrescriptions.css */
-
 * {
   box-sizing: border-box;
 }
@@ -8,8 +6,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  background: #f8fafc;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f9fafb; /* Light background for better contrast */
   min-height: 100vh;
 }
 
@@ -26,58 +24,16 @@
 .main-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #1e293b; /* Dark text color */
   margin: 0 0 0.5rem 0;
   letter-spacing: -0.02em;
 }
 
 .subtitle {
   font-size: 1.1rem;
-  color: #64748b;
+  color: #64748b; /* Gray description text */
   margin: 0;
   font-weight: 400;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
-}
-
-.btn-secondary {
-  background: white;
-  color: #16a34a;
-  border: 2px solid #22c55e;
-}
-
-.btn-secondary:hover {
-  background: #f0fdf4;
-  transform: translateY(-1px);
 }
 
 /* Controls Section */
@@ -99,58 +55,38 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #64748b;
+  color: #64748b; /* Gray icon color */
   z-index: 1;
 }
 
 .search-input {
-  width: 60em;
+  width: 100%;
   padding: 10px 40px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #e2e8f0; /* Light gray border */
   border-radius: 12px;
   font-size: 1rem;
-  background: white;
+  background: white; /* White background */
   transition: all 0.2s ease-in-out;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #22c55e;
-  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+  border-color: #10b981; /* Green border on focus */
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
 
 .search-input::placeholder {
-  color: #94a3b8;
+  color: #94a3b8; /* Placeholder color */
   opacity: 1;
-}
-
-.filter-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
-  background: white;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  color: #64748b;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.filter-btn:hover {
-  border-color: #22c55e;
-  color: #22c55e;
-  background: #f8fafc;
 }
 
 /* Table Section */
 .table-container {
-  background: white;
+  background: white; /* White background for table */
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e2e8f0; /* Light gray border */
 }
 
 .table-wrapper {
@@ -163,35 +99,27 @@
 }
 
 .prescriptions-table thead {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: #65bfa6; /* Light green header */
 }
 
 .prescriptions-table th {
   padding: 1.25rem 1.5rem;
   text-align: left;
   font-weight: 600;
-  color: white;
+  color: white; /* White text for header */
   font-size: 0.95rem;
   letter-spacing: 0.02em;
   border: none;
 }
 
-.prescriptions-table th:first-child {
-  border-top-left-radius: 0;
-}
-
-.prescriptions-table th:last-child {
-  border-top-right-radius: 0;
-}
-
 .table-row {
   transition: all 0.2s ease-in-out;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9; /* Light gray border for rows */
 }
 
 .table-row:hover {
-  background: #f8fafc;
-  transform: scale(1.01);
+  background: rgba(16, 185, 129, 0.02); /* Light green on hover */
+  transform: scale(1.01); /* Slight scale effect on hover */
 }
 
 .prescriptions-table td {
@@ -202,42 +130,43 @@
 
 .student-name {
   font-weight: 600;
-  color: #1e293b;
+  color: #1e293b; /* Dark text color */
 }
 
 .enrollment-number {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  color: #64748b;
+  color: #64748b; /* Gray text color */
   font-weight: 500;
-  background: #f1f5f9;
+  background: #f1f5f9; /* Light background */
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
   display: inline-block;
 }
 
 .program-badge {
-  background: #f1f5f9;
-  color: #475569;
+  background: #f1f5f9; /* Light background */
+  color: #475569; /* Darker gray for program badge */
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e2e8f0; /* Light gray border */
 }
 
 .date-cell,
 .time-cell {
-  color: #64748b;
+  color: #64748b; /* Gray text color */
   font-weight: 500;
 }
 
+/* View Button */
 .view-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  color: white;
+  background: #10b981; /* Green background */
+  color: white; /* White text */
   border: none;
   border-radius: 8px;
   font-size: 0.85rem;
@@ -249,14 +178,14 @@
 
 .view-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 /* Footer */
 .footer-info {
   margin-top: 1.5rem;
   text-align: center;
-  color: #64748b;
+  color: #64748b; /* Gray text color */
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -264,7 +193,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .prescription-container {
-    padding: 1rem;
+    padding: 1rem; /* Reduced padding for smaller screens */
   }
   
   .header-section {
@@ -274,7 +203,7 @@
   }
   
   .main-title {
-    font-size: 2rem;
+    font-size: 2rem; /* Adjusted font size for smaller screens */
   }
   
   .controls-section {
@@ -283,42 +212,37 @@
   }
   
   .search-container {
-    max-width: none;
-  }
-  
-  .action-buttons {
-    width: 100%;
-    justify-content: flex-start;
+    max-width: none; /* Allow full width */
   }
   
   .prescriptions-table th,
   .prescriptions-table td {
-    padding: 1rem;
-    font-size: 0.9rem;
+    padding: 1rem; /* Reduced padding for smaller screens */
+    font-size: 0.9rem; /* Adjusted font size */
   }
   
   .view-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
+    padding: 0.5rem 1rem; /* Adjusted button size */
+    font-size: 0.8rem; /* Adjusted font size */
   }
 }
 
 @media (max-width: 640px) {
   .table-wrapper {
-    font-size: 0.85rem;
+    font-size: 0.85rem; /* Adjusted font size */
   }
   
   .prescriptions-table th,
   .prescriptions-table td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.75rem 0.5rem; /* Reduced padding */
   }
   
   .program-badge {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem; /* Adjusted font size */
+    padding: 0.4rem 0.8rem; /* Adjusted padding */
   }
   
   .enrollment-number {
-    font-size: 0.8rem;
+    font-size: 0.8rem; /* Adjusted font size */
   }
 }

@@ -6,8 +6,12 @@ import {
   FaFileMedical,
   FaPrescriptionBottleAlt,
   FaUserGraduate
+ 
+
 } from "react-icons/fa";
+import { BiLogOut } from "react-icons/bi";
 import logo from '../../assets/SlideBar/Logo.svg';
+
 
 export default function Sidebar() {
   return (
@@ -46,10 +50,27 @@ export default function Sidebar() {
       </ul>
 
       {/* User Section */}
+      <div className="sidebar-user-logout">
+        <BiLogOut /> Logout
+  
+        
+      </div>
       <div className="sidebar-user">
         <img src="/staff.png" alt="staff" className="user-img" />
         <p>Mr.A.M.S.K.T. Aththanayaka</p>
       </div>
+
+      
+
+
+
+
+
+
+
+
+
+
     </div>
   );
 }

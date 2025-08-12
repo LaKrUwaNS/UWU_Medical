@@ -529,6 +529,7 @@
   .students-table td:nth-child(3),
   .students-table th:nth-child(4),
   .students-table td:nth-child(4) {
-    display: none;
+    display: none;np
   }
 }
+
