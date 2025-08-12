@@ -89,7 +89,7 @@ function MedicalRequests() {
   return (
     <div style={{ position: 'relative' }}>
       <Toaster position="top-center" reverseOrder={false} />
-      <div style={{ display: 'flex' }}>
+      <div>
         <main className="medical-request-page">
           <div className="header-MR">
             <h2 className="MR">Medical Requests</h2>
