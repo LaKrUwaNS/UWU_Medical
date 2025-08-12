@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FileText, Download, Search, Shield, Users, Database, Activity, Clock, CheckCircle, ArrowRight, Menu, X, Stethoscope, Calendar, UserCheck } from 'lucide-react';
 import './Home.css';
 import landingBelow from '../../assets/Home/landingBelow.png'
+import images from '../../assets/Image'
 
 const Home = () => {
     const navigate = useNavigate();
@@ -110,13 +111,7 @@ const Home = () => {
         }
     ];
 
-    const teamMembers = [
-        "N.M.L.S.K Nishshanka (UWU/ICT/22/064)",
-        "R.M.K.A Senarath (UWU/ICT/22/066)", 
-        "W.R.A.K.D Wijesinghe (UWU/ICT/22/067)",
-        "R.P.C Nirmal (UWU/ICT/22/068)",
-        "W.B.S Sameepa (UWU/ICT/22/043)"
-    ];
+ 
 
     const aboutFeatures = [
         "Replace manual paper-based filing",
@@ -132,8 +127,9 @@ const Home = () => {
                 <div className="nav-content">
                     <div className="nav-flex">
                         <div className="nav-logo">
-                            <div className="logo-icon">
-                                <Stethoscope className="w-6 h-6" />
+                            <div className="logo-icon-L">
+                                <img className = "L-logo"
+                                src={images.logo} alt="logo" />
                             </div>
                             <div className="logo-text">
                                 <h1>UWU Medical Center</h1>
@@ -326,17 +322,7 @@ const Home = () => {
                                 </div>
                             </div>
 
-                            <div className="team-section">
-                                <h3 className="team-title">Development Team</h3>
-                                <div className="team-members">
-                                    {teamMembers.map((member, index) => (
-                                        <div key={index} className="team-member">
-                                            <Users className="w-4 h-4" />
-                                            <span>{member}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
