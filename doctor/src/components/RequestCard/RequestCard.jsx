@@ -38,7 +38,7 @@ const RequestCard = ({ data, onDelete, onApprove, className = "" }) => {
   return (
     <div className={`ultra-modern-card ${className} ${loading ? 'processing' : ''} ${isApproving ? 'approving' : ''} priority-${priority}`}>
       {/* Profile + Info */}
-      <div className="card-header">
+      <div className="card-header1">
         <div className="profile-section">
           <div className="avatar-wrapper">
             <img src={data.image} alt="profile" className="profile-avatar" />
