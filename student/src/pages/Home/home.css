@@ -329,6 +329,9 @@ body {
 .section-header {
     text-align: center;
     margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .section-badge {
@@ -349,6 +352,8 @@ body {
     color: #111827;
     margin-bottom: 1rem;
     line-height: 1.2;
+    width: 100%;
+    max-width: 100%;
 }
 
 .section-title .highlight {
@@ -361,6 +366,8 @@ body {
     max-width: 90%;
     margin: 0 auto;
     line-height: 1.6;
+    width: 100%;
+    display: block;
 }
 
 /* Features Grid */
@@ -540,13 +547,13 @@ body {
 .below {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
     align-items: center;
 }
 
 .landingBelow {
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
     height: auto;
     border-radius: 12px;
     margin: 0;
@@ -559,7 +566,7 @@ body {
     text-align: left;
     margin: 0;
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
 }
 
 .contact-feature {
@@ -773,17 +780,18 @@ body {
     .below {
         flex-direction: row;
         align-items: flex-start;
-        gap: 2rem;
+        gap: 3rem;
+        justify-content: center;
     }
     
     .landingBelow {
-        flex: 1;
-        max-width: none;
+        flex: 0 0 45%;
+        max-width: 450px;
     }
     
     .contact-features {
-        flex: 1;
-        margin-top: 0;
+        flex: 0 0 45%;
+        max-width: 400px;
     }
 }
 
