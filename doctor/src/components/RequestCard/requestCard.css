@@ -87,9 +87,9 @@
   50% { background-position: 200% 0; }
 }
 
-.card-header {
+.card-header1 {
   padding: 28px 28px 24px;
-  display: flex;
+  
   justify-content: space-between;
   align-items: flex-start;
   gap: 24px;
