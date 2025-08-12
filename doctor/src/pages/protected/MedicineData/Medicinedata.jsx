@@ -285,7 +285,7 @@ function MedicineData() {
                                         <td>
                                             <div className="action-buttons">
                                                 <button className="edit-btn" onClick={() => handleEdit(medicines.findIndex(m => m._id === med._id))}>✏️</button>
-                                                <button className="delete-btn" onClick={() => handleDelete(medicines.findIndex(m => m._id === med._id))}>🗑️</button>
+                                                <button className="medicine-delete-btn"et onClick={() => handleDelete(medicines.findIndex(m => m._id === med._id))}>🗑️</button>
                                             </div>
                                         </td>
                                     </tr>

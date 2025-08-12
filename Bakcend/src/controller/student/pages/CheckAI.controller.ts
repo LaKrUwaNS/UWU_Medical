@@ -34,7 +34,7 @@ export async function correctGrammar(text: string): Promise<any> {
         contents: [
             {
                 role: "user",
-                parts: [{ text: `Correct the grammar and make this message more clear:\n${text}` }],
+                parts: [{ text: `Corrected grammer and make more clear version also summerize, only give me the one version, no need to add the other data , only need to give one clear version of that. only massage is find\n${text}` }],
             },
         ],
     });
