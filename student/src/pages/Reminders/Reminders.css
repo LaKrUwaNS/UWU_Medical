@@ -21,11 +21,18 @@
 
 .reminders-subtitle {
   font-size: 16px;
-  color: #16a34a;
+  color: #858886;
   margin: 0;
   line-height: 1.5;
 }
+.reminder-section-title{
+   font-size: 24px;
+  font-weight: 600;
+  color: #15803d;
+  margin: 0 0 24px 0;
 
+
+}
 .search-container {
   margin-bottom: 40px;
 }
@@ -66,10 +73,7 @@
 }
 
 .section-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #15803d;
-  margin: 0 0 24px 0;
+ 
 }
 
 .reminders-list {
@@ -111,7 +115,7 @@
 
 .reminder-description {
   font-size: 16px;
-  color: #16a34a;
+  color: #282928;
   margin: 0 0 16px 0;
   line-height: 1.5;
 }

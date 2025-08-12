@@ -28,8 +28,8 @@ function Sidebar() {
       {/* Header */}
       <div className="sidebar-header">
         <div className="header-content">
-          <div className="header-icon">
-           <img className="logo" src={images.logo} alt="logo" />
+          <div className="header-icon-sidebar">
+           <img className="logo" src={images.logo}alt="logo" />
           </div>
           <div className="header-text">
             <h2>Medical Center</h2>

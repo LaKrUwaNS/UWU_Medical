@@ -60,7 +60,7 @@ const Reminders = () => {
       </div>
 
       <div className="special-notices">
-        <h2 className="section-title">Special Notices</h2>
+        <h2 className="reminder-section-title">Special Notices</h2>
         
         <div className="reminders-list">
           {filteredReminders.map((reminder) => (

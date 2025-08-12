@@ -56,13 +56,15 @@
 
 /* Section Styles */
 .section-Dash {
-  margin-top: 12em;
+  margin-top: 10px;
 }
 .section-Dash-B{
-  margin-top: 15px;
+  margin-top: 12em;
 
 }
-
+.section-Dash-C{
+  margin-top: 20px;
+}
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -82,6 +84,14 @@
   font-weight: 600;
   color: #1f2937;
   margin: 0 0 12px 0;
+}
+.section-title-DA{
+  font-size: 22px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+  margin-bottom: 15px;
+  
 }
 
 .view-all-link {
@@ -142,12 +152,16 @@
   display: flex;
   flex-direction: column;
 }
-.section-title-DA{
-      font-size: 20px;
+
+.dashboard-section-title{
+ 
+   font-size: 20px;
     font-weight: 600;
     color: #272a2e;
     margin: 0;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+
 }
 
 .stat-number {

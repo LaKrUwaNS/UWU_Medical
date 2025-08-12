@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail } from 'lucide-react';
 import './ContactDoctor.css';
+import images from '../../assets/Image';
 
 const ContactDoctor = () => {
   const [subject, setSubject] = useState('');
@@ -74,7 +75,7 @@ const ContactDoctor = () => {
       <div className="doctor-section">
         <div className="doctor-image-container">
           <img 
-            src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&h=400&fit=crop&crop=face"
+            src={images.contactDoctor}
             alt="Doctor" 
             className="doctor-image"
           />

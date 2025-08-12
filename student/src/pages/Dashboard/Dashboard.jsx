@@ -107,17 +107,15 @@ function Dashboard() {
         <div className="header-left">
           <h1>Student Medical Dashboard</h1>
         </div>
-        <div className="header-right">
-          <div className="profile-avatar">👤</div>
-        </div>
+        
       </div>
 
       {/* Main Content */}
       <div className="dashboard-content">
         
         {/* Quick Stats */}
-        <div className="section">
-          <h2 className="section-title">Medical Request Overview</h2>
+        <div className="section-Dash">
+          <h2 className="section-title-DA">Medical Request Overview</h2>
           <div className="stats-grid">
             <div className="stat-card total">
               <div className="stat-icon">📋</div>
@@ -151,9 +149,9 @@ function Dashboard() {
         </div>
 
         {/* Recent Medical Requests */}
-        <div className="section-Dash">
-          <div className="section-header">
-            <h2>My Medical Requests</h2>
+        <div className="section-Dash-B">
+          <div className="section-title-DA">
+            <p>My Medical Requests</p>
             <span className="view-all-link">View All</span>
           </div>
           
@@ -187,7 +185,7 @@ function Dashboard() {
         </div>
 
         {/* Doctor Availability Section */}
-        <div className="section-Dash-B">
+        <div className="section-Dash-C">
           <h2 className="section-title-DA">Doctor Availability</h2>
           
           <div className="doctors-grid">

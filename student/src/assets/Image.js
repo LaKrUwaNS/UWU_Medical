@@ -15,6 +15,7 @@ import SmilingDoctors from '../assets/Home/smilingDocs.png';
 import uniLogo from '../assets/Loading/Uni_logo.png';
 import Login from '../assets/Login/Login.jpg';
 import LoginUniLogo from '../assets/Login/logo.png';
+import contactDoctor from '../assets/Contact_Doctor/contact-doctor.png'
 
 
 const images = {
@@ -34,7 +35,8 @@ const images = {
   SmilingDoctors,
   uniLogo,
   Login,
-  LoginUniLogo
+  LoginUniLogo,
+  contactDoctor
 };
 
 export default images;

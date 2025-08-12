@@ -81,14 +81,7 @@ const Updates = () => {
   return (
     <div className="student-updates-container">
       {/* Header */}
-      <div className="updates-header">
-        <div className="header-left">
-          <div className="doctor-info">
-            <img src="/api/placeholder/40/40" alt="Doctor Avatar" className="doctor-avatar" />
-            <span className="doctor-name">Dr Lakruvani Siwaka</span>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Page Title */}
       <div className="page-title">
