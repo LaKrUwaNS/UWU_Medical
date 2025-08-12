@@ -21,11 +21,13 @@ import {
     CheckIsStudentLoggedIn,
 } from "../controller/student/Auth.Student.controller";
 
-import { isStudentLoggedIn } from "../middleware/CheckLogin/isStudentlogin";
+import { isStudentLogin } from "../middleware/CheckLogin/isStudentlogin";
 import { getMedicalData } from "../controller/student/pages/GetMEdicales.controller";
 import { ApplyMedicalRequest } from "../controller/student/pages/applyMedical.controller";
 import { StudentdataGET, StudentDateEdit, VerifyandUpdate } from "../controller/student/pages/studnetData.controller";
 import { generateSummary } from "../controller/student/pages/CheckAI.controller";
+import { ContactDoctor, MassageArticles } from "../controller/student/pages/contactDoctor.controller";
+import { GetAllDoctors } from "../controller/Admin/Loginusers.controller";
 
 
 const upload = multer({ dest: "uploads/" }); // configure multer as needed
@@ -63,7 +65,7 @@ StudentRouter.get("/check-login", CheckIsStudentLoggedIn);
 // Upload Student Profile Photo route
 StudentRouter.post(
     "/profile-photo-upload",
-    isStudentLoggedIn,
+    isStudentLogin,
     upload.single("image"),
     UploadStudentPhoto
 );
@@ -74,22 +76,31 @@ StudentRouter.post(
 // ==========================
 // !SHOW Medical Request Page Routers
 // ==========================
-StudentRouter.get("/medical-data", isStudentLoggedIn, getMedicalData); // GET localhost:5000/student/medical-data
+StudentRouter.get("/medical-data", isStudentLogin, getMedicalData); // GET localhost:5000/student/medical-data
 
 
 
 // ==========================
 // Apply Medical Request Page Routers
 // ==========================
-StudentRouter.post("/apply-medical", isStudentLoggedIn, ApplyMedicalRequest); // post localhost:5000/student/apply-medical
+StudentRouter.post("/apply-medical", isStudentLogin, ApplyMedicalRequest); // post localhost:5000/student/apply-medical
 
 
 // ==========================
 // Settings Page Routers
 // ==========================
-StudentRouter.get("/settings", isStudentLoggedIn, StudentdataGET);   // GET localhost:5000/student/settings
-StudentRouter.post("/settings/edit", validateMiddleware(studentUpdateSchema), isStudentLoggedIn, StudentDateEdit); // PATCH localhost:5000/student/settings/edit
-StudentRouter.patch("/settings/verify-email", isStudentLoggedIn, VerifyandUpdate); // POST localhost:5000/student/settings/verify-email
+StudentRouter.get("/settings", isStudentLogin, StudentdataGET);   // GET localhost:5000/student/settings
+StudentRouter.post("/settings/edit", validateMiddleware(studentUpdateSchema), isStudentLogin, StudentDateEdit); // PATCH localhost:5000/student/settings/edit
+StudentRouter.patch("/settings/verify-email", isStudentLogin, VerifyandUpdate); // POST localhost:5000/student/settings/verify-email
 
+
+//Contact Doctor page
+StudentRouter.get("/All-doctor", GetAllDoctors); // GET localhost:5000/student/All-doctor
+StudentRouter.post("/contact-doctor", isStudentLogin, ContactDoctor); // POST localhost:5000/student/contact-doctor
+
+
+
+// Article Massages
+StudentRouter.post("/article-massage/:id", isStudentLogin, MassageArticles); // POST localhost:5000/student/article-massage/:id
 
 export default StudentRouter;
