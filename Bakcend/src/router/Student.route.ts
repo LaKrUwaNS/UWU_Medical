@@ -105,7 +105,7 @@ StudentRouter.post("/article-massage/:id", isStudentLogin, MassageArticles); // 
 
 // Apply Medical
 StudentRouter.post("/apply-medical", isStudentLogin, ApplyMedicalRequest); // POST localhost:5000/student/apply-medical
-
+StudentRouter.get("/medical-data", isStudentLogin, getMedicalData); // GET localhost:5000/student/medical-data
 
 
 export default StudentRouter;
