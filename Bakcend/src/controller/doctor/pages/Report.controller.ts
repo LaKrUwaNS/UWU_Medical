@@ -3,48 +3,48 @@ import { AuthenticatedRequest } from "../../../middleware/CheckLogin/isDotorlogi
 import { Prescription } from "../../../models/prescription.model";
 import { TryCatch } from "../../../utils/Error/ErrorHandler";
 import { sendResponse } from "../../../utils/response";
+import Student from "../../../models/Student.model";
+import { MedicalRequest } from "../../../models/MedicalRequest.model";
 
 export const ReportData = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
+    // Get all prescriptions
     const prescriptions = await Prescription.find();
 
+    // Weekday names
     const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    const groupedByWeekday: { [key: string]: number } = {
-        'Sunday': 0,
-        'Monday': 0,
-        'Tuesday': 0,
-        'Wednesday': 0,
-        'Thursday': 0,
-        'Friday': 0,
-        'Saturday': 0,
-    };
+    // Initialize counts for each weekday
+    const groupedByWeekday: { [key: string]: number } = weekdays.reduce((acc, day) => {
+        acc[day] = 0;
+        return acc;
+    }, {} as { [key: string]: number });
 
+    // Count prescriptions by weekday
     prescriptions.forEach((prescription) => {
         const date = prescription.createdAt ? new Date(prescription.createdAt) : new Date();
-        const dayIndex = date.getDay();
-        const dayName = weekdays[dayIndex];
-
+        const dayName = weekdays[date.getDay()];
         groupedByWeekday[dayName] += 1;
     });
 
+    // Prepare chart data
     const chartData = weekdays.map(day => ({
         name: day,
         value: groupedByWeekday[day],
     }));
 
-    sendResponse(res, 200, true, "Chart data retrieved successfully", chartData);
-});
+    // Card data counts
+    const [TotalStudents, TotalMedicalRequests, TotalPrescriptions] = await Promise.all([
+        Student.countDocuments(),
+        MedicalRequest.countDocuments(),
+        Prescription.countDocuments()
+    ]);
 
-
-export const CardData = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const prescriptions = await Prescription.find();
-
-    const totalPrescriptions = prescriptions.length;
-
-    const cardData = {
-        totalPrescriptions,
-        // Add more card data as needed
-    };
-
-    sendResponse(res, 200, true, "Card data retrieved successfully", cardData);
+    sendResponse(res, 200, true, "Dashboard data retrieved successfully", {
+        chartData,
+        cards: {
+            TotalStudents,
+            TotalMedicalRequests,
+            TotalPrescriptions
+        }
+    });
 });

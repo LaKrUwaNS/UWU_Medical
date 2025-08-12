@@ -39,11 +39,6 @@ export const ChangeRead = TryCatch(async (req: AuthenticatedRequest, res: Respon
 export const DeleteMassage = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
     const { id } = req.params;
 
-    const doctorId = req.user?.id;
-    if (!doctorId) {
-        return sendResponse(res, 401, false, "Unauthorized: User not found");
-    }
-
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return sendResponse(res, 400, false, "Invalid reminder ID");
     }
