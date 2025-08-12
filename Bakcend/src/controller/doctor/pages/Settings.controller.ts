@@ -61,6 +61,8 @@ export const DoctorDataEdit = TryCatch(async (req: AuthenticatedRequest, res: Re
     return res.status(200).json({ success: true, message: "OTP sent to email" });
 });
 
+
+
 // ---------------------
 // Verify OTP & Update Doctor Data
 // ---------------------

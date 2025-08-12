@@ -5,17 +5,19 @@ export interface MassageProps extends Document {
     receiver: mongoose.Types.ObjectId;
     articleId?: mongoose.Types.ObjectId; // Optional for article messagese
     content: string;
+    Read: false;
     subject?: string;
     type: "Article" | "Important";
     urgent: boolean;
 }
 
 const MassageSchema = new Schema<MassageProps>({
-    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
+    sender: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
+    receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', required: false },
     content: { type: String, required: true },
     articleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Article', required: false }, // Optional for article messages    
     subject: { type: String },
+    Read: { type: Boolean, default: false, required: true },
     type: { type: String, enum: ["Article", "Important"], required: true },
     urgent: { type: Boolean, default: false, required: true }
 }, {

@@ -18,6 +18,7 @@ import { GetAllStudents } from "../controller/doctor/pages/AllStudents.controlle
 import { GetAllStaff } from "../controller/doctor/pages/Staff..controller";
 import { DoctorDataEdit, DoctorDataGET, VerifyAndUpdateDoctor } from "../controller/doctor/pages/Settings.controller";
 import Doctor from "../models/Doctor.model";
+import { ChangeRead, DeleteMassage, GetAllReminders } from "../controller/doctor/pages/Reminders.controller";
 
 const DoctorRouter = Router();
 
@@ -147,5 +148,12 @@ DoctorRouter.get("/settings", isDoctorLogin, DoctorDataGET);                    
 DoctorRouter.post("/settings/verify-email", isDoctorLogin, VerifyAndUpdateDoctor); // localhost:5000/doctor/settings/verify-email
 DoctorRouter.put("/settings", isDoctorLogin, DoctorDataEdit);                     // localhost:5000/doctor/settings
 
+
+// ==========================
+// Reminders Page Routers
+// ==========================
+DoctorRouter.get("/reminders", isDoctorLogin, GetAllReminders); // localhost:5000/doctor/reminders
+DoctorRouter.patch("/reminders/:id/read", isDoctorLogin, ChangeRead); // localhost:5000/doctor/reminders/:id/read
+DoctorRouter.delete("/reminders/:id", isDoctorLogin, DeleteMassage); // localhost:5000/doctor/reminders/:id
 
 export default DoctorRouter;
