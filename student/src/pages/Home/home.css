@@ -517,7 +517,7 @@ body {
 
 /* Contact Section */
 .contact-grid {
-    display: grid;
+    /* display: grid; */
     grid-template-columns: 1fr;
     gap: 2rem;
     align-items: start;
@@ -553,7 +553,7 @@ body {
 
 .landingBelow {
     width: 100%;
-    max-width: 400px;
+    /* max-width: 400px; */
     height: auto;
     border-radius: 12px;
     margin: 0;
@@ -709,7 +709,7 @@ body {
     }
     
     .landingBelow {
-        max-width: 600px;
+        /* max-width: 600px; */
     }
     
     .f-text {
@@ -786,7 +786,7 @@ body {
     
     .landingBelow {
         flex: 0 0 45%;
-        max-width: 450px;
+        /* max-width: 450px; */
     }
     
     .contact-features {
