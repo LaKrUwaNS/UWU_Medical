@@ -9,17 +9,19 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
-.table-wrapper {
+.table-wrapper1 {
   max-height: 200px;     /* Adjust height to fit ~4 rows */
   overflow-y: auto;
-}
+  display: block; /* ensures overflow works */
 
+}
 
 .table-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+  
 }
 
 .table-header-row h3 {
@@ -42,6 +44,9 @@
 
 .student-table thead {
   background-color: #dfffea;
+   position: sticky;   /* stick header to top */
+  top: 0;
+  z-index: 2; 
 }
 
 .student-table th,
