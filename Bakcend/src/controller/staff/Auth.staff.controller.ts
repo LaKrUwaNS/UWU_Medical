@@ -3,7 +3,7 @@ import { TryCatch } from "../../utils/Error/ErrorHandler";
 import { sendResponse } from "../../utils/response";
 import { generateAccessToken, generateRefreshToken, decodeAccessToken } from "../../utils/WebToken";
 import { sendTokenCookies } from "../../utils/Cookies";
-import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
+import { FifteenMinutesFromNow, OneDayFromNow, SevenDaysFromNow } from "../../utils/Date";
 import { cloudinary } from "../../config/Claudenary";
 import { AuthenticatedStaffRequest } from "../../middleware/CheckLogin/isStafflogin";
 
@@ -88,12 +88,12 @@ export const VerifyStaffRegisterOTP = TryCatch(async (req: Request, res: Respons
 
     // Save session
     await Session.create({
-        staffId: staff._id,
-        accessToken,
-        refreshToken,
-        sessionType: "LOGIN",
-        expireAt: OneDayFromNow(),
-        date: new Date(),
+    staffId: staff._id,
+    accessToken,
+    refreshToken,
+    sessionType: "LOGIN",
+    expireAt: SevenDaysFromNow(),
+    date: new Date(),
     });
 
     sendTokenCookies(res, accessToken, refreshToken);
@@ -221,12 +221,12 @@ export const StaffLogin = TryCatch(async (req: Request, res: Response) => {
 
     // Create new login session
     await Session.create({
-        staffId: staff._id,
-        accessToken,
-        refreshToken,
-        sessionType: "LOGIN",
-        expireAt: OneDayFromNow(),
-        date: new Date(),
+    staffId: staff._id,
+    accessToken,
+    refreshToken,
+    sessionType: "LOGIN",
+    expireAt: SevenDaysFromNow(),
+    date: new Date(),
     });
 
     // Send cookies

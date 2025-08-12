@@ -19,6 +19,7 @@ import { GetAllStaff } from "../controller/doctor/pages/Staff..controller";
 import { DoctorDataEdit, DoctorDataGET, VerifyAndUpdateDoctor } from "../controller/doctor/pages/Settings.controller";
 import Doctor from "../models/Doctor.model";
 import { ChangeRead, DeleteMassage, GetAllReminders } from "../controller/doctor/pages/Reminders.controller";
+import { ReportData } from "../controller/doctor/pages/Report.controller";
 
 const DoctorRouter = Router();
 
@@ -152,8 +153,15 @@ DoctorRouter.put("/settings", isDoctorLogin, DoctorDataEdit);                   
 // ==========================
 // Reminders Page Routers
 // ==========================
-DoctorRouter.get("/reminders", isDoctorLogin, GetAllReminders); // localhost:5000/doctor/reminders
-DoctorRouter.patch("/reminders/:id/read", isDoctorLogin, ChangeRead); // localhost:5000/doctor/reminders/:id/read
-DoctorRouter.delete("/reminders/:id", isDoctorLogin, DeleteMassage); // localhost:5000/doctor/reminders/:id
+DoctorRouter.get("/reminders", GetAllReminders); // localhost:5000/doctor/reminders
+DoctorRouter.patch("/reminders/:id/read", ChangeRead); // localhost:5000/doctor/reminders/:id/read
+DoctorRouter.delete("/reminders/:id", DeleteMassage); // localhost:5000/doctor/reminders/:id
+
+
+
+// ==========================
+// Report Page Routers
+// ==========================
+DoctorRouter.get("/reports", ReportData); // localhost:5000/doctor/reports
 
 export default DoctorRouter;

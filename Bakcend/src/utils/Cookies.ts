@@ -14,13 +14,13 @@ export const sendTokenCookies = (
     res.cookie('accessToken', accessToken, {
         httpOnly: true,
         sameSite: 'strict',
-        maxAge: OneDayFromNow().getTime() - Date.now(),
+        maxAge: SevenDaysFromNow().getTime() - Date.now(),
     });
 
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         sameSite: 'strict',
-        maxAge: OneDayFromNow().getTime() - Date.now(),
+        maxAge: SevenDaysFromNow().getTime() - Date.now(),
     });
 };
 

@@ -7,12 +7,10 @@ import mongoose from "mongoose";
 
 // Get all reminders (messages received by doctor)
 export const GetAllReminders = TryCatch(async (req: AuthenticatedRequest, res: Response) => {
-    const doctorId = req.user?.id;
-    if (!doctorId) {
-        return sendResponse(res, 401, false, "Unauthorized: User not found");
+const reminders = await Massage.find().populate("sender", "indexNumber -_id");
+    if (!reminders) {
+        return sendResponse(res, 404, false, "No reminders found");
     }
-
-    const reminders = await Massage.find();
     return sendResponse(res, 200, true, "Reminders fetched successfully", reminders);
 });
 

@@ -6,7 +6,7 @@ import { generateResetOtpEmailHtml } from "../../const/Mail/ResepOTP.templete";
 import { CreateOTP } from "../../utils/OTPGen";
 import { sendTokenCookies } from "../../utils/Cookies";
 import { decodeAccessToken, generateAccessToken, generateRefreshToken } from "../../utils/WebToken";
-import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
+import { FifteenMinutesFromNow, OneDayFromNow, SevenDaysFromNow } from "../../utils/Date";
 import OTP from "../../models/OTP.model";
 import { Session } from "../../models/session.model";
 import { cloudinary } from "../../config/Claudenary";
@@ -215,12 +215,12 @@ export const DoctorLogging = TryCatch(async (req: Request, res: Response) => {
     const newRefreshToken = generateRefreshToken(doctor._id.toString());
 
     await Session.create({
-        doctorId: doctor._id,
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-        sessionType: "LOGIN",
-        expireAt: OneDayFromNow(),
-        date: new Date(),
+    doctorId: doctor._id,
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+    sessionType: "LOGIN",
+    expireAt: SevenDaysFromNow(),
+    date: new Date(),
     });
 
     sendTokenCookies(res, newAccessToken, newRefreshToken);
@@ -338,12 +338,12 @@ export const VerifyRegisterOTP = TryCatch(async (req: Request, res: Response) =>
     const refreshToken = generateRefreshToken(doctor._id.toString());
 
     await Session.create({
-        doctorId: doctor._id,
-        accessToken,
-        refreshToken,
-        sessionType: "LOGIN",
-        expireAt: OneDayFromNow(),
-        date: new Date(),
+    doctorId: doctor._id,
+    accessToken,
+    refreshToken,
+    sessionType: "LOGIN",
+    expireAt: SevenDaysFromNow(),
+    date: new Date(),
     });
 
     sendTokenCookies(res, accessToken, refreshToken);
