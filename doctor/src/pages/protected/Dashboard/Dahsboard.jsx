@@ -71,7 +71,7 @@ const Dashboard = () => {
     <div className="dashboard">
       {/* --- Modern Header --- */}
       <header className="dashboard-header1">
-        <h2> D<span className="green">ai</span>ly Ov<span className="green">er</span>view</h2>
+        <h2> Daily Overview</h2>
 
       </header>
 
