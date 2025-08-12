@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './MedicalRequests.css';
 import RequestCard from '../../../components/RequestCard/RequestCard';
 import images from "../../../assets/images";
-import UserProfile from "../../../components/UserProfile/UseraProfile";
+
 
 function MedicalRequests() {
   const [requests, setRequests] = useState([]);
@@ -86,11 +86,6 @@ function MedicalRequests() {
         <main className="medical-request-page">
           <div className="header-MR">
             <h2 className="MR">Medical Requests</h2>
-            <UserProfile
-              className="User-profile"
-              name="Dr. Lakruwan Sharaka"
-              image={images.lakruwan}
-            />
           </div>
 
           {loading ? (

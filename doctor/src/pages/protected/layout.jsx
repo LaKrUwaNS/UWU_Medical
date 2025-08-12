@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import SlideBar from "../../components/SlideBar/SlideBar";
 import { Navigate } from "react-router-dom";
 import { DoctorContext } from "../../context/DoctorContext";
+import UserProfile from '../../components/UserProfile/UseraProfile';
 import "./layout.css";
 
 const Layout = ({ children }) => {
@@ -9,7 +10,6 @@ const Layout = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [doctor, setDoctor] = useState(null);
 
-    // Toggle sidebar collapse state
     const handleToggle = () => {
         setIsCollapsed((prev) => !prev);
     };
@@ -19,7 +19,7 @@ const Layout = ({ children }) => {
             try {
                 const res = await fetch("http://localhost:5000/doctor/check-login", {
                     method: "GET",
-                    credentials: "include", // include cookies
+                    credentials: "include",
                 });
 
                 if (!res.ok) {
@@ -30,9 +30,9 @@ const Layout = ({ children }) => {
 
                 const data = await res.json();
 
-                if (data.success) {
+                if (data.success && data.data?.doctor) {
                     setIsAuthenticated(true);
-                    setDoctor(data.doctor);
+                    setDoctor(data.data.doctor);
                 } else {
                     setIsAuthenticated(false);
                     setDoctor(null);
@@ -43,7 +43,6 @@ const Layout = ({ children }) => {
             }
         };
 
-        // Only check login once on component mount
         checkDoctorLogin();
     }, []);
 
@@ -58,10 +57,23 @@ const Layout = ({ children }) => {
     return (
         <DoctorContext.Provider value={doctor}>
             <div className="main-layout">
+                {/* Sidebar */}
                 <div className={`sidebar-container ${isCollapsed ? "collapsed" : ""}`}>
                     <SlideBar isCollapsed={isCollapsed} onToggle={handleToggle} />
                 </div>
+
+                {/* Main content */}
                 <div className={`main-content ${isCollapsed ? "collapsed" : ""}`}>
+                    {/* Top bar with UserProfile */}
+                    <div className="top-bar">
+                        {doctor && (
+                            <UserProfile
+                                name={`Dr. ${doctor.fullName}`}
+                                image={doctor.photo}
+                            />
+                        )}
+                    </div>
+
                     {children}
                 </div>
             </div>

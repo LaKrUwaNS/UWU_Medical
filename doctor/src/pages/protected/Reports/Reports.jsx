@@ -4,7 +4,7 @@ import {
 } from 'recharts';
 import './Reports.css';
 import images from '../../../assets/images';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
+
 
 const chartData = [
   { name: 'Technology', value: 30 },
@@ -22,10 +22,6 @@ const Reports = () => {
     <div className="medical-dashboard">
       {/* Header */}
       <div className="dashboard-header">
-        <div className="user-info">
-           <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-          
-        </div>
       </div>
 
       {/* Main Content */}
@@ -58,11 +54,11 @@ const Reports = () => {
               <h3>Total Students</h3>
               <div className="stat-number">250</div>
               <div className="stat-chart">
-                <div className="mini-bar" style={{height: '60%'}}></div>
-                <div className="mini-bar" style={{height: '80%'}}></div>
-                <div className="mini-bar" style={{height: '40%'}}></div>
-                <div className="mini-bar" style={{height: '90%'}}></div>
-                <div className="mini-bar" style={{height: '70%'}}></div>
+                <div className="mini-bar" style={{ height: '60%' }}></div>
+                <div className="mini-bar" style={{ height: '80%' }}></div>
+                <div className="mini-bar" style={{ height: '40%' }}></div>
+                <div className="mini-bar" style={{ height: '90%' }}></div>
+                <div className="mini-bar" style={{ height: '70%' }}></div>
               </div>
             </div>
           </div>
@@ -72,11 +68,11 @@ const Reports = () => {
               <h3>Medical Requests</h3>
               <div className="stat-number">10</div>
               <div className="stat-chart">
-                <div className="mini-bar" style={{height: '30%'}}></div>
-                <div className="mini-bar" style={{height: '50%'}}></div>
-                <div className="mini-bar" style={{height: '70%'}}></div>
-                <div className="mini-bar" style={{height: '40%'}}></div>
-                <div className="mini-bar" style={{height: '60%'}}></div>
+                <div className="mini-bar" style={{ height: '30%' }}></div>
+                <div className="mini-bar" style={{ height: '50%' }}></div>
+                <div className="mini-bar" style={{ height: '70%' }}></div>
+                <div className="mini-bar" style={{ height: '40%' }}></div>
+                <div className="mini-bar" style={{ height: '60%' }}></div>
               </div>
             </div>
           </div>
@@ -86,11 +82,11 @@ const Reports = () => {
               <h3>Total Medicals</h3>
               <div className="stat-number">50</div>
               <div className="stat-chart">
-                <div className="mini-bar" style={{height: '80%'}}></div>
-                <div className="mini-bar" style={{height: '60%'}}></div>
-                <div className="mini-bar" style={{height: '90%'}}></div>
-                <div className="mini-bar" style={{height: '50%'}}></div>
-                <div className="mini-bar" style={{height: '70%'}}></div>
+                <div className="mini-bar" style={{ height: '80%' }}></div>
+                <div className="mini-bar" style={{ height: '60%' }}></div>
+                <div className="mini-bar" style={{ height: '90%' }}></div>
+                <div className="mini-bar" style={{ height: '50%' }}></div>
+                <div className="mini-bar" style={{ height: '70%' }}></div>
               </div>
             </div>
           </div>

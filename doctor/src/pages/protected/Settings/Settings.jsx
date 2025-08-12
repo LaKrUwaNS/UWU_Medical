@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Settings.css';
 import images from '../../../assets/images';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
+
 
 const Settings = () => {
   const initialProfileData = {
@@ -53,9 +53,6 @@ const Settings = () => {
   return (
     <div className="profile-page">
       <div className="profile-header-settings">
-        <div className="doctor-info">
-           <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-        </div>
       </div>
 
       <div className="profile-container">
@@ -91,7 +88,7 @@ const Settings = () => {
 
           <div className="profile-right">
             <h2>Profile data</h2>
-            
+
             <div className="form-group">
               <label>Name</label>
               <input
@@ -155,13 +152,13 @@ const Settings = () => {
             </div>
 
             <div className="button-group">
-              <button 
+              <button
                 className="save-btn cancel"
                 onClick={handleCancel}
               >
                 Cancel
               </button>
-              <button 
+              <button
                 className="save-btn primary"
                 onClick={handleSaveChanges}
               >

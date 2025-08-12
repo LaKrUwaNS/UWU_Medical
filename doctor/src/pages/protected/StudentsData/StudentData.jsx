@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';  // <-- Import useParams
 import './StudentData.css';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
 import images from '../../../assets/images';
 import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
@@ -61,9 +60,6 @@ const StudentData = () => {
         <h2 className="student-data-title">Student Data</h2>
         <div className='pro-header'>
           <button className="new-add-btn">New Add</button>
-          <div className="profile">
-            <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-          </div>
         </div>
       </div>
 

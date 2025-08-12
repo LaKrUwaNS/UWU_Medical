@@ -4,7 +4,7 @@ import images from "../../../assets/images";
 import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
 // Components
-import UserProfile from '../../../components/UserProfile/UseraProfile';
+
 import NextPatientCard from '../../../components/NextPatientCard/NextPatientCard';
 import StudentDataCard from '../../../components/StudentDataCard/StudentDataCard';
 import DonutChart from '../../../components/DonutChart/DonutChart';
@@ -72,8 +72,7 @@ const Dashboard = () => {
       {/* --- Modern Header --- */}
       <header className="dashboard-header1">
         <h2> D<span className="green">ai</span>ly Ov<span className="green">er</span>view</h2>
-        
-        <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
+
       </header>
 
       {/* --- Modern Summary Cards --- */}
@@ -107,7 +106,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        
+
 
         <div className="card medical">
           <div className="card-header">

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Updates.css";
 import BlogCard from "../../../components/BlogCard/BlogCard";
-import UserProfile from "../../../components/UserProfile/UseraProfile";
 import AddNotePopup from "../../../components/AddNotePopup/AddNotePopup";
 import images from "../../../assets/images";
 
@@ -111,9 +110,6 @@ const Updates = () => {
 
   return (
     <div className="updates-page">
-      <div className="user">
-        <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-      </div>
 
       <header className="updates-header">
         <h2>Notes already Submitted</h2>

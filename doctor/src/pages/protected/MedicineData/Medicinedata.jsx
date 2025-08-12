@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './MedicineData.css';
-import images from '../../../assets/images';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
-import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
 const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
@@ -252,9 +249,6 @@ function MedicineData() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <button className='add-button' onClick={() => setIsModalOpen(true)}>New Add</button>
-                    <div className="doctor-profile">
-                        <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-                    </div>
                 </div>
             </div>
 

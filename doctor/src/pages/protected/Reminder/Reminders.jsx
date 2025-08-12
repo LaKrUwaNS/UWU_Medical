@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import MessageCard from '../../../components/MessageCard/MessageCard';
 import './Reminders.css';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
 import images from '../../../assets/images';
 
 function Reminders() {
@@ -20,7 +19,7 @@ function Reminders() {
       studentId: "UWU/ICT/22/064",
       content: "I would like to request an appointment for a check-up..."
     },
-     {
+    {
       id: 1,
       type: "Massage",
       studentId: "UWU/ICT/22/064",
@@ -32,7 +31,7 @@ function Reminders() {
       studentId: "UWU/ICT/22/064",
       content: "I would like to request an appointment for a check-up..."
     },
-     {
+    {
       id: 1,
       type: "Massage",
       studentId: "UWU/ICT/22/064",
@@ -44,7 +43,7 @@ function Reminders() {
       studentId: "UWU/ICT/22/064",
       content: "I would like to request an appointment for a check-up..."
     },
-     {
+    {
       id: 1,
       type: "Massage",
       studentId: "UWU/ICT/22/064",
@@ -56,7 +55,7 @@ function Reminders() {
       studentId: "UWU/ICT/22/064",
       content: "I would like to request an appointment for a check-up..."
     },
-    
+
   ]);
 
   const handleDelete = (id) => {
@@ -72,10 +71,6 @@ function Reminders() {
     <div className="messages-page">
       <header className="top-bar">
         <h2>Massages From Students</h2>
-    
-         <div className="profile">
-            <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-          </div>
       </header>
 
       <div className="message-grid">
