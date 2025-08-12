@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import MessageCard from '../../../components/MessageCard/MessageCard';
 import './Reminders.css';
 import { Toaster, toast } from 'react-hot-toast';
+import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
 function Reminders() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch reminders from backend
+
   const fetchReminders = async () => {
     try {
       const res = await fetch("http://localhost:5000/doctor/reminders", {
         method: "GET",
-        credentials: "include", // send cookies for authentication
+        credentials: "include",
         headers: {
           "Content-Type": "application/json"
         }
@@ -32,7 +33,6 @@ function Reminders() {
     }
   };
 
-  // ✅ Mark reminder as read
   const handleMarkAsRead = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/doctor/reminders/${id}/read`, {
@@ -46,7 +46,7 @@ function Reminders() {
       const data = await res.json();
       if (res.ok && data.success) {
         toast.success("Marked as read");
-        fetchReminders(); // refresh list
+        fetchReminders();
       } else {
         toast.error(data.message || "Failed to mark as read");
       }
@@ -56,7 +56,7 @@ function Reminders() {
     }
   };
 
-  // ✅ Delete reminder
+
   const handleDelete = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/doctor/reminders/${id}`, {
@@ -92,7 +92,7 @@ function Reminders() {
       </header>
 
       {loading ? (
-        <p>Loading reminders...</p>
+        <p><Loadinganimate /></p>
       ) : messages.length === 0 ? (
         <p>No reminders found.</p>
       ) : (

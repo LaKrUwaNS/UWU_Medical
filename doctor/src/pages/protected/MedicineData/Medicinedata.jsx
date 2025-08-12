@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './MedicineData.css';
 import { Toaster, toast } from 'react-hot-toast';
+import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
+
 
 const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
@@ -256,7 +258,7 @@ function MedicineData() {
 
             <div className="table-container">
                 {loading ? (
-                    <p>Loading medicine data...</p>
+                    <p><Loadinganimate /></p>
                 ) : (
                     <table className='medicine-table'>
                         <thead>

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./Updates.css";
 import BlogCard from "../../../components/BlogCard/BlogCard";
 import AddNotePopup from "../../../components/AddNotePopup/AddNotePopup";
-import images from "../../../assets/images";
 import { Toaster, toast } from "react-hot-toast";
+import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
 const BASE_URL = "http://localhost:5000/doctor";
 
@@ -120,7 +120,7 @@ const Updates = () => {
       </header>
 
       {loading ? (
-        <p>Loading articles...</p>
+        <p><Loadinganimate /></p>
       ) : (
         <div className="blog-list">
           {blogs.map((blog) => (
