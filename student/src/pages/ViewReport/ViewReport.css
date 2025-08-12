@@ -1,0 +1,291 @@
+/* StudentMedicalReports.css */
+
+.medical-reports-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* Student Profile Section */
+.student-profile {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+}
+
+.profile-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e0e0e0;
+}
+
+.student-info h2.student-name {
+  margin: 0 0 5px 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+.student-info p {
+  margin: 3px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.student-id {
+  color: #888 !important;
+  font-weight: 500;
+}
+
+.course {
+  font-weight: 500;
+  color: #555 !important;
+}
+
+.email {
+  color: #007bff !important;
+}
+
+.profile-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 200px;
+}
+
+.emergency-contacts h3,
+.tags-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.emergency-contacts p {
+  margin: 5px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.tag.blood-type {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.tag.regular-patient {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.tag.allergy {
+  background-color: #fff3e0;
+  color: #ef6c00;
+  border: 1px solid #ffcc02;
+}
+
+.tag.default {
+  background-color: #f0f0f0;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+/* Medical Reports Section */
+.medical-reports {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.report-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+
+.report-header {
+  background-color: #e8f5e8;
+  padding: 20px;
+  display: flex;
+  gap: 30px;
+  border-bottom: 1px solid #c8e6c9;
+}
+
+.report-info {
+  flex: 0 0 300px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.label {
+  font-weight: 600;
+  color: #333;
+  min-width: 80px;
+  font-size: 14px;
+}
+
+.value {
+  color: #555;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.drug-history-header {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  border: 1px solid #ddd;
+}
+
+.drug-header-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 15px;
+  padding: 8px 0;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 10px;
+}
+
+.drug-header-row span {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.drug-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 15px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+
+.drug-row:last-child {
+  border-bottom: none;
+}
+
+.drug-col {
+  font-weight: 500;
+  color: #333;
+}
+
+.times-col {
+  color: #666;
+}
+
+.desc-col {
+  color: #555;
+}
+
+.description-section {
+  padding: 20px;
+}
+
+.description-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.description-section p {
+  margin: 0;
+  line-height: 1.6;
+  color: #555;
+  font-size: 14px;
+  text-align: justify;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .medical-reports-container {
+    padding: 15px;
+  }
+  
+  .student-profile {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .profile-left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .report-header {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .report-info {
+    flex: none;
+  }
+  
+  .drug-history-header {
+    overflow-x: auto;
+  }
+  
+  .drug-header-row,
+  .drug-row {
+    min-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .student-profile {
+    padding: 15px;
+  }
+  
+  .report-header {
+    padding: 15px;
+  }
+  
+  .description-section {
+    padding: 15px;
+  }
+  
+  .tags {
+    justify-content: center;
+  }
+}

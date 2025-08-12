@@ -1,0 +1,243 @@
+.contact-doctor-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #e8e8e8 0%, #a8e6a3 100%);
+}
+
+.contact-form-section {
+  flex: 1;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px 0 0 20px;
+  max-width: 500px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.description {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.subject-input {
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  background: #f9f9f9;
+}
+
+.subject-input:focus {
+  border-color: #a8e6a3;
+  background: white;
+}
+
+.subject-input::placeholder {
+  color: #999;
+}
+
+.content-textarea {
+  padding: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  min-height: 150px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  background: #f9f9f9;
+}
+
+.content-textarea:focus {
+  border-color: #a8e6a3;
+  background: white;
+}
+
+.content-textarea::placeholder {
+  color: #999;
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.cancel-btn,
+.send-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.cancel-btn {
+  background: #ff6b6b;
+  color: white;
+  flex: 1;
+}
+
+.cancel-btn:hover {
+  background: #ff5252;
+  transform: translateY(-1px);
+}
+
+.send-btn {
+  background: #4caf50;
+  color: white;
+  flex: 1;
+}
+
+.send-btn:hover {
+  background: #45a049;
+  transform: translateY(-1px);
+}
+
+.doctor-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(135deg, #a8e6a3 0%, #7dd87a 100%);
+  border-radius: 0 20px 20px 0;
+}
+
+.doctor-image-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doctor-image {
+  width: 280px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stethoscope {
+  position: absolute;
+  top: 20px;
+  right: -10px;
+  width: 40px;
+  height: 40px;
+  background: #2196f3;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.stethoscope::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+}
+
+.email-notification {
+  position: absolute;
+  bottom: 80px;
+  left: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: #2196f3;
+  border-radius: 50%;
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.email-notification:hover {
+  transform: scale(1.1);
+}
+
+.mail-icon {
+  color: white;
+  width: 24px;
+  height: 24px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contact-doctor-container {
+    flex-direction: column;
+  }
+  
+  .contact-form-section {
+    border-radius: 20px 20px 0 0;
+    padding: 30px 20px;
+  }
+  
+  .doctor-section {
+    border-radius: 0 0 20px 20px;
+    min-height: 300px;
+  }
+  
+  .doctor-image {
+    width: 200px;
+    height: 250px;
+  }
+  
+  .title {
+    font-size: 24px;
+  }
+}
