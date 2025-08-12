@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import MessageCard from '../../../components/MessageCard/MessageCard';
 import './Reminders.css';
 import images from '../../../assets/images';
+import { Toaster, toast } from 'react-hot-toast';
 
 function Reminders() {
   const [activeTab, setActiveTab] = useState("Massages");
@@ -63,12 +64,13 @@ function Reminders() {
   };
 
   const handleMarkAsRead = (id) => {
-    alert(`Marked message ID ${id} as read!`);
+    toast.success(`Marked message ID ${id} as read!`)
     // You could move it to a "read" state or change status
   };
 
   return (
     <div className="messages-page">
+      <Toaster position="top-center" reverseOrder={false} />
       <header className="top-bar">
         <h2>Massages From Students</h2>
       </header>

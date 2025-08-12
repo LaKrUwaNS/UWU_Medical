@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './MedicalRequests.css';
 import RequestCard from '../../../components/RequestCard/RequestCard';
 import images from "../../../assets/images";
-
+import { Toaster, toast } from 'react-hot-toast';
 
 function MedicalRequests() {
   const [requests, setRequests] = useState([]);
@@ -18,7 +18,7 @@ function MedicalRequests() {
       .then(data => {
         if (data.success) {
           const mappedRequests = data.data.medicalRequests.map(req => ({
-            id: req._id,  // Use backend _id here
+            id: req._id,
             name: req.studentId?.name || "Unknown Student",
             regNo: req.studentId?.indexNumber || "N/A",
             dateFrom: new Date(req.date).toISOString().split("T")[0],
@@ -31,10 +31,14 @@ function MedicalRequests() {
           }));
           setRequests(mappedRequests);
         } else {
+          toast.error("Failed to fetch medical requests: " + data.message);
           console.error("Failed to fetch medical requests:", data.message);
         }
       })
-      .catch(err => console.error("Fetch error:", err))
+      .catch(err => {
+        toast.error("Error fetching medical requests.");
+        console.error("Fetch error:", err);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -48,12 +52,13 @@ function MedicalRequests() {
       });
       const result = await res.json();
       if (result.success) {
-        // Remove rejected request from UI list or update status
         setRequests(prev => prev.filter(req => req.id !== id));
+        toast.success("Request rejected successfully.");
       } else {
-        alert("Failed to reject request: " + result.message);
+        toast.error("Failed to reject request: " + result.message);
       }
     } catch (err) {
+      toast.error("Failed to reject request due to network error.");
       console.error("Reject error:", err);
     }
   };
@@ -68,20 +73,22 @@ function MedicalRequests() {
       });
       const result = await res.json();
       if (result.success) {
-        // Update approved request status in UI
         setRequests(prev =>
           prev.map(req => (req.id === id ? { ...req, status: "approved" } : req))
         );
+        toast.success("Request approved successfully.");
       } else {
-        alert("Failed to approve request: " + result.message);
+        toast.error("Failed to approve request: " + result.message);
       }
     } catch (err) {
+      toast.error("Failed to approve request due to network error.");
       console.error("Approve error:", err);
     }
   };
 
   return (
     <div style={{ position: 'relative' }}>
+      <Toaster position="top-center" reverseOrder={false} />
       <div style={{ display: 'flex' }}>
         <main className="medical-request-page">
           <div className="header-MR">
