@@ -190,7 +190,7 @@ const StudentRecords = () => {
                     <tr key={student.enrollmentNumber} className="table-row">
                       <td>
                         <Link
-                          to={`/student-data/${student.id}`}
+                          to={`/student-records/${student.id}`}
                           className="student-link"
                           title="View Student Profile"
                         >
