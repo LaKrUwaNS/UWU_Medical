@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Search, Users } from 'lucide-react';
 import './Staff.css';
 import images from '../../../assets/images';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
 import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
 const Staff = () => {
@@ -58,11 +57,7 @@ const Staff = () => {
             <h1>Medical Staff Directory</h1>
             <p>Find a Staff Member by Name</p>
           </div>
-          <div className="user-info">
-            <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-          </div>
         </div>
-
         <div className="stats-card">
           <div className="stats-content">
             <div className="stats-icon">

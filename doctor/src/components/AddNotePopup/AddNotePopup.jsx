@@ -120,9 +120,7 @@ const AddNotePopup = ({ isOpen, onClose }) => {
           <div className="popup-subtitle">
             This note will be added for this academic year as registered in the system of our LMU Medical center.
           </div>
-          <div className="user-info">
-            <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-          </div>
+         
         </div>
 
         <div className="popup-content">

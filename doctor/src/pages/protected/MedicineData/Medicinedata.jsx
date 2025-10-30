@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './MedicineData.css';
-import images from '../../../assets/images';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
+import { Toaster, toast } from 'react-hot-toast';
 import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
+
 
 const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
@@ -109,12 +109,12 @@ function MedicineData() {
 
     const handleSubmit = async () => {
         if (!formData.name.trim() || !formData.expire || !formData.id || formData.quantity === '') {
-            alert('Please fill in all required fields');
+            toast.error('Please fill in all required fields');
             return;
         }
 
         if (!inventoryId) {
-            alert('Please select a valid Inventory ID');
+            toast.error('Please select a valid Inventory ID');
             return;
         }
 
@@ -131,7 +131,7 @@ function MedicineData() {
             if (inventoryId !== originalData.inventoryId) payload.inventoryId = inventoryId;
 
             if (Object.keys(payload).length === 0) {
-                alert('No changes detected to update.');
+                toast.error('No changes detected to update.');
                 return;
             }
         } else {
@@ -169,7 +169,7 @@ function MedicineData() {
             console.log('Response text:', text);
 
             if (!res.ok) {
-                alert(`Error ${res.status}: ${text}`);
+                toast.error(`Error ${res.status}: ${text}`);
                 return;
             }
 
@@ -178,13 +178,13 @@ function MedicineData() {
             if (data.success) {
                 fetchMedicines();
                 resetForm();
-                alert(editingIndex !== null ? 'Medicine updated successfully!' : 'Medicine added successfully!');
+                toast.success(editingIndex !== null ? 'Medicine updated successfully!' : 'Medicine added successfully!')
             } else {
-                alert(data.message || 'Operation failed.');
+                toast.error(data.message || 'Operation failed.');
             }
         } catch (error) {
             console.error('Error saving medicine:', error);
-            alert('Something went wrong. Please try again.');
+            toast.error('Something went wrong. Please try again.');
         }
     };
 
@@ -213,13 +213,13 @@ function MedicineData() {
                 const data = await res.json();
                 if (data.success) {
                     fetchMedicines();
-                    alert('Medicine deleted successfully!');
+                    toast.success('Medicine deleted successfully!');
                 } else {
-                    alert(data.message || 'Failed to delete medicine.');
+                    toast.error(data.message || 'Failed to delete medicine.');
                 }
             } catch (error) {
                 console.error('Error deleting medicine:', error);
-                alert('Something went wrong.');
+                toast.error('Something went wrong. Please try again.');
             }
         }
     };
@@ -241,6 +241,7 @@ function MedicineData() {
 
     return (
         <div className='medicine-page'>
+            <Toaster position="top-center" reverseOrder={false} />
             <div className="top-header">
                 <h2>Medicine Data</h2>
                 <div className="top-actions">
@@ -252,15 +253,12 @@ function MedicineData() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                     <button className='add-button' onClick={() => setIsModalOpen(true)}>New Add</button>
-                    <div className="doctor-profile">
-                        <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-                    </div>
                 </div>
             </div>
 
             <div className="table-container">
                 {loading ? (
-                    <Loadinganimate />
+                    <p><Loadinganimate /></p>
                 ) : (
                     <table className='medicine-table'>
                         <thead>
@@ -291,7 +289,7 @@ function MedicineData() {
                                         <td>
                                             <div className="action-buttons">
                                                 <button className="edit-btn" onClick={() => handleEdit(medicines.findIndex(m => m._id === med._id))}>✏️</button>
-                                                <button className="delete-btn" onClick={() => handleDelete(medicines.findIndex(m => m._id === med._id))}>🗑️</button>
+                                                <button className="medicine-delete-btn" et onClick={() => handleDelete(medicines.findIndex(m => m._id === med._id))}>🗑️</button>
                                             </div>
                                         </td>
                                     </tr>

@@ -1,33 +1,60 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell
 } from 'recharts';
 import './Reports.css';
 import images from '../../../assets/images';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
+import { toast } from 'react-hot-toast';
+import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
-const chartData = [
-  { name: 'Technology', value: 30 },
-  { name: 'Animal Science', value: 20 },
-  { name: 'Applied Science', value: 25 },
-  { name: 'Medicine', value: 15 },
-  { name: 'Management', value: 10 },
-];
-
-// Different color for each bar
-const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7f50', '#00c49f'];
+const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7f50', '#00c49f', '#ff4d4d', '#4db8ff'];
 
 const Reports = () => {
+  const [chartData, setChartData] = useState([]);
+  const [stats, setStats] = useState({
+    TotalStudents: 0,
+    TotalMedicalRequests: 0,
+    TotalPrescriptions: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/doctor/reports', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+
+          }
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          setChartData(data.data.chartData || []);
+          setStats(data.data.cards || {});
+          toast.success("Reports loaded successfully");
+        } else {
+          toast.error(data.message || "Failed to load reports");
+        }
+      } catch (error) {
+        toast.error("Error fetching reports");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
+  }, []);
+
+  if (loading) {
+    return <div><Loadinganimate /></div>;
+  }
+
   return (
     <div className="medical-dashboard">
-      {/* Header */}
-      <div className="dashboard-header">
-        <div className="user-info">
-           <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-          
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="dashboard-content">
         {/* Bar Chart Section */}
@@ -56,42 +83,21 @@ const Reports = () => {
           <div className="stat-card">
             <div className="stat-content">
               <h3>Total Students</h3>
-              <div className="stat-number">250</div>
-              <div className="stat-chart">
-                <div className="mini-bar" style={{height: '60%'}}></div>
-                <div className="mini-bar" style={{height: '80%'}}></div>
-                <div className="mini-bar" style={{height: '40%'}}></div>
-                <div className="mini-bar" style={{height: '90%'}}></div>
-                <div className="mini-bar" style={{height: '70%'}}></div>
-              </div>
+              <div className="stat-number">{stats.TotalStudents}</div>
             </div>
           </div>
 
           <div className="stat-card">
             <div className="stat-content">
               <h3>Medical Requests</h3>
-              <div className="stat-number">10</div>
-              <div className="stat-chart">
-                <div className="mini-bar" style={{height: '30%'}}></div>
-                <div className="mini-bar" style={{height: '50%'}}></div>
-                <div className="mini-bar" style={{height: '70%'}}></div>
-                <div className="mini-bar" style={{height: '40%'}}></div>
-                <div className="mini-bar" style={{height: '60%'}}></div>
-              </div>
+              <div className="stat-number">{stats.TotalMedicalRequests}</div>
             </div>
           </div>
 
           <div className="stat-card">
             <div className="stat-content">
               <h3>Total Medicals</h3>
-              <div className="stat-number">50</div>
-              <div className="stat-chart">
-                <div className="mini-bar" style={{height: '80%'}}></div>
-                <div className="mini-bar" style={{height: '60%'}}></div>
-                <div className="mini-bar" style={{height: '90%'}}></div>
-                <div className="mini-bar" style={{height: '50%'}}></div>
-                <div className="mini-bar" style={{height: '70%'}}></div>
-              </div>
+              <div className="stat-number">{stats.TotalPrescriptions}</div>
             </div>
           </div>
         </div>

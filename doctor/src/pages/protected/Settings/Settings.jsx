@@ -1,62 +1,170 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Settings.css';
-import images from '../../../assets/images';
-import UserProfile from '../../../components/UserProfile/UseraProfile';
 
 const Settings = () => {
   const initialProfileData = {
-    name: '',
-    gender: '',
-    dateOfBirth: '',
+    userName: '',
+    fullName: '',
     mobileNumber: '',
-    email: ''
+    personalEmail: '',
   };
 
   const [profileData, setProfileData] = useState(initialProfileData);
   const [profileImage, setProfileImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch doctor settings on component mount
+  useEffect(() => {
+    const fetchDoctorSettings = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('http://localhost:5000/doctor/settings', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const json = await res.json();
+
+        if (json.success) {
+          const data = json.data;
+          setProfileData({
+            userName: data.userName || '',
+            fullName: data.fullName || '',
+            mobileNumber: data.mobileNumber || '',
+            personalEmail: data.personalEmail || '',
+          });
+
+          if (data.photo) {
+            setProfileImage(data.photo);
+          } else {
+            setProfileImage(null);
+          }
+        } else {
+          alert(`Error: ${json.message}`);
+        }
+      } catch (err) {
+        alert('Failed to fetch doctor settings.');
+        console.error(err);
+      }
+      setLoading(false);
+    };
+
+    fetchDoctorSettings();
+  }, []);
+
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileData(prev => ({
+    setProfileData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
+  // Handle image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target.result);
+      reader.onload = (ev) => {
+        setProfileImage(ev.target.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
+  // Remove photo
   const handleRemovePhoto = () => {
     setProfileImage(null);
+    setImageFile(null);
   };
 
-  const handleSaveChanges = () => {
-    console.log('Saving changes:', profileData);
-    alert('Changes saved successfully!');
+  // Save changes (PATCH)
+  const handleSaveChanges = async () => {
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('name', profileData.fullName);
+      formData.append('phone', profileData.mobileNumber);
+      formData.append('email', profileData.personalEmail);
+
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+
+      const res = await fetch('http://localhost:5000/doctor/settings', {
+        method: 'PATCH',
+        // IMPORTANT: Do NOT set Content-Type header with FormData
+        body: formData,
+        credentials: 'include', // if your backend uses cookies/session
+      });
+
+      const json = await res.json();
+
+      if (json.success) {
+        alert('Doctor data updated successfully');
+        const data = json.data;
+        setProfileData({
+          userName: data.userName || '',
+          fullName: data.fullName || '',
+          mobileNumber: data.mobileNumber || '',
+          personalEmail: data.personalEmail || '',
+        });
+        setProfileImage(data.photo || null);
+        setImageFile(null);
+      } else {
+        alert(`Update failed: ${json.message}`);
+      }
+    } catch (err) {
+      alert('Failed to update doctor settings.');
+      console.error(err);
+    }
+
+    setLoading(false);
   };
 
+  // Cancel changes resets to last loaded data
   const handleCancel = () => {
-    setProfileData(initialProfileData);
-    setProfileImage(null);
-    console.log('All data cleared');
-    alert('All changes have been cancelled and data cleared!');
+    setLoading(true);
+    fetch('http://localhost:5000/doctor/settings', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success) {
+          const data = json.data;
+          setProfileData({
+            userName: data.userName || '',
+            fullName: data.fullName || '',
+            mobileNumber: data.mobileNumber || '',
+            personalEmail: data.personalEmail || '',
+          });
+          setProfileImage(data.photo || null);
+          setImageFile(null);
+        } else {
+          alert(`Error: ${json.message}`);
+        }
+      })
+      .catch((err) => {
+        alert('Failed to reset data.');
+        console.error(err);
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
     <div className="profile-page">
-      <div className="profile-header-settings">
-        <div className="doctor-info">
-           <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-        </div>
-      </div>
+      <div className="profile-header-settings"></div>
 
       <div className="profile-container">
         <div className="profile-card">
@@ -91,42 +199,28 @@ const Settings = () => {
 
           <div className="profile-right">
             <h2>Profile data</h2>
-            
+
             <div className="form-group">
-              <label>Name</label>
+              <label>UserName</label>
               <input
                 type="text"
-                name="name"
-                value={profileData.name}
-                onChange={handleInputChange}
+                name="userName"
+                value={profileData.userName}
+                readOnly
                 className="form-input"
-                placeholder="Enter your name"
+                placeholder="Username"
               />
             </div>
 
             <div className="form-group">
-              <label>Gender</label>
-              <select
-                name="gender"
-                value={profileData.gender}
-                onChange={handleInputChange}
-                className="form-input"
-              >
-                <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Date of Birth</label>
+              <label>FullName</label>
               <input
-                type="date"
-                name="dateOfBirth"
-                value={profileData.dateOfBirth}
+                type="text"
+                name="fullName"
+                value={profileData.fullName}
                 onChange={handleInputChange}
                 className="form-input"
+                placeholder="Enter your Fullname"
               />
             </div>
 
@@ -143,29 +237,23 @@ const Settings = () => {
             </div>
 
             <div className="form-group">
-              <label>Email</label>
+              <label>Personal Email</label>
               <input
                 type="email"
-                name="email"
-                value={profileData.email}
+                name="personalEmail"
+                value={profileData.personalEmail}
                 onChange={handleInputChange}
                 className="form-input"
-                placeholder="Enter email address"
+                placeholder="Enter personal email address"
               />
             </div>
 
             <div className="button-group">
-              <button 
-                className="save-btn cancel"
-                onClick={handleCancel}
-              >
+              <button className="save-btn cancel" onClick={handleCancel} disabled={loading}>
                 Cancel
               </button>
-              <button 
-                className="save-btn primary"
-                onClick={handleSaveChanges}
-              >
-                Save Changes
+              <button className="save-btn primary" onClick={handleSaveChanges} disabled={loading}>
+                {loading ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </div>

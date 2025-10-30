@@ -3,7 +3,6 @@ import { TryCatch } from "../../utils/Error/ErrorHandler";
 import Student from "../../models/Student.model";
 import { sendResponse } from "../../utils/response";
 import { Session } from "../../models/session.model";
-import { decodeAccessToken } from "../../utils/WebToken";
 
 export interface AuthenticatedStudentRequest extends Request {
     user?: {
@@ -11,47 +10,42 @@ export interface AuthenticatedStudentRequest extends Request {
         name: string;
         indexNumber: string;
         degree: string;
+        photo?: string;
     };
 }
 
-export const isStudentLoggedIn = TryCatch(
+export const isStudentLogin = TryCatch(
     async (req: AuthenticatedStudentRequest, res: Response, next: NextFunction) => {
-        let token = req.cookies.accessToken as string | undefined;
+        const accessToken = req.cookies.accessToken;
 
-        if (!token) {
-            return sendResponse(res, 401, false, "Unauthorized: Please log in");
+        if (!accessToken) {
+            return sendResponse(res, 401, false, "Not logged in");
         }
 
-        // Decode & verify JWT
-        const studentId = decodeAccessToken(token);
-        if (!studentId) {
-            return sendResponse(res, 401, false, "Unauthorized: Invalid or expired token");
+        // Find session with valid access token and not expired
+        const session = await Session.findOne({
+            accessToken,
+            sessionType: "LOGIN",
+            expireAt: { $gt: new Date() },
+        });
+
+        if (!session) {
+            return sendResponse(res, 401, false, "Session not found or expired");
         }
 
-        // Check active session
-        const session = await Session.findOne({ accessToken: token });
-        if (!session || session.sessionType !== "LOGIN" || !session.isActive?.()) {
-            return sendResponse(res, 401, false, "Unauthorized: Session not found or expired");
-        }
-
-        // Fetch student record
-        const student = await Student.findById(studentId);
+        // Fetch student info using session.studentId
+        const student = await Student.findById(session.studentId);
         if (!student) {
             return sendResponse(res, 404, false, "Student not found");
         }
 
-        // Optional: Refresh session expiry/token
-        // session.expireAt = new Date(Date.now() + 15 * 60 * 1000);
-        // await session.save();
-        // token = generateAccessToken(student._id.toString());
-        // sendTokenAsCookie(res, token);
-
-        // Attach student to request
+        // Attach student info to req.user
         req.user = {
-            id: student._id as string,
+            id: student.id.toString(),
             name: student.name,
             indexNumber: student.indexNumber,
-            degree: student.degree as string
+            degree: student.degree as string,
+            photo: student.photo
         };
 
         next();

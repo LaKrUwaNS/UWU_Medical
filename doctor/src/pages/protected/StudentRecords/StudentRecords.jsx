@@ -4,7 +4,6 @@ import './StudentRecords.css';
 import { useNavigate, Link } from 'react-router-dom';
 import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 import images from "../../../assets/images";
-import UserProfile from '../../../components/UserProfile/UseraProfile';
 
 const StudentRecords = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,7 +24,7 @@ const StudentRecords = () => {
             'Content-Type': 'application/json',
           },
         });
-        
+
         const result = await response.json();
         console.log("Raw API result:", result);
 
@@ -115,7 +114,6 @@ const StudentRecords = () => {
           <div className="title-section">
             <h1 className="page-title">Student Records</h1>
           </div>
-          <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
         </header>
 
         {/* Filters Section */}
@@ -134,7 +132,7 @@ const StudentRecords = () => {
                   aria-label="Search input"
                 />
               </div>
-              
+
               {/* Gender Filter */}
               <select
                 value={filterGender}
@@ -146,7 +144,7 @@ const StudentRecords = () => {
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
-              
+
               {/* Year Filter */}
               <select
                 value={filterYear}
@@ -161,7 +159,7 @@ const StudentRecords = () => {
                 <option value="4th">4th Year</option>
               </select>
             </div>
-            
+
             <div className="filters-right">
               <button className="btn btn-secondary" aria-label="More filters">
                 <Filter size={16} />
@@ -192,7 +190,7 @@ const StudentRecords = () => {
                     <tr key={student.enrollmentNumber} className="table-row">
                       <td>
                         <Link
-                          to={`/student-data/${student.id}`}
+                          to={`/student-records/${student.id}`}
                           className="student-link"
                           title="View Student Profile"
                         >
@@ -228,7 +226,7 @@ const StudentRecords = () => {
                         <span className="gender-text">{student.gender}</span>
                       </td>
                       <td>
-                        <a 
+                        <a
                           href={`mailto:${student.email}`}
                           className="email-link"
                           title="Send email"

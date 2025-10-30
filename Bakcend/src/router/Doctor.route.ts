@@ -16,8 +16,9 @@ import { createArticle, deleteArticle, getAllArticles, getArticleData, updateArt
 import { isDoctorLogin } from "../middleware/CheckLogin/isDotorlogin";
 import { GetAllStudents } from "../controller/doctor/pages/AllStudents.controller";
 import { GetAllStaff } from "../controller/doctor/pages/Staff..controller";
-import { DoctorDataEdit, DoctorDataGET, VerifyAndUpdateDoctor } from "../controller/doctor/pages/Settings.controller";
-import Doctor from "../models/Doctor.model";
+import { ChangeRead, DeleteMassage, GetAllReminders } from "../controller/doctor/pages/Reminders.controller";
+import { ReportData } from "../controller/doctor/pages/Report.controller";
+import { ChangeSettingsData, GetAllDataSettings } from "../controller/doctor/pages/Settings.controller";
 
 const DoctorRouter = Router();
 
@@ -107,7 +108,7 @@ DoctorRouter.patch("/medical-requests/:id/status", ChangeMedicalRequestStatus); 
 
 
 // ==========================
-// Updates Page Routers
+// !Updates Page Routers
 // ==========================
 DoctorRouter.get("/articles", getAllArticles);// → GET http://localhost:5000/doctor/articles
 
@@ -137,15 +138,26 @@ DoctorRouter.get("/staff", GetAllStaff); // localhost:5000/doctor/staff
 DoctorRouter.get("/students", GetAllStudents); // localhost:5000/doctor/students
 
 
-
-
-
 // ==========================
 // Settings Page Routers
 // ==========================
-DoctorRouter.get("/settings", isDoctorLogin, DoctorDataGET);                        // localhost:5000/doctor/settings
-DoctorRouter.post("/settings/verify-email", isDoctorLogin, VerifyAndUpdateDoctor); // localhost:5000/doctor/settings/verify-email
-DoctorRouter.put("/settings", isDoctorLogin, DoctorDataEdit);                     // localhost:5000/doctor/settings
+DoctorRouter.get("/settings", isDoctorLogin, GetAllDataSettings); // localhost:5000/doctor/settings
+DoctorRouter.patch("/settings", isDoctorLogin, upload.single("image"), ChangeSettingsData); // localhost:5000/doctor/settings
 
+
+
+// ==========================
+// Reminders Page Routers
+// ==========================
+DoctorRouter.get("/reminders", GetAllReminders); // localhost:5000/doctor/reminders
+DoctorRouter.patch("/reminders/:id/read", ChangeRead); // localhost:5000/doctor/reminders/:id/read
+DoctorRouter.delete("/reminders/:id", DeleteMassage); // localhost:5000/doctor/reminders/:id
+
+
+
+// ==========================
+// Report Page Routers
+// ==========================
+DoctorRouter.get("/reports", ReportData); // localhost:5000/doctor/reports
 
 export default DoctorRouter;

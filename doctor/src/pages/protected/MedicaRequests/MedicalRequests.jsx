@@ -1,139 +1,112 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './MedicalRequests.css';
 import RequestCard from '../../../components/RequestCard/RequestCard';
-import DoctorInfo from '../../../components/DoctorInfo/DoctorInfo';
-
-import nirmal from '../../../assets/Medical-Request/nirmal.png';
-import ashen from '../../../assets/Medical-Request/Ashen.jpg';
 import images from "../../../assets/images";
-import UserProfile from "../../../components/UserProfile/UseraProfile";
-
-
-const medicalRequests = [
-  {
-    id: 1,
-    name: "Chamila Nirmal",
-    regNo: "UWU/ICT/22/068",
-    dateFrom: "2025/05/02",
-    dateTo: "2025/06/03",
-    message: "I have a severe headache and fever. I need a medical certificate to excuse my absence from classes.",
-    condition: "Headache and Fever",
-    report: "External report",
-    image: nirmal,
-  },
-  {
-    id: 2,
-    name: "Kavindu Ashen",
-    regNo: "UWU/ICT/22/066",
-    dateFrom: "2025/06/22",
-    dateTo: "2025/06/29",
-    message: "I have severe Neck pain so I need a medical Certificate ",
-    condition: "Neck Pain",
-    report: "External report",
-    image: ashen,
-  },
-  // ... other data objects
-  {
-    id: 3,
-    name: "Chamila Nirmal",
-    regNo: "UWU/ICT/22/068",
-    dateFrom: "2025/05/02",
-    dateTo: "2025/06/03",
-    message: "I have a severe headache and fever. I need a medical certificate to excuse my absence from classes.",
-    condition: "Headache and Fever",
-    report: "External report",
-    image: nirmal,
-  },
-  {
-    id: 4,
-    name: "Kavindu Ashen",
-    regNo: "UWU/ICT/22/066",
-    dateFrom: "2025/06/22",
-    dateTo: "2025/06/29",
-    message: "I have severe Neck pain so I need a medical Certificate ",
-    condition: "Neck Pain",
-    report: "External report",
-    image: ashen,
-  },
-  {
-    id: 5,
-    name: "Chamila Nirmal",
-    regNo: "UWU/ICT/22/068",
-    dateFrom: "2025/05/02",
-    dateTo: "2025/06/03",
-    message: "I have a severe headache and fever. I need a medical certificate to excuse my absence from classes.",
-    condition: "Headache and Fever",
-    report: "External report",
-    image: nirmal,
-  },
-  {
-    id: 6,
-    name: "Kavindu Ashen",
-    regNo: "UWU/ICT/22/066",
-    dateFrom: "2025/06/22",
-    dateTo: "2025/06/29",
-    message: "I have severe Neck pain so I need a medical Certificate ",
-    condition: "Neck Pain",
-    report: "External report",
-    image: ashen,
-  },
-  {
-    id: 7,
-    name: "Chamila Nirmal",
-    regNo: "UWU/ICT/22/068",
-    dateFrom: "2025/05/02",
-    dateTo: "2025/06/03",
-    message: "I have a severe headache and fever. I need a medical certificate to excuse my absence from classes.",
-    condition: "Headache and Fever",
-    report: "External report",
-    image: nirmal,
-  },
-  {
-    id: 8,
-    name: "Kavindu Ashen",
-    regNo: "UWU/ICT/22/066",
-    dateFrom: "2025/06/22",
-    dateTo: "2025/06/29",
-    message: "I have severe Neck pain so I need a medical Certificate ",
-    condition: "Neck Pain",
-    report: "External report",
-    image: ashen,
-  },
-];
+import { Toaster, toast } from 'react-hot-toast';
 
 function MedicalRequests() {
-  const [requests, setRequests] = useState(medicalRequests);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleDelete = (id) => {
-    const updated = requests.filter((req) => req.id !== id);
-    setRequests(updated);
+  // Fetch medical requests from backend on mount
+  useEffect(() => {
+    fetch("http://localhost:5000/staff/medical-requests", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const mappedRequests = data.data.medicalRequests.map(req => ({
+            id: req._id,
+            name: req.studentId?.name || "Unknown Student",
+            regNo: req.studentId?.indexNumber || "N/A",
+            dateFrom: new Date(req.date).toISOString().split("T")[0],
+            dateTo: new Date(req.schedule).toISOString().split("T")[0],
+            message: req.reason || "No reason provided",
+            condition: req.servicetype || "Not specified",
+            report: req.report || req.Report || "No report",
+            image: req.studentId?.photo || images.defaultProfile,
+            status: req.status
+          }));
+          setRequests(mappedRequests);
+        } else {
+          toast.error("Failed to fetch medical requests: " + data.message);
+          console.error("Failed to fetch medical requests:", data.message);
+        }
+      })
+      .catch(err => {
+        toast.error("Error fetching medical requests.");
+        console.error("Fetch error:", err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Reject handler
+  const handleDelete = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/doctor/medical-requests/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "rejected" })
+      });
+      const result = await res.json();
+      if (result.success) {
+        setRequests(prev => prev.filter(req => req.id !== id));
+        toast.success("Request rejected successfully.");
+      } else {
+        toast.error("Failed to reject request: " + result.message);
+      }
+    } catch (err) {
+      toast.error("Failed to reject request due to network error.");
+      console.error("Reject error:", err);
+    }
+  };
+
+  // Approve handler
+  const handleApprove = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:5000/doctor/medical-requests/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "approved" })
+      });
+      const result = await res.json();
+      if (result.success) {
+        setRequests(prev =>
+          prev.map(req => (req.id === id ? { ...req, status: "approved" } : req))
+        );
+        toast.success("Request approved successfully.");
+      } else {
+        toast.error("Failed to approve request: " + result.message);
+      }
+    } catch (err) {
+      toast.error("Failed to approve request due to network error.");
+      console.error("Approve error:", err);
+    }
   };
 
   return (
     <div style={{ position: 'relative' }}>
-       
-      <div style={{ display: 'flex' }}>
+      <Toaster position="top-center" reverseOrder={false} />
+      <div>
         <main className="medical-request-page">
           <div className="header-MR">
             <h2 className="MR">Medical Requests</h2>
-            <UserProfile 
-            className="User-profile"
-            name="Dr. Lakruwan Sharaka" 
-            image={images.lakruwan} />
           </div>
 
-          {requests.length === 0 ? (
-            <div className="empty-state">
-              <p>No medical requests available.</p>
-            </div>
+          {loading ? (
+            <div className="empty-state"><p>Loading medical requests...</p></div>
+          ) : requests.length === 0 ? (
+            <div className="empty-state"><p>No medical requests available.</p></div>
           ) : (
-            <div className={`requests-grid ${isSidebarCollapsed ? 'three-cols' : 'two-cols'}`}>
-              {requests.map((req) => (
+            <div className="requests-grid two-cols">
+              {requests.map(req => (
                 <RequestCard
                   key={req.id}
                   data={req}
                   onDelete={() => handleDelete(req.id)}
+                  onApprove={() => handleApprove(req.id)}
                   className="request-card"
                 />
               ))}

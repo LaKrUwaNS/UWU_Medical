@@ -12,6 +12,7 @@ export interface IPrescription extends Document {
     date: Date;
     description: string;
     drugs: IDrug[];
+    createdAt: Date;
 }
 
 const prescriptionSchema = new Schema<IPrescription>({
@@ -24,7 +25,9 @@ const prescriptionSchema = new Schema<IPrescription>({
             medicineId: { type: Schema.Types.ObjectId, ref: "Medicine", required: true },
             quantity: { type: Number, required: true }
         }
-    ]
+    ], createdAt: { type: Date, default: Date.now }
+}, {
+    timestamps: true  // Automatically manage createdAt and updatedAt fields
 });
 
 export const Prescription = model<IPrescription>("Prescription", prescriptionSchema);

@@ -1,15 +1,18 @@
 .main-layout {
     display: flex;
     height: 100vh;
-    overflow: hidden; /* Prevent double scrollbars */
+    overflow: hidden;
+    /* Prevent double scrollbars */
     width: 100vw;
 }
 
 /* Fix the typo: sidebar-conatainer -> sidebar-container */
 .sidebar-container {
-    transition: width 0.3s ease; /* Fix: 0.3 -> 0.3s */
+    transition: width 0.3s ease;
+    /* Fix: 0.3 -> 0.3s */
     width: 275px;
-    flex-shrink: 0; /* Prevent sidebar from shrinking */
+    flex-shrink: 0;
+    /* Prevent sidebar from shrinking */
 }
 
 .sidebar-container.collapsed {
@@ -17,10 +20,13 @@
 }
 
 .main-content {
-    flex-grow: 1; /* Remove the extra 'a' */
+    flex-grow: 1;
+    /* Remove the extra 'a' */
     padding: 20px;
-    transition: all 0.3s ease; /* Smooth transition for all properties */
-    overflow-y: auto; /* Allow scrolling within content area */
+    transition: all 0.3s ease;
+    /* Smooth transition for all properties */
+    overflow-y: auto;
+    /* Allow scrolling within content area */
     /* Remove margin-left - let flexbox handle positioning */
 }
 
@@ -37,4 +43,31 @@
     height: 100vh;
     font-size: 18px;
     color: #666;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border-bottom: none;
+}
+
+.doctor-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.doctor-name {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.doctor-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
 }

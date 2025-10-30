@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./Updates.css";
 import BlogCard from "../../../components/BlogCard/BlogCard";
-import UserProfile from "../../../components/UserProfile/UseraProfile";
 import AddNotePopup from "../../../components/AddNotePopup/AddNotePopup";
-import images from "../../../assets/images";
+import { Toaster, toast } from "react-hot-toast";
+import Loadinganimate from '../../../components/LoadingAnimation/Loadinganimate';
 
 const BASE_URL = "http://localhost:5000/doctor";
 
@@ -42,12 +42,12 @@ const Updates = () => {
         if (data.success) {
           setSelectedArticle(data.data);
         } else {
-          alert(`Error: ${data.message}`);
+          toast.error(`Error: ${data.message}`);
         }
       })
       .catch((err) => {
         console.error("Read error:", err);
-        alert("Failed to fetch article content");
+        toast.error("Failed to fetch article content");
       });
   };
 
@@ -65,14 +65,14 @@ const Updates = () => {
       .then((data) => {
         if (data.success) {
           setBlogs((prev) => prev.filter((blog) => blog._id !== id));
-          alert("Article deleted successfully");
+          toast.success("Article deleted successfully");
         } else {
-          alert(`Error: ${data.message}`);
+          toast.error(`Error: ${data.message}`);
         }
       })
       .catch((err) => {
         console.error("Delete error:", err);
-        alert("Failed to delete article");
+        toast.error("Failed to delete article");
       });
   };
 
@@ -100,21 +100,18 @@ const Updates = () => {
           alert("Article created successfully");
           setShowAddNotePopup(false);
         } else {
-          alert(`Error: ${data.message}`);
+          toast.error(`Error: ${data.message}`);
         }
       })
       .catch((err) => {
         console.error("Create error:", err);
-        alert("Failed to create article");
+        toast.error("Failed to create article");
       });
   };
 
   return (
     <div className="updates-page">
-      <div className="user">
-        <UserProfile name="Dr. Lakruwan Sharaka" image={images.lakruwan} />
-      </div>
-
+      <Toaster position="top-center" reverseOrder={false} />
       <header className="updates-header">
         <h2>Notes already Submitted</h2>
         <button className="add-btn" onClick={handleNewAdd}>
@@ -123,7 +120,7 @@ const Updates = () => {
       </header>
 
       {loading ? (
-        <p>Loading articles...</p>
+        <p><Loadinganimate /></p>
       ) : (
         <div className="blog-list">
           {blogs.map((blog) => (

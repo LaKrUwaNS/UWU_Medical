@@ -36,7 +36,7 @@ const StudentDataCard = ({ students }) => {
         <span className="dots">•••</span>
       </div>
 
-      <div className="table-wrapper">
+      <div className="table-wrapper1">
 
         <table className="student-table">
           <thead>

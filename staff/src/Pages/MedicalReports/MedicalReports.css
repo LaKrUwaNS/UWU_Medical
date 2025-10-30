@@ -1,5 +1,3 @@
-/* MedicalReports.css */
-
 * {
   margin: 0;
   padding: 0;
@@ -8,7 +6,7 @@
 
 .medical-reports-container {
   min-height: 100vh;
-  background: #f8fafc;
+  background: #f9fafb; /* Light background for better contrast */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -18,8 +16,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 2rem;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff; /* White background for header */
+  border-bottom: 1px solid #e2e8f0; /* Light gray border */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -32,13 +30,9 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #1e293b;
+  color: #1e293b; /* Dark text color */
   font-size: 1.25rem;
   font-weight: 600;
-}
-
-.logo-icon {
-  color: #10b981;
 }
 
 .header-nav {
@@ -53,7 +47,7 @@
 }
 
 .nav-item {
-  color: #64748b;
+  color: #64748b; /* Gray text color */
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -62,14 +56,8 @@
 }
 
 .nav-item:hover {
-  color: #10b981;
+  color: #10b981; /* Green on hover */
   background: rgba(16, 185, 129, 0.05);
-}
-
-.nav-item.active {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-  font-weight: 600;
 }
 
 .header-right {
@@ -90,24 +78,24 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: #f1f5f9;
+  background: #f1f5f9; /* Light background */
   border: none;
   border-radius: 10px;
-  color: #64748b;
+  color: #64748b; /* Gray icon color */
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .notification-btn:hover {
-  background: #e2e8f0;
-  color: #10b981;
+  background: #e2e8f0; /* Slightly darker on hover */
+  color: #10b981; /* Green on hover */
 }
 
 .notification-badge {
   position: absolute;
   top: -2px;
   right: -2px;
-  background: #ef4444;
+  background: #ef4444; /* Red for notifications */
   color: white;
   border-radius: 50%;
   width: 18px;
@@ -117,14 +105,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(45deg, #10b981, #059669);
-  border: 2px solid #e2e8f0;
 }
 
 /* Main Content */
@@ -142,14 +122,14 @@
 }
 
 .header-content h1 {
-  font-size: 2.5rem;
+  font-size: 2.5rem; /* Increased size for emphasis */
   font-weight: 700;
-  color: #1e293b;
+  color: #1e293b; /* Dark text color */
   margin-bottom: 0.5rem;
 }
 
 .page-description {
-  color: #64748b;
+  color: #64748b; /* Gray description text */
   font-size: 1rem;
 }
 
@@ -159,8 +139,8 @@
 }
 
 .stat-card {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: #ffffff; /* White background for cards */
+  border: 1px solid #e2e8f0; /* Light gray border */
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   display: flex;
@@ -174,11 +154,11 @@
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-color: #10b981;
+  border-color: #10b981; /* Green border on hover */
 }
 
 .stat-icon {
-  color: #10b981;
+  color: #10b981; /* Green icon color */
   flex-shrink: 0;
 }
 
@@ -190,13 +170,13 @@
 .stat-number {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #1e293b; /* Dark text color */
   line-height: 1.2;
 }
 
 .stat-label {
   font-size: 0.875rem;
-  color: #64748b;
+  color: #64748b; /* Gray label color */
   font-weight: 500;
 }
 
@@ -208,22 +188,21 @@
 .search-box {
   position: relative;
   max-width: 1010px;
-  
 }
 
 .search-box input {
   width: 100%;
   padding: 1rem 1rem 1rem 3rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #e2e8f0; /* Light gray border */
   border-radius: 12px;
-  background: white;
+  background: white; /* White background */
   font-size: 12px;
   transition: all 0.3s ease;
 }
 
 .search-box input:focus {
   outline: none;
-  border-color: #10b981;
+  border-color: #10b981; /* Green border on focus */
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
@@ -232,7 +211,7 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #64748b;
+  color: #64748b; /* Gray icon color */
 }
 
 /* Filters Section */
@@ -247,8 +226,7 @@
 
 .filters {
   display: flex;
-  gap: 230px;
-  flex-wrap: wrap;
+  gap: 1rem; /* Adjusted gap for better spacing */
 }
 
 .filter-group {
@@ -260,14 +238,14 @@
 .filter-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: #374151; /* Dark gray for labels */
 }
 
 .filter-group select {
   padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #e2e8f0; /* Light gray border */
   border-radius: 8px;
-  background: white;
+  background: white; /* White background */
   font-size: 0.875rem;
   min-width: 150px;
   cursor: pointer;
@@ -276,7 +254,7 @@
 
 .filter-group select:focus {
   outline: none;
-  border-color: #10b981;
+  border-color: #10b981; /* Green border on focus */
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
@@ -285,13 +263,14 @@
   gap: 0.75rem;
 }
 
+/* Button Styles */
 .btn-primary {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.875rem 1.5rem;
-  background: #10b981;
-  color: white;
+  background: #10b981; /* Green background */
+  color: white; /* White text */
   border: none;
   border-radius: 10px;
   font-weight: 500;
@@ -300,7 +279,7 @@
 }
 
 .btn-primary:hover {
-  background: #059669;
+  background: #059669; /* Darker green on hover */
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
@@ -310,9 +289,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.875rem 1.5rem;
-  background: white;
-  color: #64748b;
-  border: 2px solid #e2e8f0;
+  background: white; /* White background */
+  color: #64748b; /* Gray text */
+  border: 2px solid #e2e8f0; /* Light gray border */
   border-radius: 10px;
   font-weight: 500;
   cursor: pointer;
@@ -320,51 +299,48 @@
 }
 
 .btn-secondary:hover {
-  border-color: #10b981;
-  color: #10b981;
+  border-color: #10b981; /* Green border on hover */
+  color: #10b981; /* Green text on hover */
   transform: translateY(-1px);
 }
 
 /* Table */
 .table-container {
-  background: white;
+  background: white; /* White background for table */
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e2e8f0; /* Light gray border */
   overflow: hidden;
-  border: 1px solid rgb(39, 161, 39);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .reports-table {
   width: 100%;
-  border: 1px solid rgb(39, 161, 39);
   border-collapse: collapse;
 }
 
 .reports-table thead {
-  background: #f8fafc;
+  background: #65bfa6; /* Light green header */
 }
 
 .reports-table th {
   padding: 1.25rem 1.5rem;
   text-align: left;
   font-weight: 600;
-  background: #229134;
-  color: #e7eaee;
+  color: #ffffff; /* White text for header */
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0; /* Light gray border */
 }
 
 .table-row {
   transition: all 0.3s ease;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9; /* Light gray border for rows */
 }
 
 .table-row:hover {
-  background: rgba(16, 185, 129, 0.02);
-  transform: scale(1.005);
+  background: rgba(16, 185, 129, 0.02); /* Light green on hover */
+  transform: scale(1.005); /* Slight scale effect on hover */
 }
 
 .reports-table td {
@@ -382,18 +358,18 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(45deg, #10b981, #059669);
+  background: linear-gradient(45deg, #10b981, #059669); /* Green gradient */
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: white; /* White text for initials */
   font-weight: 600;
   font-size: 0.875rem;
 }
 
 .student-name {
   font-weight: 500;
-  color: #1e293b;
+  color: #1e293b; /* Dark text color */
 }
 
 .doctor-info {
@@ -403,12 +379,12 @@
 }
 
 .doctor-icon {
-  color: #10b981;
+  color: #10b981; /* Green icon color */
   flex-shrink: 0;
 }
 
 .doctor-name {
-  color: #374151;
+  color: #374151; /* Dark gray for doctor name */
   font-weight: 500;
 }
 
@@ -433,11 +409,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #64748b;
+  color: #64748b; /* Gray text color */
 }
 
 .date-icon {
-  color: #10b981;
+  color: #10b981; /* Green icon color */
   flex-shrink: 0;
 }
 
@@ -459,33 +435,33 @@
 }
 
 .btn-icon.view {
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1); /* Light blue background */
+  color: #3b82f6; /* Blue icon color */
 }
 
 .btn-icon.view:hover {
-  background: rgba(59, 130, 246, 0.2);
-  transform: scale(1.1);
+  background: rgba(59, 130, 246, 0.2); /* Darker blue on hover */
+  transform: scale(1.1); /* Scale effect on hover */
 }
 
 .btn-icon.edit {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  background: rgba(16, 185, 129, 0.1); /* Light green background */
+  color: #10b981; /* Green icon color */
 }
 
 .btn-icon.edit:hover {
-  background: rgba(16, 185, 129, 0.2);
-  transform: scale(1.1);
+  background: rgba(16, 185, 129, 0.2); /* Darker green on hover */
+  transform: scale(1.1); /* Scale effect on hover */
 }
 
 .btn-icon.download {
-  background: rgba(107, 114, 128, 0.1);
-  color: #6b7280;
+  background: rgba(107, 114, 128, 0.1); /* Light gray background */
+  color: #6b7280; /* Gray icon color */
 }
 
 .btn-icon.download:hover {
-  background: rgba(107, 114, 128, 0.2);
-  transform: scale(1.1);
+  background: rgba(107, 114, 128, 0.2); /* Darker gray on hover */
+  transform: scale(1.1); /* Scale effect on hover */
 }
 
 /* Empty State */
@@ -495,17 +471,17 @@
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  color: #64748b;
+  color: #64748b; /* Gray text color */
   text-align: center;
-  background: white;
+  background: white; /* White background */
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e2e8f0; /* Light gray border */
 }
 
 .empty-state h3 {
   margin: 1rem 0 0.5rem;
   font-size: 1.25rem;
-  color: #374151;
+  color: #374151; /* Dark gray for empty state title */
 }
 
 /* Modal */
@@ -524,7 +500,7 @@
 }
 
 .modal {
-  background: white;
+  background: white; /* White background for modal */
   border-radius: 16px;
   width: 90%;
   max-width: 500px;
@@ -545,35 +521,15 @@
   }
 }
 
-/* Moved responsive/modal-specific rules outside keyframes */
-.patient-doctor-info {
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-.report-modal {
-  max-width: 95%;
-}
-
-.report-header-info {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.report-meta {
-  align-items: flex-start;
-}
-
 .modal-header {
   padding: 1.5rem 2rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0; /* Light gray border */
 }
 
 .modal-header h2 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: #1e293b; /* Dark text color */
 }
 
 .modal-body {
@@ -588,24 +544,24 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #374151;
+  color: #374151; /* Dark gray for labels */
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
   padding: 0.875rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #e2e8f0; /* Light gray border */
   border-radius: 8px;
   font-size: 0.875rem;
   transition: all 0.3s ease;
-  background: white;
+  background: white; /* White background */
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #10b981;
+  border-color: #10b981; /* Green border on focus */
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
@@ -614,13 +570,13 @@
   justify-content: flex-end;
   gap: 1rem;
   padding: 1rem 2rem 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #e2e8f0; /* Light gray border */
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
   .header-nav {
-    display: none;
+    display: none; /* Hide navigation on smaller screens */
   }
   
   .header-stats {
@@ -640,13 +596,13 @@
   }
   
   .filter-group select {
-    min-width: auto;
+    min-width: auto; /* Allow select to take full width */
   }
 }
 
 @media (max-width: 768px) {
   .main-content {
-    padding: 1rem;
+    padding: 1rem; /* Reduced padding for smaller screens */
   }
   
   .page-header {
@@ -656,7 +612,7 @@
   }
   
   .header-content h1 {
-    font-size: 2rem;
+    font-size: 2rem; /* Adjusted font size for smaller screens */
   }
   
   .header-stats {
@@ -671,11 +627,11 @@
   }
   
   .stat-number {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* Adjusted size for smaller screens */
   }
   
   .search-box {
-    max-width: none;
+    max-width: none; /* Allow full width */
   }
   
   .filters-section {
@@ -686,81 +642,5 @@
   
   .filters {
     flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .action-buttons {
-    justify-content: center;
-  }
-  
-  .reports-table {
-    font-size: 0.875rem;
-  }
-  
-  .reports-table th,
-  .reports-table td {
-    padding: 1rem 0.75rem;
-  }
-  
-  .student-info {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
-  }
-  
-  .modal {
-    width: 95%;
-    margin: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header {
-    padding: 1rem;
-  }
-  
-  .logo {
-    font-size: 1rem;
-  }
-  
-  .header-content h1 {
-    font-size: 1.75rem;
-  }
-  
-  .stat-card {
-    padding: 0.75rem;
-  }
-  
-  .stat-number {
-    font-size: 1.25rem;
-  }
-  
-  .stat-label {
-    font-size: 0.75rem;
-  }
-  
-  .search-box input {
-    padding: 0.875rem 0.875rem 0.875rem 2.5rem;
-  }
-  
-  .reports-table th:nth-child(3),
-  .reports-table td:nth-child(3) {
-    display: none;
-  }
-  
-  .btn-primary,
-  .btn-secondary {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.875rem;
-  }
-  
-  .notification-btn {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .avatar {
-    width: 36px;
-    height: 36px;
   }
 }

@@ -166,6 +166,11 @@
     overflow-y: auto;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
     animation: modalSlideIn 0.3s ease;
+    
+}
+.modal-container::-webkit-scrollbar{
+    display: none;
+
 }
 
 @keyframes modalSlideIn {
@@ -369,7 +374,7 @@
 }
 
 /* Delete button styles */
-.delete-btn {
+.medicine-delete-btn{
   background: none;
   border: none;
   cursor: pointer;
@@ -382,12 +387,12 @@
   justify-content: center;
 }
 
-.delete-btn:hover {
+.medicine-delete-btn:hover {
   background-color: #ffebee;
   transform: scale(1.1);
 }
 
-.delete-btn:active {
+.medicine-delete-btn:active {
   transform: scale(0.95);
 }
 
@@ -421,7 +426,7 @@
 }
 
 .delete-btn-text:hover {
-  background-color: #d32f2f;
+  background-color: #2fd358;
 }
 
 /* Responsive design for action buttons */

@@ -6,7 +6,7 @@ import { generateResetOtpEmailHtml } from "../../const/Mail/ResepOTP.templete";
 import { CreateOTP } from "../../utils/OTPGen";
 import { sendTokenCookies } from "../../utils/Cookies";
 import { decodeAccessToken, generateAccessToken, generateRefreshToken } from "../../utils/WebToken";
-import { FifteenMinutesFromNow, OneDayFromNow } from "../../utils/Date";
+import { FifteenMinutesFromNow, OneDayFromNow, SevenDaysFromNow } from "../../utils/Date";
 import OTP from "../../models/OTP.model";
 import { Session } from "../../models/session.model";
 import { cloudinary } from "../../config/Claudenary";
@@ -92,12 +92,12 @@ export const VerifyStudentRegisterOTP = TryCatch(async (req: Request, res: Respo
     const refreshToken = generateRefreshToken(student._id as string);
 
     await Session.create({
-        studentId: student._id,
-        accessToken,
-        refreshToken,
-        sessionType: "LOGIN",
-        expireAt: OneDayFromNow(),
-        date: new Date(),
+    studentId: student._id,
+    accessToken,
+    refreshToken,
+    sessionType: "LOGIN",
+    expireAt: SevenDaysFromNow(),
+    date: new Date(),
     });
 
     sendTokenCookies(res, accessToken, refreshToken);
@@ -227,12 +227,12 @@ export const StudentLogin = TryCatch(async (req: Request, res: Response) => {
 
     // Create new login session
     await Session.create({
-        studentId: student._id,
-        accessToken,
-        refreshToken,
-        sessionType: "LOGIN",
-        expireAt: OneDayFromNow(),
-        date: new Date(),
+    studentId: student._id,
+    accessToken,
+    refreshToken,
+    sessionType: "LOGIN",
+    expireAt: SevenDaysFromNow(),
+    date: new Date(),
     });
 
     // Send cookies

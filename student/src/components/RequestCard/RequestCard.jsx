@@ -1,7 +1,15 @@
 import React from 'react';
 import './RequestCard.css';
 
-function RequestCard({ status, title, description, fromDate, toDate }) {
+function RequestCard({ 
+  id, 
+  status, 
+  title, 
+  description, 
+  fromDate, 
+  toDate, 
+  onDelete 
+}) {
   const statusClass = {
     Pending: 'pending',
     Approved: 'approved',
@@ -9,6 +17,15 @@ function RequestCard({ status, title, description, fromDate, toDate }) {
   };
 
   const cssClass = statusClass[status] || 'pending';
+
+  const handleDelete = () => {
+    if (onDelete && typeof onDelete === 'function') {
+      // Optional: Add confirmation dialog
+      if (window.confirm('Are you sure you want to delete this request?')) {
+        onDelete(id);
+      }
+    }
+  };
 
   return (
     <div className={`request-card ${cssClass}`}>
@@ -27,7 +44,9 @@ function RequestCard({ status, title, description, fromDate, toDate }) {
         </div>
         <div className="button-group">
           <button className="btn resend-btn">Resend</button>
-          <button className="btn delete-btn">Delete</button>
+          <button className="btn delete-btn" onClick={handleDelete}>
+            Delete
+          </button>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
   width: 280px;
   border-radius: 15px;
   padding: 15px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -10,12 +10,40 @@
 }
 
 .massage-card {
-  background-color: #d1fae5; /* light green */
+  background-color: #d1fae5;
+  /* light green */
 }
 
 .article-card {
-  background-color: #fef3c7; /* light orange */
+  background-color: #fef3c7;
+  /* light orange */
 }
+
+/* Highlight urgent reminders */
+.urgent-badge {
+  background-color: red;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-left: 6px;
+}
+
+/* Style for read reminders */
+.read-card {
+  opacity: 0.6;
+}
+
+/* Important type styling */
+.important-card {
+  border-left: 4px solid red;
+}
+
+/* Article type styling */
+.article-card {
+  border-left: 4px solid blue;
+}
+
 
 .message-card-header {
   display: flex;
@@ -42,7 +70,8 @@
   justify-content: space-between;
 }
 
-.delete-btn, .read-btn {
+.delete-btn,
+.read-btn {
   padding: 6px 12px;
   border-radius: 6px;
   border: none;
