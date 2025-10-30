@@ -1,43 +1,64 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Download, Search, Shield, Users, Database, Activity, Clock, CheckCircle, ArrowRight, Menu, X, Stethoscope, Calendar, UserCheck } from 'lucide-react';
+import {
+    FileText,
+    Download,
+    Search,
+    Shield,
+    Users,
+    Database,
+    Activity,
+    Clock,
+    CheckCircle,
+    ArrowRight,
+    Menu,
+    X,
+    Stethoscope,
+    Calendar,
+    UserCheck,
+    UserPlus
+} from 'lucide-react';
 import './Home.css';
-import landingBelow from '../../assets/Home/landingBelow.png'
-import images from '../../assets/Image'
+import landingBelow from '../../assets/Home/landingBelow.png';
+import images from '../../assets/Image';
 
 const Home = () => {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
 
+    // Student Login - Navigate to internal route
     const StudentLogin = () => {
-        console.log("Student Login Clicked");
-        navigate('/login'); // Navigate to login page
-    };
-
-    const StaffLogin = () => {
-        console.log("Staff Login Clicked");
-        // You can update this to navigate to a specific staff login route if you have one
-        // For now, using the same login page
         navigate('/login');
     };
 
-    useEffect(() => {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+    // Doctor Login - External
+    const DoctorLogin = () => {
+        window.open(' http://localhost:5174/', '_blank', 'noopener,noreferrer');
+    };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    setActiveSection(entry.target.id);
-                }
-            });
-        }, observerOptions);
+    // Staff Login - External
+    const StaffLogin = () => {
+        window.open(' http://localhost:5175/', '_blank', 'noopener,noreferrer');
+    };
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id);
+                    }
+                });
+            },
+            {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px',
+            }
+        );
 
         const sections = document.querySelectorAll('section[id]');
-        sections.forEach(el => observer.observe(el));
+        sections.forEach((el) => observer.observe(el));
 
         return () => observer.disconnect();
     }, []);
@@ -111,15 +132,6 @@ const Home = () => {
         }
     ];
 
- 
-
-    const aboutFeatures = [
-        "Replace manual paper-based filing",
-        "Secure digital health record storage",
-        "Easy access for students and staff",
-        "Modern web-based interface"
-    ];
-
     return (
         <div className="umc-container">
             {/* Navigation */}
@@ -128,8 +140,7 @@ const Home = () => {
                     <div className="nav-flex">
                         <div className="nav-logo">
                             <div className="logo-icon-L">
-                                <img className = "L-logo"
-                                src={images.logo} alt="logo" />
+                                <img className="L-logo" src={images.logo} alt="logo" />
                             </div>
                             <div className="logo-text">
                                 <h1>UWU Medical Center</h1>
@@ -144,31 +155,34 @@ const Home = () => {
                             <a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}>About</a>
                         </div>
 
-                        <div className="nav-actions">
-                            <button className="btn-login" onClick={StaffLogin}>
-                                <Users className="w-5 h-5" />
-                                <span>Student login</span>
-                            </button>
-                            <button
-                                className="mobile-menu-btn"
-                                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            >
-                                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                            </button>
-                        </div>
+                        <button
+                            className="mobile-menu-btn"
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        >
+                            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
                     </div>
 
-                    {/* Mobile Menu */}
                     {isMenuOpen && (
                         <div className="mobile-menu">
                             <a href="#home">Home</a>
                             <a href="#features">Features</a>
                             <a href="#workflow">How It Works</a>
                             <a href="#contact">About</a>
-                            <button className="mobile-login" onClick={StaffLogin}>
-                                <Users className="w-5 h-5" />
-                                <span>Student login</span>
-                            </button>
+                            <div className="mobile-login-buttons">
+                                <button className="mobile-login student-btn" onClick={StudentLogin}>
+                                    <Users className="w-5 h-5" />
+                                    <span>Student</span>
+                                </button>
+                                <button className="mobile-login doctor-btn" onClick={DoctorLogin}>
+                                    <Stethoscope className="w-5 h-5" />
+                                    <span>Doctor</span>
+                                </button>
+                                <button className="mobile-login staff-btn" onClick={StaffLogin}>
+                                    <UserPlus className="w-5 h-5" />
+                                    <span>Staff</span>
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -183,28 +197,27 @@ const Home = () => {
                         </div>
 
                         <h1 className="hero-title">
-                            Digital Medical Records<br />
-                            Management System
+                            Digital Medical Records<br />Management System
                         </h1>
 
                         <p className="hero-description">
-                            Streamline medical record management at UWU Medical Center. Secure, efficient, and user-friendly 
-                            system for students, doctors, and administrative staff to manage health records digitally.
+                            Streamline medical record management at UWU Medical Center. Secure, efficient, and user-friendly system for students, doctors, and administrative staff.
                         </p>
 
-                        {/* <div className="hero-buttons">
-                            <button className="btn-primary" onClick={StudentLogin}>
+                        <div className="hero-buttons">
+                            <button className="btn-primary student-primary" onClick={StudentLogin}>
                                 <Users className="w-5 h-5" />
                                 <span>Student Portal</span>
                             </button>
-                            <button 
-                                className="btn-secondary"
-                                onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
-                            >
-                                <Download className="w-5 h-5" />
-                                <span>Learn More</span>
+                            <button className="btn-primary doctor-primary" onClick={DoctorLogin}>
+                                <Stethoscope className="w-5 h-5" />
+                                <span>Doctor Portal</span>
                             </button>
-                        </div> */}
+                            <button className="btn-primary staff-primary" onClick={StaffLogin}>
+                                <UserPlus className="w-5 h-5" />
+                                <span>Staff Portal</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -213,24 +226,17 @@ const Home = () => {
             <section id="features" className="section section-white">
                 <div className="home-container">
                     <div className="section-header">
-                        <div className="section-badge">
-                            System Features
-                        </div>
-                        <h2 >
-                            Comprehensive 
-                        </h2>
+                        <div className="section-badge">System Features</div>
+                        <h2>Comprehensive Healthcare Management</h2>
                         <p>
-                            Our system provides complete digital health record management tailored for the 
-                            Uva Wellassa University Medical Center environment.
+                            Our system provides complete digital health record management tailored for the Uva Wellassa University Medical Center environment.
                         </p>
                     </div>
 
                     <div className="features-grid">
                         {medicalSystemFeatures.map((feature, index) => (
                             <div key={index} className="feature-card">
-                                <div className="feature-icon">
-                                    {feature.icon}
-                                </div>
+                                <div className="feature-icon">{feature.icon}</div>
                                 <h3 className="feature-title">{feature.title}</h3>
                                 <p className="feature-description">{feature.description}</p>
                                 <ul className="feature-list">
@@ -253,9 +259,7 @@ const Home = () => {
                     <div className="stats-grid">
                         {systemStats.map((stat, index) => (
                             <div key={index} className="stat-item">
-                                <div className="stat-icon">
-                                    {stat.icon}
-                                </div>
+                                <div className="stat-icon">{stat.icon}</div>
                                 <div className="stat-number">{stat.number}</div>
                                 <div className="stat-label">{stat.label}</div>
                             </div>
@@ -268,24 +272,17 @@ const Home = () => {
             <section id="workflow" className="section section-gray">
                 <div className="home-container">
                     <div className="section-header">
-                        <div className="section-badge">
-                            How It Works
-                        </div>
-                        <h2 className="section-title">
-                            Simple Medical Record Process
-                        </h2>
+                        <div className="section-badge">How It Works</div>
+                        <h2 className="section-title">Simple Medical Record Process</h2>
                         <p className="section-description">
-                            Our streamlined workflow ensures efficient management of medical records 
-                            from registration to report access.
+                            Our streamlined workflow ensures efficient management of medical records from registration to report access.
                         </p>
                     </div>
 
                     <div className="workflow-grid">
                         {workflows.map((workflow, index) => (
                             <div key={index} className="workflow-item">
-                                <div className="workflow-step">
-                                    {workflow.step}
-                                </div>
+                                <div className="workflow-step">{workflow.step}</div>
                                 <h3 className="workflow-title">{workflow.title}</h3>
                                 <p className="workflow-description">{workflow.description}</p>
                                 {index < workflows.length - 1 && (
@@ -302,20 +299,13 @@ const Home = () => {
                 <div className="home-container">
                     <div className="contact-grid">
                         <div className="contact-content">
-                            <h2 className="contact-title">
-                                About UWU Medical Center System
-                            </h2>
+                            <h2 className="contact-title">About UWU Medical Center System</h2>
                             <h5 className="contact-description">
-                                Developed by ICT students as part of their Independent Study Project, this system 
-                                modernizes healthcare record management at Uva Wellassa University Medical Center.
+                                Developed by ICT students as part of their Independent Study Project, this system modernizes healthcare record management at Uva Wellassa University Medical Center.
                             </h5>
-
                             <div className="below">
-                                <img className='landingBelow' src={landingBelow} alt="Medical Center System" />
-                                
+                                <img className="landingBelow" src={landingBelow} alt="Medical Center System" />
                             </div>
-
-                            
                         </div>
                     </div>
                 </div>
@@ -331,19 +321,12 @@ const Home = () => {
                             </div>
                             <div className="footer-info">
                                 <h3>UWU Medical Center System</h3>
-                                <p>
-                                    Digital healthcare record management for students and staff.
-                                </p>
+                                <p>Digital healthcare record management for students and staff.</p>
                             </div>
                         </div>
-
                         <div className="footer-text">
-                            <p>
-                                © 2024 Uva Wellassa University Medical Center. All rights reserved.
-                            </p>
-                            <p>
-                                ICT 222-2: Independent Study Project I - Group 12
-                            </p>
+                            <p>© 2024 Uva Wellassa University Medical Center. All rights reserved.</p>
+                            <p>ICT 222-2: Independent Study Project I - Group 12</p>
                         </div>
                     </div>
                 </div>
